@@ -1,0 +1,10 @@
+.edit {
+    margin-top: 2em;
+}
+mat-progress-spinner {
+    margin: auto;
+}
+
+.break {
+    flex-basis: 100%;
+}

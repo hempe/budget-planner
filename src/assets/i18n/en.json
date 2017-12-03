@@ -1,0 +1,24 @@
+{
+    "Profile": {
+        "User": "User"
+    },
+    "name": "Name",
+    "prename": "Surname",
+    "company": "Company",
+    "telNumber": "Phone",
+    "mobilNumber": "Mobile",
+    "eMail": "Email",
+    "city": "City",
+    "street": "Street, Nr.",
+    "zipCode": "ZIP",
+    "comment": "Comment",
+    "Auth": {
+        "SignInWithGoogle": "Sign in with Google",
+        "SignInWithMicrosoft": "Sign in with Microsoft"
+    },
+    "Menu": {
+        "Login": "Login",
+        "Profile": "Profile",
+        "Home": "Home"
+    }
+}

@@ -1,0 +1,40 @@
+<div class="wrapper">
+    <div class="element-container">
+        <mat-card class="element">
+            <div class="company-wrapper">
+                <span class="company">Sign in</span>
+            </div>
+            <div class="content-wrapper">
+                <div class="content">
+                    <div class="welcome-message-wrapper">
+                        <p class="welcome-message">Hello there! Sign in and start managing your budget.</p>
+                    </div>
+                    <div class="signIn-buttons">
+                        <button mat-raised-button (click)="signInWith('Google')" class="signIn">
+                            <img class="logo" src="assets/img/auth/google.svg" /> {{ 'Auth.SignInWithGoogle' | translate }}
+                        </button>
+                        <button mat-raised-button (click)="signInWith('Microsoft')" class="signIn">
+                            <img class="logo" src="assets/img/auth/microsoft.svg" /> {{ 'Auth.SignInWithMicrosoft' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+        <!--
+    <div class="element">
+        <span class="company">Sign in</span>
+        <div class="welcome-message-wrapper">
+            <p class="welcome-message">Hello there! Sign in and start managing your budget.</p>
+        </div>
+        <div class="signIn-buttons">
+            <button mat-raised-button (click)="onClick" class="signIn">
+                <img class="logo" src="assets/img/auth/google.svg" /> {{ 'Auth.SignInWithGoogle' | translate }}
+            </button>
+            <button mat-raised-button (click)="onClick" class="signIn">
+                <img class="logo" src="assets/img/auth/microsoft.svg" /> {{ 'Auth.SignInWithMicrosoft' | translate }}
+            </button>
+        </div>
+    </div>
+-->
+    </div>
+</div>

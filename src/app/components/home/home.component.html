@@ -1,0 +1,33 @@
+<view-wrapper [head]="head">
+    <div flexContainer>
+
+        <span flex=2.5>
+            <div class="wrapper">
+                <mat-card>
+                    <doughnut title='Assets' [units]="assets.positiv" color="#66bb6a" (edit)="edit('assets.positiv')"></doughnut>
+                </mat-card>
+            </div>
+        </span>
+        <span flex=2.5>
+            <div class="wrapper">
+                <mat-card>
+                    <doughnut title='Debts' [units]="assets.negativ" color="#ef5350"></doughnut>
+                </mat-card>
+            </div>
+        </span>
+        <span flex=2.5>
+            <div class="wrapper">
+                <mat-card>
+                    <doughnut title='Revenue' [units]="revenue.positiv" color="#26a69a"></doughnut>
+                </mat-card>
+            </div>
+        </span>
+        <span flex=2.5>
+            <div class="wrapper">
+                <mat-card>
+                    <doughnut title='Expenses' [units]="revenue.negativ" color="#ff7043"></doughnut>
+                </mat-card>
+            </div>
+        </span>
+    </div>
+</view-wrapper>

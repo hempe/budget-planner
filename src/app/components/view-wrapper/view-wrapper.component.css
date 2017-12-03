@@ -1,0 +1,137 @@
+.outlet {
+    margin-top: -200px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+header {
+    min-height: 200px;
+    max-height: 200px;
+    background: #baec8e url(/assets/img/backgrounds/header_1.png) no-repeat 50%
+        fixed;
+    background-size: cover;
+}
+
+.menu {
+    padding: 2em 1em;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.menu-title {
+    margin: 2em 1em 1em 1em;
+    display: block;
+    font-weight: bolder;
+    font-size: 0.9em;
+}
+
+.menu-entry {
+    width: 100%;
+    text-align: left;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.menu-entry-icon {
+    margin-right: 0.5em;
+}
+
+.menu-divider {
+    margin-top: 1em;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.12);
+    height: 1px;
+}
+.title {
+    font-family: roboto;
+}
+
+.title-wrapper {
+    padding: 3em 2em 0em 2em;
+}
+
+.title-container {
+    color: white;
+    min-height: 60px;
+    max-height: 60px;
+    margin-bottom: 1em;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.title-container > mat-icon {
+    margin-right: 4px;
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+    vertical-align: sub;
+}
+
+.mat-menu-items > button {
+    padding-right: 3em;
+}
+
+.side-nav {
+    min-width: 300px;
+    max-width: 300px;
+    background: transparent;
+}
+
+.content {
+    padding: 36px 24px 24px 0;
+    flex: 1 1 auto;
+    max-width: calc(100vw - 324px);
+}
+
+.spacer {
+    height: 36.25px;
+}
+@media (max-width: 700px) {
+    .side-nav {
+        max-width: 58px;
+        min-width: 58px;
+    }
+
+    .content {
+        max-width: calc(100vw - 82px);
+    }
+
+    .title-wrapper {
+        height: 160px;
+    }
+
+    .menu {
+        padding: 0 !important;
+    }
+
+    .title-container {
+        display: none;
+    }
+
+    .menu-title {
+        display: none;
+    }
+
+    .menu-entry {
+        color: #6abd20;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        max-width: 58px;
+        min-width: 58px;
+        text-align: center;
+
+        text-align: center;
+        border-radius: 10px;
+    }
+
+    .menu-entry-icon {
+        margin-right: 0;
+    }
+
+    .menu-entry span {
+        display: none;
+    }
+}

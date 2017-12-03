@@ -1,0 +1,36 @@
+<mat-toolbar class="user-bar">
+  <a class="company" (click)="goHome()">
+    <img src="/assets/img/logo/logo-128.png" />
+  </a>
+  <a class="company" (click)="goHome()">Budget Planner 2.0</a>
+  <span class="fill-remaining-space"></span>
+
+  <mat-menu #appMenu="matMenu">
+    <div class="mat-menu-items">
+      <button mat-menu-item (click)="gotoProfile()">
+        <mat-icon>account_circle</mat-icon> Profile
+      </button>
+      <button mat-menu-item>
+        <mat-icon>help</mat-icon> Help
+      </button>
+      <hr/>
+      <button mat-menu-item (click)="signOut()">
+        <mat-icon>exit_to_app</mat-icon> Logout
+      </button>
+    </div>
+  </mat-menu>
+
+  <button mat-button [matMenuTriggerFor]="appMenu" [hidden]="!configuraton.loggedIn">
+    <img class="avatar" src="/assets/img/avatars/noavatar.png">
+    <span class="user-name">{{configuraton.username}}</span>
+  </button>
+
+</mat-toolbar>
+
+<div *ngIf="configuraton.loggedIn && !loading">
+  <router-outlet></router-outlet>
+</div>
+
+<div *ngIf="!configuraton.loggedIn && !loading">
+  <login></login>
+</div>

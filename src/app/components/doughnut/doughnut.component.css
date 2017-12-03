@@ -1,0 +1,35 @@
+.label {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    left: 50%;
+}
+.title {
+    position: absolute;
+    color: white;
+    font-size: 1.5em;
+    bottom: 24px;
+}
+.header {
+    position: relative;
+    padding: 24px;
+    display: inline-block;
+    width: calc(100% - 48px);
+}
+
+.mat-list-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+mat-list-item.isBase {
+    cursor: pointer;
+}
+.value {
+    color: rgba(0, 0, 0, 0.54);
+}
+.isBase {
+    display: none;
+}
+canvas {
+    margin: auto;
+}

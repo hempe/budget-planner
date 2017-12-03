@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "node_modules/": true,
+        "e2e/": true,
+        ".vscode/chrome": true,
+        "**/obj": true,
+        "**/bin": true,
+        "wwwroot": true,
+        ".prettierc": true
+    },
+    "csharpfixformat.style.spaces.beforeParenthesis": false
+}

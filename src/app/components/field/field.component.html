@@ -1,0 +1,27 @@
+<div [ngSwitch]="type">
+    <div *ngSwitchCase="'email'">
+        <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+        <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
+            <input matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
+                email [errorStateMatcher]="matcher">
+            <mat-error error [name]="name"></mat-error>
+        </mat-form-field>
+    </div>
+    <div *ngSwitchCase="'textarea'">
+        <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+        <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
+            <textarea matInput type="{{type}}" rows="10" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
+                [errorStateMatcher]="matcher"></textarea>
+            <mat-error error [name]="name"></mat-error>
+        </mat-form-field>
+    </div>
+    <div *ngSwitchCase="isInputType(type)">
+        <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+        <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
+            <input matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
+                [errorStateMatcher]="matcher">
+            <mat-error error [name]="name"></mat-error>
+        </mat-form-field>
+    </div>
+    <strong *ngSwitchDefault style="color:red">Unknown type '{{type}}'</strong>
+</div>

@@ -1,0 +1,24 @@
+<view-wrapper [head]="head" [button]="button">
+    <mat-card>
+        <form #form="ngForm" (ngSubmit)="submit()" *ngIf="showForm">
+            <h2 translate>Profile.User</h2>
+            <mat-card-content *ngIf="value" flexContainer class="flex-container">
+                <field icon="person" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
+                <field [(ngModel)]="value.prename" name="prename" type="text" flex=5></field>
+                <field icon="domain" [(ngModel)]="value.company" name="company" type="text" flex=10></field>
+
+                <field icon="phone" [(ngModel)]="value.telNumber" name="telNumber" type="tel" flex=5></field>
+                <field icon="smartphone" [(ngModel)]="value.mobilNumber" name="mobilNumber" type="tel" flex=5></field>
+                <field icon="mail" [(ngModel)]="value.eMail" name="eMail" type="email" flex=10></field>
+
+                <field icon="my_location" [(ngModel)]="value.city" name="city" type="text" flex=5></field>
+                <field [(ngModel)]="value.street" name="street" type="text" flex=3></field>
+                <field [(ngModel)]="value.zipCode" name="zipCode" type="number" flex=2></field>
+                <field [(ngModel)]="value.comment" name="comment" type="textarea" flex=10></field>
+
+            </mat-card-content>
+            <button mat-raised-button type="submit" [color]="form.dirty ? 'primary' : ''" [disabled]="form.invalid" translate="">Save</button>
+        </form>
+        <mat-progress-spinner color="primary" mode="indeterminate" *ngIf="!showForm"></mat-progress-spinner>
+    </mat-card>
+</view-wrapper>
