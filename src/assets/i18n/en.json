@@ -1,7 +1,4 @@
 {
-    "Profile": {
-        "User": "User"
-    },
     "name": "Name",
     "prename": "Surname",
     "company": "Company",
@@ -16,9 +13,13 @@
         "SignInWithGoogle": "Sign in with Google",
         "SignInWithMicrosoft": "Sign in with Microsoft"
     },
-    "Menu": {
-        "Login": "Login",
-        "Profile": "Profile",
-        "Home": "Home"
-    }
+
+    "Login": "Login",
+    "Profile": "Profile",
+    "Home": "Home",
+    "User": "User",
+    "Assets": "Assets",
+    "Debts": "Debts",
+    "Revenue": "Revenue",
+    "Expenses": "Expenses"
 }

@@ -28,9 +28,9 @@ import { TEST_JSON } from '../../common/testing/test';
     styleUrls: ['./bar.component.css']
 })
 export class BarComponent {
+    public totalUnit: IUnit<IAsset>;
     public datasets: Colors[] = [];
     public labels: string[];
-    public current: { name: string; value?: number }[];
 
     public options: any = {
         scales: {
@@ -92,8 +92,8 @@ export class BarComponent {
     @Input() public color: string = '';
     @Input() public label: string = '';
     @Input()
-    public set units(value: IGroup<IBudget>[]) {
-        value = array(value);
+    public set units(units: IGroup<IBudget>) {
+        let value = [units];
 
         value.forEach(val => {
             val.positiv = array(val.positiv);
@@ -145,28 +145,53 @@ export class BarComponent {
             }
         ];
 
+        this.totalUnit = {
+            name: 'Total',
+            elements: [
+                {
+                    name: 'Income',
+                    value: units.positiv
+                        .map(c =>
+                            c.elements
+                                .map(x => x.value * x.frequency)
+                                .reduce((a, b) => a + b, 0)
+                        )
+                        .reduce((a, b) => a + b, 0)
+                },
+                {
+                    name: 'Expenses',
+                    value: units.negativ
+                        .map(c =>
+                            c.elements
+                                .map(x => x.value * x.frequency)
+                                .reduce((a, b) => a + b, 0)
+                        )
+                        .reduce((a, b) => a + b, 0)
+                }
+            ]
+        };
+        this.unit = this.totalUnit;
+
         // this shoud be the budget names
         this.labels = value.map(x => x.name);
-        this._units = value;
-        this.current = value;
+        this._units = units;
     }
-    public get units(): IGroup<IBudget>[] {
+    public get units(): IGroup<IBudget> {
         return this._units;
     }
 
     public get isBase(): boolean {
-        return this.current === this.units;
+        return false;
+        //return this.current === this.units;
     }
 
-    private _units: IGroup<IBudget>[];
+    private _units: IGroup<IBudget>;
 
     public unit: IUnit<IAsset> = undefined;
-    public current_name = '';
     constructor() {}
 
     public back(): void {
-        this.current = this.units;
-        this.current_name = undefined;
+        //this.current = this.units;
         return;
     }
     public itemClick(label: string): void {
@@ -181,10 +206,14 @@ export class BarComponent {
     }
 
     private setUnitByName(label: string) {
+        /*
         let val = this.current_name ? this.current_name : label;
         let filter = this.units.filter(x => x.name === val);
         if (filter && filter[0]) {
-            if (this.current_name) {
+            if (
+                this.current_name &&
+                (label == 'Income' || label == 'Expenses')
+            ) {
                 this.current = (label == 'Income'
                     ? filter[0].positiv
                     : filter[0].negativ
@@ -193,7 +222,7 @@ export class BarComponent {
                         <any>{
                             name: x.name,
                             value: x.elements
-                                .map(x => x.value)
+                                .map(x => x.value * x.frequency)
                                 .reduce((a, b) => a + b, 0)
                         }
                 );
@@ -227,5 +256,6 @@ export class BarComponent {
             this.current_name = undefined;
             this.current = this.units;
         }
+        */
     }
 }

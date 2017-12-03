@@ -24,6 +24,7 @@ import { ChartsModule } from 'ng2-charts';
 import { ConfigurationService } from './services/configuration';
 import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
 import { DoughnutComponent } from './components/doughnut/doughnut.component';
+import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
 import { ErrorStateMatcher } from '@angular/material';
 import { FieldComponent } from './components/field/field.component';
@@ -49,6 +50,7 @@ import { httpFactory } from './services/http-interceptor';
         FieldComponent,
         LoginComponent,
         HomeComponent,
+        EditComponent,
         DoughnutComponent,
         BarComponent,
         ProfileComponent,

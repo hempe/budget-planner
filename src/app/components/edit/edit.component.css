@@ -1,0 +1,9 @@
+.wrapper {
+    padding: 24px;
+    width: calc(100% - 48px);
+}
+mat-card {
+    width: 100%;
+    padding: 0px;
+    display: inline-block;
+}

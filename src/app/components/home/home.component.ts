@@ -8,6 +8,7 @@ import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
+import { Router } from '@angular/router';
 import { TEST_JSON } from '../../common/testing/test';
 
 @Component({
@@ -26,17 +27,19 @@ export class HomeComponent {
     public budget: any;
 
     constructor(
+        private router: Router,
         private fileService: FileService,
         private config: ConfigurationService
     ) {
         this.assets = fileService.current.assets;
         this.revenue = fileService.current.revenue;
         this.budget = fileService.current.budgets;
+        this.config.resetColor();
         //this.positiv = fileService.current.assets.positiv;
         //fileService.current.revenue.negativ
     }
 
-    public edit(color: any) {
-        this.config.setColor(color);
+    public edit(path: any) {
+        this.router.navigate(['edit'].concat(path.split('.')));
     }
 }

@@ -7,6 +7,7 @@ export function clone<T>(obj: T): T {
 }
 export function array<T>(arr: T[]): T[] {
     let array = [];
+    if (!arr) return array;
     Object.keys(arr).forEach(key => {
         if (!isNaN(<any>key)) {
             array[Number(key)] = arr[key];

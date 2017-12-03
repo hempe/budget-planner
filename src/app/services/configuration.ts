@@ -18,13 +18,57 @@ export class ConfigurationService {
     }
     private _color: string;
 
-    public setColor(color: string) {
+    public setColor(path?: string) {
+        let color = this.getColor(path);
         let addon = 60;
         this._color = `rgba(${hexToRgb(color)
             .map(x => (x + addon < 255 ? x + addon : 255))
-            .join(',')},0.6)`;
+            .join(',')}, 0.6)`;
     }
+
     public resetColor() {
-        this._color = 'rgba(186, 236, 142, 0.6)';
+        this._color = `rgba(${hexToRgb(this.getColor()).join(',')}, 0.6)`;
+    }
+
+    public getIcon(type?: string) {
+        switch (type) {
+            case 'assets.positiv':
+            case 'assets.negativ':
+            case 'revenue.positiv':
+            case 'revenue.negativ':
+                return 'assessment';
+            default:
+                return 'home';
+        }
+    }
+
+    public getName(type?: string) {
+        switch (type) {
+            case 'assets.positiv':
+                return 'Assets';
+            case 'assets.negativ':
+                return 'Debts';
+            case 'revenue.positiv':
+                return 'Revenue';
+            case 'revenue.negativ':
+                return 'Expenses';
+            default:
+                return 'Home';
+        }
+    }
+
+    public getColor(type?: string) {
+        switch (type) {
+            case 'assets.positiv':
+                return '#66bb6a';
+            case 'assets.negativ':
+                return '#ef5350';
+            case 'revenue.positiv':
+                return '#26a69a';
+            case 'revenue.negativ':
+                return '#ff7043';
+            default:
+                return '#BAEC8E';
+        }
     }
 }

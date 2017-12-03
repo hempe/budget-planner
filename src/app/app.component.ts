@@ -5,6 +5,7 @@ import { FileService } from './services/file-service';
 import { Router } from '@angular/router';
 import { TEST_JSON } from './common/testing/test';
 import { TranslateService } from '@ngx-translate/core';
+import { array } from './common/helper';
 
 declare var Chart: any;
 @Component({
@@ -31,6 +32,12 @@ export class AppComponent {
                 data: JSON.stringify(TEST_JSON)
             });
         }
+        fileService.current.budgets = array(fileService.current.budgets);
+        fileService.current.budgets.pop();
+        fileService.current.budgets.pop();
+        fileService.current.budgets.pop();
+        fileService.current.budgets.pop();
+        fileService.current.budgets.pop();
     }
 
     public loading: boolean = true;

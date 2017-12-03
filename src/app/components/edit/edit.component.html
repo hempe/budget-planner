@@ -1,0 +1,26 @@
+<view-wrapper [head]="head">
+    <div>
+        <mat-card>
+            <ng-container *ngIf="units">
+                <mat-list dense *ngFor="let unit of units">
+                    <h3 matSubheader>
+                        <!--
+                    <button mat-icon-button *ngIf="!isBase" (click)="back()">
+                        <mat-icon>arrow_back</mat-icon>
+                    </button>
+                -->
+                        {{unit.name}}
+                    </h3>
+
+                    <ng-container *ngIf="unit.elements">
+                        <mat-list-item *ngFor="let element of unit.elements" (click)="itemClick(element.name)" [ngClass]="{'isBase':isBase}">
+                            <!--<mat-icon matListIcon>{{ unit == totalUnit ? 'folder' : 'note' }}</mat-icon>-->
+                            <h4 matLine>{{element.name}}</h4>
+                            <p matLine class="value"> {{element.value | numberWithSeperator}} </p>
+                        </mat-list-item>
+                    </ng-container>
+                </mat-list>
+            </ng-container>
+        </mat-card>
+    </div>
+</view-wrapper>

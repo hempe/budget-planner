@@ -1,7 +1,7 @@
 <view-wrapper [head]="head" [button]="button">
     <mat-card>
         <form #form="ngForm" (ngSubmit)="submit()" *ngIf="showForm">
-            <h2 translate>Profile.User</h2>
+            <h2 translate>User</h2>
             <mat-card-content *ngIf="value" flexContainer class="flex-container">
                 <field icon="person" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
                 <field [(ngModel)]="value.prename" name="prename" type="text" flex=5></field>
