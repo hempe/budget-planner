@@ -33,3 +33,43 @@ mat-list-item.isBase {
 canvas {
     margin: auto;
 }
+
+mat-card {
+    width: 100%;
+    padding: 0px;
+    display: inline-block;
+}
+
+.hidden {
+    height: 0px;
+    /*overflow: hidden;*/
+    transition: height 2s;
+    transition: opacity 2s;
+    opacity: 0;
+}
+.dropdown {
+    transition: opacity 2s;
+    transition: height 2s;
+    opacity: 1;
+}
+
+.transition-not {
+    overflow: hidden;
+    opacity: 0;
+    transform: scaleY(0);
+    transition: transform 100ms ease, opacity 100ms ease;
+    transform-origin: top;
+
+    /*transition: max-height 2000ms 2000ms ease, opacity 200ms ease;*/
+}
+
+.transition {
+    /* this traniton for showing */
+    opacity: 100;
+    /*transition: max-height 2000ms ease, opacity 200ms 2000ms ease;*/
+    transform-origin: top;
+
+    transform: scaleY(1);
+    height: auto;
+    overflow: auto;
+}

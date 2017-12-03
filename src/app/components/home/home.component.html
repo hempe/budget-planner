@@ -1,40 +1,34 @@
 <view-wrapper [head]="head">
     <div flexContainer>
-        <!--
+
         <span flex=2.5 *ngFor="let b of budget">
             <div class="wrapper">
-                <mat-card>
-                    <bar [label]='b.name' [units]="b" color="#66bb6a" (edit)="edit('#66bb6a')"></bar>
-                </mat-card>
+                <bar [label]='b.name' [units]="b" color="#26c6da" (edit)="edit('#66bb6a')"></bar>
             </div>
         </span>
-    -->
+
         <span flex=2.5>
             <div class="wrapper">
-                <mat-card>
-                    <doughnut [label]="config.getName('assets.positiv')" [units]="assets.positiv" color="#66bb6a" (edit)="edit('assets.positiv')"></doughnut>
-                </mat-card>
+                <doughnut [label]="config.getName('assets.positiv')" [units]="assets.positiv" [color]="config.getColor('assets.positiv')"
+                    (edit)="edit('assets.positiv')"></doughnut>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
-                <mat-card>
-                    <doughnut [label]="config.getName('assets.negativ')" [units]="assets.negativ" color="#ef5350" (edit)="edit('assets.negativ')"></doughnut>
-                </mat-card>
+                <doughnut [label]="config.getName('assets.negativ')" [units]="assets.negativ" [color]="config.getColor('assets.negativ')"
+                    (edit)="edit('assets.negativ')"></doughnut>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
-                <mat-card>
-                    <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.positiv" color="#26a69a" (edit)="edit('revenue.positiv')"></doughnut>
-                </mat-card>
+                <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
+                    (edit)="edit('revenue.positiv')"></doughnut>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
-                <mat-card>
-                    <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" color="#ff7043" (edit)="edit('revenue.negativ')"></doughnut>
-                </mat-card>
+                <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
+                    (edit)="edit('revenue.negativ')"></doughnut>
             </div>
         </span>
 

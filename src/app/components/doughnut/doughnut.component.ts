@@ -123,6 +123,9 @@ export class DoughnutComponent {
 
         this.unit = this.totalUnit;
     }
+
+    public more: boolean = false;
+
     public get units(): IUnit<IAsset>[] {
         return this._units;
     }
@@ -148,11 +151,27 @@ export class DoughnutComponent {
             this.unit = this.totalUnit;
             return;
         }
+        this.more = true;
         this.setUnitByName(e.active[0]._model.label);
+    }
+
+    public toggleTotals() {
+        if (this.unit == this.totalUnit) {
+            this.more = !this.more;
+        } else {
+            this.more = true;
+        }
+        this.unit = this.totalUnit;
     }
 
     private setUnitByName(label: string) {
         let filter = this.units.filter(x => x.name === label);
-        this.unit = filter && filter[0] ? filter[0] : this.totalUnit;
+        let newUnit = filter && filter[0] ? filter[0] : this.totalUnit;
+
+        if (newUnit == this.unit) {
+            this.more = false;
+        } else {
+            this.unit = newUnit;
+        }
     }
 }
