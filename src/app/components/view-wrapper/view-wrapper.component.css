@@ -10,8 +10,8 @@
 header {
     min-height: 200px;
     max-height: 200px;
-    background: #baec8e url(/assets/img/backgrounds/header_1.png) no-repeat 50%
-        fixed;
+    background: url(/assets/img/backgrounds/header.png) no-repeat 50% fixed;
+    background-blend-mode: color-burn;
     background-size: cover;
 }
 

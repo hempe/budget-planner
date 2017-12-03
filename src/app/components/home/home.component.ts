@@ -3,6 +3,7 @@ import { Component, HostListener } from '@angular/core';
 import { Files, IFile } from '../../common/file';
 import { array, numberWithSeperator } from '../../common/helper';
 
+import { ConfigurationService } from '../../services/configuration';
 import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
@@ -22,18 +23,20 @@ export class HomeComponent {
 
     public assets: any;
     public revenue: any;
-    public active: any;
+    public budget: any;
+
     constructor(
         private fileService: FileService,
-        private mouseService: MouseService
+        private config: ConfigurationService
     ) {
         this.assets = fileService.current.assets;
         this.revenue = fileService.current.revenue;
+        this.budget = fileService.current.budgets;
         //this.positiv = fileService.current.assets.positiv;
         //fileService.current.revenue.negativ
     }
 
-    public edit(active: any) {
-        this.active = active;
+    public edit(color: any) {
+        this.config.setColor(color);
     }
 }

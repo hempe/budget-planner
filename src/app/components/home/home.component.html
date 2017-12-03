@@ -4,30 +4,39 @@
         <span flex=2.5>
             <div class="wrapper">
                 <mat-card>
-                    <doughnut title='Assets' [units]="assets.positiv" color="#66bb6a" (edit)="edit('assets.positiv')"></doughnut>
+                    <bar label='Budgets' [units]="budget" color="#66bb6a" (edit)="edit('#66bb6a')"></bar>
+                </mat-card>
+            </div>
+        </span>
+
+        <span flex=2.5>
+            <div class="wrapper">
+                <mat-card>
+                    <doughnut label='Assets' [units]="assets.positiv" color="#66bb6a" (edit)="edit('#66bb6a')"></doughnut>
                 </mat-card>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
                 <mat-card>
-                    <doughnut title='Debts' [units]="assets.negativ" color="#ef5350"></doughnut>
+                    <doughnut label='Debts' [units]="assets.negativ" color="#ef5350" (edit)="edit('#ef5350')"></doughnut>
                 </mat-card>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
                 <mat-card>
-                    <doughnut title='Revenue' [units]="revenue.positiv" color="#26a69a"></doughnut>
+                    <doughnut label='Revenue' [units]="revenue.positiv" color="#26a69a" (edit)="edit('#26a69a')"></doughnut>
                 </mat-card>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
                 <mat-card>
-                    <doughnut title='Expenses' [units]="revenue.negativ" color="#ff7043"></doughnut>
+                    <doughnut label='Expenses' [units]="revenue.negativ" color="#ff7043" (edit)="edit('#ff7043')"></doughnut>
                 </mat-card>
             </div>
         </span>
+
     </div>
 </view-wrapper>

@@ -16,6 +16,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ApiService } from './services/api';
 import { AppComponent } from './app.component';
 import { AppRoutes } from './app.router';
+import { BarComponent } from './components/bar/bar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -49,6 +50,7 @@ import { httpFactory } from './services/http-interceptor';
         LoginComponent,
         HomeComponent,
         DoughnutComponent,
+        BarComponent,
         ProfileComponent,
         ReloadOnResizeDirective,
         FlexContainerDirective,

@@ -1,4 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+
+import { ConfigurationService } from '../../services/configuration';
 import { Router } from '@angular/router';
 
 export interface MenuGroup extends MenuEntry {
@@ -17,7 +19,10 @@ export interface MenuEntry {
     styleUrls: ['./view-wrapper.component.css']
 })
 export class ViewWrapperComponent implements OnInit {
-    constructor(private router: Router) {}
+    public get color() {
+        return this.config.color;
+    }
+    constructor(private router: Router, private config: ConfigurationService) {}
 
     @Input() public button: MenuEntry;
 

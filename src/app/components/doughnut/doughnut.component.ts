@@ -68,7 +68,7 @@ export class DoughnutComponent {
 
     @Input() public chartType: string = 'doughnut';
     @Input() public color: string = '';
-    @Input() public title: string = '';
+    @Input() public label: string = '';
     @Input()
     public set units(value: IUnit<IAsset>[]) {
         value = array(value);
