@@ -38,28 +38,6 @@ fieldset {
     height: 0.5px !important;
 }
 
-.search-bar {
-    width: 100%;
-    background: white;
-    margin-bottom: 2em;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    align-items: flex-start;
-}
-
-.search-bar > input {
-    outline: none;
-    background-color: transparent;
-    border: 0px solid;
-    flex: 1 1 auto;
-    line-height: 3em;
-    font-size: 1em;
-}
-.search-bar > mat-icon {
-    margin: 0.5em;
-}
 mat-row {
     cursor: pointer;
 }

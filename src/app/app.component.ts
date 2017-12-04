@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { TEST_JSON } from './common/testing/test';
 import { TranslateService } from '@ngx-translate/core';
 import { array } from './common/helper';
-
 declare var Chart: any;
 @Component({
     selector: 'app-root',
@@ -25,13 +24,14 @@ export class AppComponent {
 
         this.api.init().then(x => (this.loading = false));
 
-        fileService.loadMemory();
-        if (!fileService.current) {
-            fileService.loadFile({
-                name: 'myfile.pbj',
-                data: JSON.stringify(TEST_JSON)
-            });
-        }
+        //fileService.loadMemory();
+        //if (!fileService.current) {
+        fileService.loadFile({
+            name: 'myfile.pbj',
+            data: JSON.stringify(TEST_JSON)
+        });
+        //}
+
         fileService.current.budgets = array(fileService.current.budgets);
         fileService.current.budgets.pop();
         fileService.current.budgets.pop();

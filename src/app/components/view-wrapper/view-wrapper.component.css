@@ -13,6 +13,16 @@ header {
     background: url(/assets/img/backgrounds/header.png) no-repeat 50% fixed;
     background-blend-mode: color-burn;
     background-size: cover;
+    transition: color 3000ms;
+}
+
+:host {
+    background-color: #eeeeee;
+    height: calc(100vh - 65px);
+    width: 100%;
+    display: block;
+    overflow: auto;
+    position: relative;
 }
 
 .menu {

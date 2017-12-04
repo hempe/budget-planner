@@ -4,13 +4,17 @@
     transform: translate(-50%, -50%);
     text-align: center;
     left: 50%;
+    color: white;
 }
+
 .title {
     position: absolute;
     color: white;
     font-size: 1.5em;
     bottom: 24px;
+    cursor: pointer;
 }
+
 .header {
     position: relative;
     padding: 24px;
@@ -53,23 +57,51 @@ mat-card {
     opacity: 1;
 }
 
-.transition-not {
+.dropdown {
     overflow: hidden;
     opacity: 0;
     transform: scaleY(0);
     transition: transform 100ms ease, opacity 100ms ease;
     transform-origin: top;
-
-    /*transition: max-height 2000ms 2000ms ease, opacity 200ms ease;*/
+    position: absolute;
+    padding-bottom: 24px;
+    left: 0;
+    right: 0;
+    top: 0px;
+    z-index: 10;
 }
 
-.transition {
-    /* this traniton for showing */
+.dropdown-show {
     opacity: 100;
-    /*transition: max-height 2000ms ease, opacity 200ms 2000ms ease;*/
     transform-origin: top;
-
     transform: scaleY(1);
     height: auto;
     overflow: auto;
+}
+
+.dropdown > mat-card {
+    padding: 0;
+}
+.dropdown > mat-card > div {
+    padding: 12px 0;
+}
+
+.more-button {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    color: white;
+}
+
+.edit-button {
+    position: absolute;
+    top: 0px;
+    right: 12px;
+}
+.edit-button-text {
+    cursor: pointer;
+}
+
+.relative {
+    position: relative;
 }

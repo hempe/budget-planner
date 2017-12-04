@@ -23,6 +23,7 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { ChartsModule } from 'ng2-charts';
 import { ConfigurationService } from './services/configuration';
 import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
+import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
 import { DoughnutComponent } from './components/doughnut/doughnut.component';
 import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
@@ -59,7 +60,8 @@ import { httpFactory } from './services/http-interceptor';
         FlexDirective,
         FlexBreakDirective,
         ErrorComponent,
-        NumberWithSeperatorPipe
+        NumberWithSeperatorPipe,
+        DataSourceTableComponent
     ],
     imports: [
         BrowserModule,

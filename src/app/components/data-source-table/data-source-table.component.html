@@ -1,0 +1,21 @@
+<div class="mat-elevation-z8">
+    <div class="header">
+        <mat-form-field class="search">
+            <input matInput #filter placeholder="{{ 'Filter' | translate }}">
+        </mat-form-field>
+        <mat-paginator #paginator [pageIndex]="0" [pageSize]="10"></mat-paginator>
+    </div>
+
+    <mat-table #table [dataSource]="data">
+        <ng-container *ngFor="let header of headers">
+            <ng-container matColumnDef="{{header.key}}">
+                <mat-header-cell *matHeaderCellDef translate>{{ header.name }}</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <input [(ngModel)]="row[header.key]">
+                </mat-cell>
+            </ng-container>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: columns;" (click)="onSelected(row)"></mat-row>
+    </mat-table>
+</div>

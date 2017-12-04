@@ -1,43 +1,39 @@
 <mat-card [style.background-color]="color">
     <div class="header">
-        <div class="title" style="cursor:pointer" (click)="toggleTotals()">{{label}}</div>
+        <div class="title" (click)="toggleTotals()">{{label}}</div>
         <div *ngIf="tooltip" class="label">
-            <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'" style="color:white">{{t}}</div>
+            <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'">{{t}}</div>
         </div>
         <canvas baseChart height="250" width="250" [colors]="colors" [datasets]="datasets" [labels]="labels" [options]="options"
             [chartType]="chartType" (chartClick)="chartClicked($event)"></canvas>
 
-        <button mat-icon-button style="position:absolute;bottom:12px;right:12px;color:white" (click)="more=!more">
+        <button mat-icon-button class="more-button" (click)="more=!more">
             <mat-icon *ngIf="!more">expand_more</mat-icon>
             <mat-icon *ngIf="more">expand_less</mat-icon>
         </button>
     </div>
-    <div style="position:relative;">
-        <div style="position:absolute;padding-bottom:24px;left:0;right:0;top:0px;z-index:10;" [ngClass]="{'transition':more}" class="transition-not">
-            <mat-card style="padding:0;">
-                <!--<div style="font-size:1.2em;padding:24px;">{{label}}</div> [hidden]="!more" -->
-                <div>
-
-                    <div *ngIf="unit" style="padding:12px 0;">
-                        <mat-list dense>
-                            <h3 matSubheader style="position:relative">
-                                <button mat-icon-button *ngIf="!isBase" (click)="back()">
-                                    <mat-icon>arrow_back</mat-icon>
-                                </button>
-                                <span (click)="back()" style="cursor: pointer">{{unit.name}}</span>
-                                <button mat-icon-button style="position:absolute;top:0px;right:12px;" (click)="onEdit()">
-                                    <mat-icon aria-label="edit">create</mat-icon>
-                                </button>
-                            </h3>
-                            <ng-container *ngIf="unit.elements">
-                                <mat-list-item *ngFor="let element of unit.elements" (click)="itemClick(element.name)" [ngClass]="{'isBase':isBase}">
-                                    <mat-icon matListIcon>{{ unit == totalUnit ? 'folder' : 'note' }}</mat-icon>
-                                    <h4 matLine>{{element.name}}</h4>
-                                    <p matLine class="value"> {{element.value | numberWithSeperator}} </p>
-                                </mat-list-item>
-                            </ng-container>
-                        </mat-list>
-                    </div>
+    <div class="relative">
+        <div [ngClass]="{'dropdown-show':more}" class="dropdown">
+            <mat-card>
+                <div *ngIf="unit">
+                    <mat-list dense>
+                        <h3 matSubheader class="relative">
+                            <button mat-icon-button *ngIf="!isBase" (click)="back()">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                            <span (click)="back()" class="edit-button-text">{{unit.name}}</span>
+                            <button mat-icon-button class="edit-button" (click)="onEdit()">
+                                <mat-icon aria-label="edit">create</mat-icon>
+                            </button>
+                        </h3>
+                        <ng-container *ngIf="unit.elements">
+                            <mat-list-item *ngFor="let element of unit.elements" (click)="itemClick(element.name)" [ngClass]="{'isBase':isBase}">
+                                <mat-icon matListIcon>{{ unit == totalUnit ? 'folder' : 'note' }}</mat-icon>
+                                <h4 matLine>{{element.name}}</h4>
+                                <p matLine class="value"> {{element.value | numberWithSeperator}} </p>
+                            </mat-list-item>
+                        </ng-container>
+                    </mat-list>
                 </div>
             </mat-card>
         </div>
