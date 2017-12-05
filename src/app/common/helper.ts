@@ -54,3 +54,67 @@ export function hexToRgb(hex: string): number[] {
     }
     throw new Error('Bad Hex');
 }
+
+export function toSum(a: number, b: number) {
+    return toNumber(a) + toNumber(b);
+}
+
+export function toNumber(value: any): number {
+    if (isNaN(value)) return 0;
+    return Number(value);
+}
+
+//used in reduce
+export function toAvarage(
+    total: number,
+    amount: number,
+    index: number,
+    array: number[]
+) {
+    total += amount;
+    if (index === array.length - 1) {
+        return total / array.length;
+    } else {
+        return total;
+    }
+}
+
+export function flat<T>(arrays: T[][]): T[] {
+    return [].concat.apply([], arrays);
+}
+
+export function getCompare(property: string, direction: '' | 'asc' | 'desc') {
+    return (v1, v2) => {
+        function compare(a, b) {
+            if (a == b) return 0;
+            if (a == undefined) return -1;
+            if (b == undefined) return 1;
+            if (a[property] < b[property]) return -1;
+            if (a[property] > b[property]) return 1;
+            return 0;
+        }
+
+        let val = compare(v1, v2);
+        return direction == 'desc' ? -val : val;
+    };
+}
+
+export function unique(array: any[], byProperty?: string) {
+    var arr = [];
+    for (var i = 0; i < array.length; i++) {
+        if (
+            !arr.includes(array[i]) &&
+            (!byProperty ||
+                array.filter(
+                    a =>
+                        a == array[i] ||
+                        (a != undefined &&
+                            array[i] != undefined &&
+                            a[byProperty] == array[i][byProperty])
+                ))
+        ) {
+            arr.push(array[i]);
+        }
+    }
+    return arr;
+}

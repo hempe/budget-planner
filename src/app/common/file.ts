@@ -26,6 +26,7 @@ export interface IBudget extends IAsset {
 export interface IAsset {
     name: string;
     value: number;
+    checked?: boolean;
 }
 
 export interface IRevenue extends IAsset {

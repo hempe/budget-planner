@@ -16,3 +16,19 @@
 .mat-paginator {
     background: transparent;
 }
+
+.selectable ::ng-deep mat-header-row,
+.selectable ::ng-deep mat-row {
+    padding: 0 24px 0 0;
+}
+.checkbox-row {
+    max-width: 72px;
+    width: 72px;
+    height: 48px;
+    position: relative;
+}
+.checkbox {
+    position: absolute;
+    top: 14px;
+    left: 24px;
+}

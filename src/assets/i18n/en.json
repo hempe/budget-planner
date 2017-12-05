@@ -22,5 +22,13 @@
     "Debts": "Debts",
     "Revenue": "Revenue",
     "Expenses": "Expenses",
-    "Filter": "Filter"
+    "Filter": "Filter",
+    "Name": "Name",
+    "Amount": "Amount",
+    "Year": "Year",
+    "Insert": "Insert",
+    "Copy": "Copy",
+    "Delete": "Delete",
+    "Up": "Up",
+    "Down": "Down"
 }

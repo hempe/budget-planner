@@ -93,6 +93,13 @@ mat-card {
     color: white;
 }
 
+.edit-button-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: white;
+}
+
 .edit-button {
     position: absolute;
     top: 0px;

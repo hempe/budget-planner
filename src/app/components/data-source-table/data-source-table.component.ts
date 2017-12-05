@@ -9,12 +9,13 @@ import {
 } from '@angular/core';
 import {
     DataSourceColumn,
-    DataSourceDefinition
+    DataSourceFactory
 } from '../../services/data-source-wrapper';
+import { MatPaginator, MatSort } from '@angular/material';
 
 import { DataSource } from '@angular/cdk/table';
-import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { unique } from '../../common/helper';
 
 @Component({
     selector: 'data-source-table',
@@ -26,27 +27,49 @@ export class DataSourceTableComponent implements OnInit {
 
     @ViewChild('filter') filter: ElementRef;
 
-    @Input() public dataSource: DataSourceDefinition<any, any> | null;
-
-    public ngOnInit(): void {
-        this.columns = this.dataSource.columns.map(x => x.key);
-        this.headers = this.dataSource.columns;
-        this.data = this.dataSource.createDataSource(
-            this.paginator,
-            this.filter,
-            this.dataSource.columns
-        );
-    }
-
-    public data: DataSource<any>;
-    public columns: string[];
-    public headers: DataSourceColumn[];
-
-    @ViewChild(MatPaginator) public paginator: MatPaginator;
+    @Input() public dataSourceFactory: DataSourceFactory<any, any> | null;
+    @Input() public columns: DataSourceColumn[];
+    @Input() public selectable: boolean;
 
     @Output() public selected: EventEmitter<any> = new EventEmitter<any>();
+    @ViewChild(MatPaginator) public paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
+
+    public ngOnInit(): void {
+        this.headers = unique(this.columns);
+        this.cols = unique(
+            this.selectable
+                ? [''].concat(this.columns.map(x => x.key))
+                : this.columns.map(x => x.key)
+        );
+
+        this.dataSource = this.dataSourceFactory({
+            paginator: this.paginator,
+            filter: this.filter,
+            sort: this.sort,
+            columns: this.columns
+        });
+    }
+
+    public dataSource: DataSource<any>;
+    public headers: DataSourceColumn[];
+
+    public cols: string[];
+
+    private cj = true;
+    public isChecked(row: any) {
+        return this.cj;
+    }
+    public toggleChecked(row: any) {
+        this.cj = !this.cj;
+        console.info('toggle');
+    }
 
     public onSelected(row: any): void {
+        console.info('selected', row);
+
+        this.cj = !this.cj;
+        console.info('toggle');
         //this.selected.emit(row);
     }
 }

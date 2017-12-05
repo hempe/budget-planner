@@ -7,7 +7,7 @@ import {
     Output
 } from '@angular/core';
 import { Files, IAsset, IFile, IUnit } from '../../common/file';
-import { array, numberWithSeperator } from '../../common/helper';
+import { array, numberWithSeperator, toSum } from '../../common/helper';
 
 import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
@@ -81,9 +81,9 @@ export class DoughnutComponent {
                     .map(x =>
                         array(x.elements)
                             .map(y => y.value)
-                            .reduce((a, b) => a + b, 0)
+                            .reduce(toSum, 0)
                     )
-                    .reduce((a, b) => a + b, 0)
+                    .reduce(toSum, 0)
             )
         ];
         this.tooltip = this.total;
@@ -93,7 +93,7 @@ export class DoughnutComponent {
                 data: value.map(x =>
                     array(x.elements)
                         .map(y => y.value)
-                        .reduce((a, b) => a + b, 0)
+                        .reduce(toSum, 0)
                 ),
                 backgroundColor: value.map(
                     (x, i) =>
@@ -114,9 +114,7 @@ export class DoughnutComponent {
                 x =>
                     <IAsset>{
                         name: x.name,
-                        value: x.elements
-                            .map(x => x.value)
-                            .reduce((a, b) => a + b, 0)
+                        value: x.elements.map(x => x.value).reduce(toSum, 0)
                     }
             )
         };

@@ -32,6 +32,7 @@ import { FieldComponent } from './components/field/field.component';
 import { FileService } from './services/file-service';
 import { FormsModule } from '@angular/forms';
 import { HomeComponent } from './components/home/home.component';
+import { KeyboardService } from './services/keyboard';
 import { LoginComponent } from './components/login/login.component';
 import { MaterialModule } from './app.material';
 import { MouseService } from './services/mouse';
@@ -101,6 +102,7 @@ import { httpFactory } from './services/http-interceptor';
     providers: [
         ConfigurationService,
         MouseService,
+        KeyboardService,
         ApiService,
         FileService,
         {

@@ -1,6 +1,11 @@
 <mat-card [style.background-color]="color">
     <div class="header">
         <div class="title" (click)="toggleTotals()">{{label}}</div>
+
+        <button mat-icon-button class="edit-button-top" (click)="onEdit()">
+            <mat-icon>create</mat-icon>
+        </button>
+
         <div *ngIf="tooltip" class="label">
             <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'">{{t}}</div>
         </div>
@@ -23,7 +28,7 @@
                             </button>
                             <span (click)="back()" class="edit-button-text">{{unit.name}}</span>
                             <button mat-icon-button class="edit-button" (click)="onEdit()">
-                                <mat-icon aria-label="edit">create</mat-icon>
+                                <mat-icon>create</mat-icon>
                             </button>
                         </h3>
                         <ng-container *ngIf="unit.elements">

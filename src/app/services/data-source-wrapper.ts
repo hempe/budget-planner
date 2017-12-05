@@ -1,24 +1,25 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ElementRef, EventEmitter } from '@angular/core';
+import { MatPaginator, MatSort } from '@angular/material';
 
 import { DataSource } from '@angular/cdk/table';
-import { ElementRef } from '@angular/core';
-import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../components/view-wrapper/view-wrapper.component';
 import { count } from 'rxjs/operators/count';
+import { getCompare } from '../common/helper';
 
 export interface DataSourceColumn {
     name: string;
     key: string;
+    type?: string;
 }
-
-export interface DataSourceDefinition<TApi, TValue> {
-    name: string;
+export interface DataSourceRefs {
+    paginator: MatPaginator;
+    filter: ElementRef;
+    sort: MatSort;
     columns: DataSourceColumn[];
-    createDataSource: (
-        paginator: MatPaginator,
-        filterElement: ElementRef,
-        columns: DataSourceColumn[]
-    ) => DataSource<TValue>;
+}
+export interface DataSourceFactory<TApi, TValue> {
+    (refs: DataSourceRefs): DataSource<TValue>;
 }
 
 export interface DataSourceValue<TValue> {
@@ -30,23 +31,22 @@ export class ListDataSource<TValue> extends DataSource<TValue> {
     private properties: string[];
 
     constructor(
+        private updateEvent: EventEmitter<{}>,
         private list: TValue[],
-        private paginator: MatPaginator,
-        private filterElement: ElementRef,
-        columns: DataSourceColumn[]
+        private refs: DataSourceRefs
     ) {
         super();
-        if (filterElement) {
-            Observable.fromEvent(filterElement.nativeElement, 'keyup')
+        if (refs.filter) {
+            Observable.fromEvent(refs.filter.nativeElement, 'keyup')
                 .debounceTime(150)
                 .distinctUntilChanged()
                 .subscribe(() => {
                     console.info('apply filter');
-                    this.filter = filterElement.nativeElement.value;
+                    this.filter = refs.filter.nativeElement.value;
                 });
         }
 
-        this.properties = columns.map(x => x.key);
+        this.properties = this.refs.columns.map(x => x.key);
     }
     URLSearchParams;
     filterChange = new BehaviorSubject('');
@@ -58,21 +58,35 @@ export class ListDataSource<TValue> extends DataSource<TValue> {
     }
 
     connect(): Observable<TValue[]> {
-        const displayDataChanges = [this.paginator.page, this.filterChange];
+        const displayDataChanges = [
+            this.refs.paginator.page,
+            this.filterChange,
+            this.updateEvent,
+            this.refs.sort.sortChange
+        ];
 
         return Observable.merge(...displayDataChanges).map(() => {
-            this.paginator.length = this.list.length;
+            this.refs.paginator.length = this.list.length;
 
-            let expr = new RegExp(this.filter, 'i');
-            let result = this.list.filter(
-                t =>
-                    this.properties.findIndex(
-                        p => t[p] && t[p].toString().match(expr)
-                    ) >= 0
-            );
+            let result = this.list.map(x => x);
+            if (this.filter) {
+                let expr = new RegExp(this.filter, 'i');
+                result = this.list.filter(
+                    t =>
+                        this.properties.findIndex(
+                            p => t[p] && t[p].toString().match(expr)
+                        ) >= 0
+                );
+            }
+            if (this.refs.sort.active && this.refs.sort.direction) {
+                result = result.sort(
+                    getCompare(this.refs.sort.active, this.refs.sort.direction)
+                );
+            }
             let paged = result.slice(
-                this.paginator.pageIndex * this.paginator.pageSize,
-                (this.paginator.pageIndex + 1) * this.paginator.pageSize
+                this.refs.paginator.pageIndex * this.refs.paginator.pageSize,
+                (this.refs.paginator.pageIndex + 1) *
+                    this.refs.paginator.pageSize
             );
             return paged;
         });

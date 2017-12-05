@@ -73,7 +73,7 @@ namespace BudgetPlanner.Controllers {
             }
             var claims = info.Principal.Claims.ToList();
 
-            var result = await this.signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+            var result = await this.signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
             if (result.Succeeded) {
                 await this.signInManager.UpdateExternalAuthenticationTokensAsync(info);
                 return this.RedirectToLocal(returnUrl);

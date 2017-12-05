@@ -1,3 +1,49 @@
 mat-tab-group ::ng-deep mat-tab-header {
     background: rgba(255, 255, 255, 0.3);
 }
+
+.menu-entry {
+    user-select: none;
+    padding: 12px 12px 12px 36px;
+    display: block;
+    cursor: pointer;
+    position: relative;
+}
+.menu-entry > mat-icon {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+}
+.menu-container {
+    background-color: white;
+    padding: 12px 24px;
+}
+
+.menu-header {
+    background: #fafafa;
+    font-weight: 400;
+    display: flex;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 20px;
+    padding-bottom: 21px;
+    display: flex;
+}
+.menu-title {
+    font-size: 14px;
+    line-height: 24px;
+}
+.menu-spacer {
+    flex: 1 1 auto;
+}
+.menu {
+    background: transparent;
+    color: rgba(0, 0, 0, 0.54);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.menu-wrapper {
+    width: 250px;
+    padding-left: 24px;
+    padding-top: 48px;
+}
