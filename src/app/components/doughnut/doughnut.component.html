@@ -2,7 +2,7 @@
     <div class="header">
         <div class="title" (click)="toggleTotals()">{{label}}</div>
 
-        <button mat-icon-button class="edit-button-top" (click)="onEdit()">
+        <button mat-icon-button class="edit-button-top" (click)="onEdit()" *ngIf="!editView">
             <mat-icon>create</mat-icon>
         </button>
 
@@ -12,12 +12,12 @@
         <canvas baseChart height="250" width="250" [colors]="colors" [datasets]="datasets" [labels]="labels" [options]="options"
             [chartType]="chartType" (chartClick)="chartClicked($event)"></canvas>
 
-        <button mat-icon-button class="more-button" (click)="more=!more">
+        <button mat-icon-button class="more-button" (click)="more=!more" *ngIf="!editView">
             <mat-icon *ngIf="!more">expand_more</mat-icon>
             <mat-icon *ngIf="more">expand_less</mat-icon>
         </button>
     </div>
-    <div class="relative">
+    <div class="relative" *ngIf="!editView">
         <div [ngClass]="{'dropdown-show':more}" class="dropdown">
             <mat-card>
                 <div *ngIf="unit">

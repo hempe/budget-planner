@@ -1,9 +1,14 @@
 import { Color, Colors } from 'ng2-charts';
 import {
     Component,
+    DoCheck,
     EventEmitter,
     HostListener,
     Input,
+    IterableDiffer,
+    IterableDiffers,
+    OnDestroy,
+    OnInit,
     Output
 } from '@angular/core';
 import { Files, IAsset, IFile, IUnit } from '../../common/file';
@@ -13,6 +18,8 @@ import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 import { TEST_JSON } from '../../common/testing/test';
 
 @Component({
@@ -20,7 +27,7 @@ import { TEST_JSON } from '../../common/testing/test';
     templateUrl: 'doughnut.component.html',
     styleUrls: ['./doughnut.component.css']
 })
-export class DoughnutComponent {
+export class DoughnutComponent implements OnInit, OnDestroy {
     public datasets: Colors[] = [];
     public labels: string[];
 
@@ -66,6 +73,8 @@ export class DoughnutComponent {
         this.edit.emit();
     }
 
+    @Input() editView: boolean = false;
+
     @Input() public chartType: string = 'doughnut';
     @Input() public color: string = '';
     @Input() public label: string = '';
@@ -73,6 +82,23 @@ export class DoughnutComponent {
     public set units(value: IUnit<IAsset>[]) {
         value = array(value);
         value.forEach(val => (val.elements = array(val.elements)));
+        this._units = value;
+        this.updateGraphic();
+    }
+
+    @Input() public update: Observable<{}>;
+    private updateSub: Subscription;
+
+    ngOnDestroy(): void {}
+    ngOnInit(): void {
+        if (this.update)
+            this.update.subscribe(x => {
+                this.updateGraphic();
+            });
+    }
+
+    private updateGraphic() {
+        let value = this._units;
 
         this.total = [
             'Total',
@@ -105,8 +131,8 @@ export class DoughnutComponent {
                 borderWidth: 10
             }
         ];
+
         this.labels = value.map(x => x.name);
-        this._units = value;
 
         this.totalUnit = {
             name: 'Total',
@@ -133,9 +159,7 @@ export class DoughnutComponent {
     }
 
     private _units: IUnit<IAsset>[];
-
     public unit: IUnit<IAsset> = undefined;
-    constructor() {}
 
     public back(): void {
         this.unit = this.totalUnit;

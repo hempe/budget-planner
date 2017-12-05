@@ -12,7 +12,7 @@
                 <mat-header-cell *matHeaderCellDef translate mat-sort-header>{{ header.name }}</mat-header-cell>
                 <mat-cell *matCellDef="let row">
                     <!-- Todo: besseres input feld? -->
-                    <input matInput [placeholder]="header.name" [(ngModel)]="row[header.key]" [type]="header.type">
+                    <input matInput [placeholder]="header.name" [(ngModel)]="row[header.key]" [type]="header.type" (change)="onChange(row)">
                 </mat-cell>
             </ng-container>
         </ng-container>

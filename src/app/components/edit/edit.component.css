@@ -43,7 +43,11 @@ mat-tab-group ::ng-deep mat-tab-header {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 .menu-wrapper {
-    width: 250px;
+    width: 300px;
     padding-left: 24px;
     padding-top: 48px;
+}
+
+.wrapper {
+    padding-top: 24px;
 }

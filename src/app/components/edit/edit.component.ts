@@ -40,29 +40,26 @@ export class EditComponent implements OnInit, OnDestroy {
 
     public head: MenuEntry = {};
     public units: IUnit<IAsset>[];
+    public update: EventEmitter<{}> = new EventEmitter<{}>();
 
     public type: string;
     public subType: string;
     public columns: DataSourceColumn[];
     public dataSources: DataSourceFactory<IUnit<IAsset>[], IAsset>[];
 
+    public label: string;
+    public color: string;
+
     private updateEvents: EventEmitter<{}>[] = [];
     private keyDown: Subscription;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private fileService: FileService,
         private config: ConfigurationService,
         private keyboardService: KeyboardService
-    ) {}
-
-    public tabChanged(tabChangeEvent: MatTabChangeEvent): void {}
-
-    ngOnDestroy(): void {
-        this.keyDown.unsubscribe();
-    }
-
-    ngOnInit(): void {
+    ) {
         this.keyDown = this.keyboardService.keyDown.subscribe(e => {
             if (
                 document.activeElement &&
@@ -84,16 +81,15 @@ export class EditComponent implements OnInit, OnDestroy {
         this.units = array(this.fileService.current[this.type][this.subType]);
         this.units.forEach(u => (u.elements = array(u.elements)));
 
+        this.label = this.config.getName(`${this.type}.${this.subType}`);
+        this.color = this.config.getColor(`${this.type}.${this.subType}`);
+
         this.columns = [
             { key: 'name', name: 'Name', type: 'text' },
             { key: 'value', name: 'Amount', type: 'number' }
         ];
         if (this.type == 'revenue')
             this.columns.push({ key: 'year', name: 'Year', type: 'number' });
-
-        this.dataSources = this.units.map((unit, index) =>
-            this.buidDataSource(unit, index)
-        );
 
         let path = `${this.type}.${this.subType}`;
         this.config.setColor(path);
@@ -102,6 +98,18 @@ export class EditComponent implements OnInit, OnDestroy {
             name: this.config.getName(path),
             action: () => this.router.navigate(['/'])
         };
+    }
+
+    public tabChanged(tabChangeEvent: MatTabChangeEvent): void {}
+
+    ngOnDestroy(): void {
+        this.keyDown.unsubscribe();
+    }
+
+    ngOnInit(): void {
+        this.dataSources = this.units.map((unit, index) =>
+            this.buidDataSource(unit, index)
+        );
     }
 
     private buidDataSource(
@@ -113,7 +121,13 @@ export class EditComponent implements OnInit, OnDestroy {
             new ListDataSource(this.updateEvents[index], unit.elements, ref);
     }
 
+    public changed(row: any) {
+        this.update.emit();
+    }
+
+    public selected(row: any) {}
     public up() {
+        console.info('up');
         let group = this.tabGroup.selectedIndex;
         let unit = this.units[group];
 
@@ -125,9 +139,11 @@ export class EditComponent implements OnInit, OnDestroy {
         });
 
         this.updateEvents[group].emit();
+        this.update.emit({});
     }
 
     public down() {
+        console.info('down');
         let group = this.tabGroup.selectedIndex;
         let unit = this.units[group];
 
@@ -140,9 +156,11 @@ export class EditComponent implements OnInit, OnDestroy {
         unit.elements.reverse();
 
         this.updateEvents[group].emit();
+        this.update.emit({});
     }
 
     public copy() {
+        console.info('copy');
         let group = this.tabGroup.selectedIndex;
         let unit = this.units[group];
 
@@ -155,9 +173,11 @@ export class EditComponent implements OnInit, OnDestroy {
         });
 
         this.updateEvents[group].emit();
+        this.update.emit({});
     }
 
     public delete() {
+        console.info('delete');
         let group = this.tabGroup.selectedIndex;
         let unit = this.units[group];
 
@@ -167,12 +187,15 @@ export class EditComponent implements OnInit, OnDestroy {
         });
 
         this.updateEvents[group].emit();
+        this.update.emit({});
     }
 
     public add() {
+        console.info('add');
         let group = this.tabGroup.selectedIndex;
         let unit = this.units[group];
         unit.elements.push(<any>{});
         this.updateEvents[group].emit();
+        this.update.emit({});
     }
 }

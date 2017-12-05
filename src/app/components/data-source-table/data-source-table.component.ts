@@ -31,6 +31,7 @@ export class DataSourceTableComponent implements OnInit {
     @Input() public columns: DataSourceColumn[];
     @Input() public selectable: boolean;
 
+    @Output() public changed: EventEmitter<any> = new EventEmitter<any>();
     @Output() public selected: EventEmitter<any> = new EventEmitter<any>();
     @ViewChild(MatPaginator) public paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -66,10 +67,10 @@ export class DataSourceTableComponent implements OnInit {
     }
 
     public onSelected(row: any): void {
-        console.info('selected', row);
+        this.selected.emit(row);
+    }
 
-        this.cj = !this.cj;
-        console.info('toggle');
-        //this.selected.emit(row);
+    public onChange(row: any) {
+        this.changed.emit(row);
     }
 }
