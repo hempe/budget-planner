@@ -16,11 +16,11 @@ export interface IFile {
     development: IDevelopmentGroup;
     client: IClient;
     name: string;
-    language: string;
+    language?: string;
 }
 
 export interface IBudget extends IAsset {
-    frequency: number;
+    frequency?: number;
 }
 
 export interface IAsset {
@@ -30,7 +30,7 @@ export interface IAsset {
 }
 
 export interface IRevenue extends IAsset {
-    year: number;
+    year?: number;
 }
 
 export interface IDevelopment {
@@ -46,16 +46,16 @@ export interface IDevelopmentGroup {
 }
 
 export interface IClient {
-    city: String;
-    comment: string;
-    company: string;
-    eMail: string;
-    mobilNumber: string;
-    name: string;
-    prename: string;
-    street: string;
-    telNumber: string;
-    zipCode: string;
+    city?: String;
+    comment?: string;
+    company?: string;
+    eMail?: string;
+    mobilNumber?: string;
+    name?: string;
+    prename?: string;
+    street?: string;
+    telNumber?: string;
+    zipCode?: string;
 }
 
 export namespace Files {

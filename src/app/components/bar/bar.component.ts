@@ -20,7 +20,6 @@ import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
-import { TEST_JSON } from '../../common/testing/test';
 
 @Component({
     selector: 'bar',

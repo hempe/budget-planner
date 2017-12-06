@@ -1,12 +1,5 @@
 <view-wrapper [head]="head">
     <div flexContainer>
-
-        <span flex=2.5 *ngFor="let b of budget">
-            <div class="wrapper">
-                <bar [label]='b.name' [units]="b" color="#26c6da" (edit)="edit('#66bb6a')"></bar>
-            </div>
-        </span>
-
         <span flex=2.5>
             <div class="wrapper">
                 <doughnut [label]="config.getName('assets.positiv')" [units]="assets.positiv" [color]="config.getColor('assets.positiv')"
@@ -29,6 +22,11 @@
             <div class="wrapper">
                 <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
                     (edit)="edit('revenue.negativ',$event)"></doughnut>
+            </div>
+        </span>
+        <span flex=2.5 *ngFor="let b of budget;let i = index">
+            <div class="wrapper">
+                <bar [label]='b.name' [units]="b" [color]="config.getColor('budgets')" (edit)="budgets(i)"></bar>
             </div>
         </span>
 

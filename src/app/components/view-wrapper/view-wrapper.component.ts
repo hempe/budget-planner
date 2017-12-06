@@ -35,9 +35,9 @@ export class ViewWrapperComponent implements OnInit {
             {
                 entries: [
                     {
-                        name: 'Login',
-                        icon: 'exit_to_app',
-                        action: () => this.router.navigate(['/login'])
+                        name: 'Home',
+                        icon: 'home',
+                        action: () => this.router.navigate(['/home'])
                     }
                 ]
             },

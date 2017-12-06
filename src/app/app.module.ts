@@ -19,6 +19,7 @@ import { AppRoutes } from './app.router';
 import { BarComponent } from './components/bar/bar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
+import { BudgetsComponent } from './components/budgets/budgets.component';
 import { CdkTableModule } from '@angular/cdk/table';
 import { ChartsModule } from 'ng2-charts';
 import { ConfigurationService } from './services/configuration';
@@ -52,6 +53,7 @@ import { httpFactory } from './services/http-interceptor';
         FieldComponent,
         LoginComponent,
         HomeComponent,
+        BudgetsComponent,
         EditComponent,
         DoughnutComponent,
         BarComponent,

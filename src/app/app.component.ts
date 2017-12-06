@@ -2,8 +2,8 @@ import { ApiService } from './services/api';
 import { Component } from '@angular/core';
 import { ConfigurationService } from './services/configuration';
 import { FileService } from './services/file-service';
+import { IClient } from './common/file';
 import { Router } from '@angular/router';
-import { TEST_JSON } from './common/testing/test';
 import { TranslateService } from '@ngx-translate/core';
 import { array } from './common/helper';
 declare var Chart: any;
@@ -25,19 +25,67 @@ export class AppComponent {
         this.api.init().then(x => (this.loading = false));
 
         //fileService.loadMemory();
-        //if (!fileService.current) {
-        fileService.loadFile({
-            name: 'myfile.pbj',
-            data: JSON.stringify(TEST_JSON)
-        });
-        //}
+        if (!fileService.current) {
+            fileService.current = {
+                assets: {
+                    name: 'Assets',
+                    positiv: [
+                        {
+                            name: 'Example',
+                            elements: [{ name: 'Example', value: 0 }]
+                        }
+                    ],
+                    negativ: [
+                        {
+                            name: 'Example',
+                            elements: [{ name: 'Example', value: 0 }]
+                        }
+                    ]
+                },
+                revenue: {
+                    name: 'Revenue',
+                    positiv: [
+                        {
+                            name: 'Example',
+                            elements: [{ name: 'Example', value: 0 }]
+                        }
+                    ],
+                    negativ: [
+                        {
+                            name: 'Example',
+                            elements: [{ name: 'Example', value: 0 }]
+                        }
+                    ]
+                },
+                client: <IClient>{},
+                name: 'Example',
+                budgets: [
+                    {
+                        name: 'Budget',
+                        positiv: [
+                            {
+                                name: 'Example',
+                                elements: [{ name: 'Example', value: 0 }]
+                            }
+                        ],
+                        negativ: [
+                            {
+                                name: 'Example',
+                                elements: [{ name: 'Example', value: 0 }]
+                            }
+                        ]
+                    }
+                ],
+                development: {
+                    elements: [],
+                    name: 'Development',
+                    from: 2017,
+                    to: 2018
+                }
+            };
+        }
 
         fileService.current.budgets = array(fileService.current.budgets);
-        fileService.current.budgets.pop();
-        fileService.current.budgets.pop();
-        fileService.current.budgets.pop();
-        fileService.current.budgets.pop();
-        fileService.current.budgets.pop();
     }
 
     public loading: boolean = true;

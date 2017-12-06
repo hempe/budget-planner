@@ -17,12 +17,12 @@
         <div class="menu">
             <div *ngFor="let group of groups;let last = last;">
                 <span class="menu-title">
-                    <span *ngIf="group.name">{{ 'Menu.' + group.name | translate }}</span>
+                    <span *ngIf="group.name">{{ group.name | translate }}</span>
                 </span>
                 <div *ngFor="let entry of group.entries">
                     <button class="menu-entry" mat-button (click)="entry.action ? entry.action(): noAction()">
                         <mat-icon class="menu-entry-icon" *ngIf="entry.icon">{{entry.icon}}</mat-icon>
-                        <span>{{ 'Menu.' + entry.name | translate }}</span>
+                        <span>{{ entry.name | translate }}</span>
                     </button>
                 </div>
                 <hr class="menu-divider" *ngIf="!last" />

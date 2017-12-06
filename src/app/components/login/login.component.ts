@@ -3,7 +3,6 @@ import { Files, IFile } from '../../common/file';
 import { ApiService } from '../../services/api';
 import { Component } from '@angular/core';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { TEST_JSON } from '../../common/testing/test';
 
 @Component({
     selector: 'login',

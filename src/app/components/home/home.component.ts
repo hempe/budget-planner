@@ -9,7 +9,6 @@ import { Http } from '@angular/http';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
 import { Router } from '@angular/router';
-import { TEST_JSON } from '../../common/testing/test';
 
 @Component({
     selector: 'home',
@@ -39,6 +38,9 @@ export class HomeComponent {
         //fileService.current.revenue.negativ
     }
 
+    public budgets(id: number) {
+        this.router.navigate(['budgets', id]);
+    }
     public edit(path: any, tab: string) {
         let route = ['edit'].concat(path.split('.'));
         if (tab) route.push(<any>{ tab: tab });

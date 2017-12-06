@@ -1,0 +1,10 @@
+<view-wrapper [head]="head" [button]="button">
+    <mat-card>
+        <h2 translate>Budget</h2>
+        <mat-card-content *ngIf="budget" flexContainer class="flex-container">
+            <field icon="trending_up" [(ngModel)]="budget.name" name="name" type="text" half="true" flex=5></field>
+        </mat-card-content>
+        <button mat-raised-button color="accent" (click)="goto('positiv')" translate>Income</button>
+        <button mat-raised-button color="warn" (click)="goto('negativ')" translate>Expeses</button>
+    </mat-card>
+</view-wrapper>

@@ -20,7 +20,6 @@ import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { TEST_JSON } from '../../common/testing/test';
 
 @Component({
     selector: 'doughnut',
