@@ -52,6 +52,9 @@ export class ConfigurationService {
                 return 'Revenue';
             case 'revenue.negativ':
                 return 'Expenses';
+            case 'budgets.positiv':
+            case 'budgets.negativ':
+                return 'Budget';
             default:
                 return 'Home';
         }
@@ -67,6 +70,9 @@ export class ConfigurationService {
                 return '#26a69a';
             case 'revenue.negativ':
                 return '#ff7043';
+            case 'budgets.positiv':
+            case 'budgets.negativ':
+                return '#26c6da';
             default:
                 return '#BAEC8E';
         }

@@ -7,6 +7,10 @@ import { MenuEntry } from '../components/view-wrapper/view-wrapper.component';
 import { count } from 'rxjs/operators/count';
 import { getCompare } from '../common/helper';
 
+export interface ExtendedDataSource<TValue> extends DataSource<TValue> {
+    changed: Observable<TValue[]>;
+}
+
 export interface DataSourceColumn {
     name: string;
     key: string;
@@ -19,7 +23,7 @@ export interface DataSourceRefs {
     columns: DataSourceColumn[];
 }
 export interface DataSourceFactory<TApi, TValue> {
-    (refs: DataSourceRefs): DataSource<TValue>;
+    (refs: DataSourceRefs): ExtendedDataSource<TValue>;
 }
 
 export interface DataSourceValue<TValue> {
@@ -27,8 +31,10 @@ export interface DataSourceValue<TValue> {
     count: number;
 }
 
-export class ListDataSource<TValue> extends DataSource<TValue> {
+export class ListDataSource<TValue> extends DataSource<TValue>
+    implements ExtendedDataSource<TValue> {
     private properties: string[];
+    changed: EventEmitter<TValue[]> = new EventEmitter();
 
     constructor(
         private updateEvent: EventEmitter<{}>,
@@ -88,6 +94,7 @@ export class ListDataSource<TValue> extends DataSource<TValue> {
                 (this.refs.paginator.pageIndex + 1) *
                     this.refs.paginator.pageSize
             );
+            this.changed.emit(paged);
             return paged;
         });
     }

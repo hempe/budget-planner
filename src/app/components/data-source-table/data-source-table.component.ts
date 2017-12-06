@@ -1,5 +1,10 @@
 import {
+    AfterViewInit,
+    OnDestroy
+} from '@angular/core/src/metadata/lifecycle_hooks';
+import {
     Component,
+    DoCheck,
     ElementRef,
     EventEmitter,
     Input,
@@ -9,12 +14,14 @@ import {
 } from '@angular/core';
 import {
     DataSourceColumn,
-    DataSourceFactory
+    DataSourceFactory,
+    ExtendedDataSource
 } from '../../services/data-source-wrapper';
 import { MatPaginator, MatSort } from '@angular/material';
 
 import { DataSource } from '@angular/cdk/table';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { Subscription } from 'rxjs/Subscription';
 import { unique } from '../../common/helper';
 
 @Component({
@@ -22,7 +29,7 @@ import { unique } from '../../common/helper';
     templateUrl: 'data-source-table.component.html',
     styleUrls: ['data-source-table.component.css']
 })
-export class DataSourceTableComponent implements OnInit {
+export class DataSourceTableComponent implements OnInit, OnDestroy {
     constructor() {}
 
     @ViewChild('filter') filter: ElementRef;
@@ -35,6 +42,13 @@ export class DataSourceTableComponent implements OnInit {
     @Output() public selected: EventEmitter<any> = new EventEmitter<any>();
     @ViewChild(MatPaginator) public paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
+
+    private subscription: Subscription;
+    private values: any[];
+
+    public ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
 
     public ngOnInit(): void {
         this.headers = unique(this.columns);
@@ -50,20 +64,26 @@ export class DataSourceTableComponent implements OnInit {
             sort: this.sort,
             columns: this.columns
         });
+        this.subscription = this.dataSource.changed.subscribe(x =>
+            this.checkIndeterminate(x)
+        );
     }
 
-    public dataSource: DataSource<any>;
+    public dataSource: ExtendedDataSource<any>;
     public headers: DataSourceColumn[];
 
     public cols: string[];
 
-    private cj = true;
-    public isChecked(row: any) {
-        return this.cj;
+    public checked: boolean;
+
+    public check(value: any) {
+        this.values.forEach(x => (x.checked = this.checked));
     }
-    public toggleChecked(row: any) {
-        this.cj = !this.cj;
-        console.info('toggle');
+
+    public indeterminate: boolean;
+
+    public setIndeterminate() {
+        this.checkIndeterminate(this.values);
     }
 
     public onSelected(row: any): void {
@@ -72,5 +92,27 @@ export class DataSourceTableComponent implements OnInit {
 
     public onChange(row: any) {
         this.changed.emit(row);
+    }
+
+    private checkIndeterminate(values: any[]): void {
+        this.values = values;
+        if (!values) return;
+
+        let oldValue = this.indeterminate;
+        this.indeterminate = false;
+        let first = undefined;
+
+        for (let x of values) {
+            if (first === undefined) first = x;
+            if (!x.checked !== !first.checked) {
+                this.indeterminate = true;
+                break;
+            }
+        }
+        if (this.indeterminate) {
+            this.checked = true;
+        } else if (first && !first.checked !== !this.checked) {
+            this.checked = !!first.checked;
+        }
     }
 }

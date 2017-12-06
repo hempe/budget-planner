@@ -11,7 +11,7 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { Files, IAsset, IFile, IUnit } from '../../common/file';
+import { Files, IAsset, IBudget, IFile, IUnit } from '../../common/file';
 import { array, numberWithSeperator, toSum } from '../../common/helper';
 
 import { FileService } from '../../services/file-service';
@@ -97,6 +97,13 @@ export class DoughnutComponent implements OnInit, OnDestroy {
             });
     }
 
+    private valueSelector(x: IAsset) {
+        if (!x) return 0;
+        if (x.hasOwnProperty('frequency'))
+            return (<IBudget>x).frequency * x.value;
+        return x.value;
+    }
+
     private updateGraphic() {
         let value = this._units;
 
@@ -106,7 +113,7 @@ export class DoughnutComponent implements OnInit, OnDestroy {
                 value
                     .map(x =>
                         array(x.elements)
-                            .map(y => y.value)
+                            .map(this.valueSelector)
                             .reduce(toSum, 0)
                     )
                     .reduce(toSum, 0)
@@ -118,7 +125,7 @@ export class DoughnutComponent implements OnInit, OnDestroy {
             {
                 data: value.map(x =>
                     array(x.elements)
-                        .map(y => y.value)
+                        .map(this.valueSelector)
                         .reduce(toSum, 0)
                 ),
                 backgroundColor: value.map(
@@ -140,7 +147,9 @@ export class DoughnutComponent implements OnInit, OnDestroy {
                 x =>
                     <IAsset>{
                         name: x.name,
-                        value: x.elements.map(x => x.value).reduce(toSum, 0)
+                        value: x.elements
+                            .map(this.valueSelector)
+                            .reduce(toSum, 0)
                     }
             )
         };

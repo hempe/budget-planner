@@ -17,7 +17,12 @@ import {
 } from '../../services/data-source-wrapper';
 import { Files, IAsset, IFile, IGroup, IUnit } from '../../common/file';
 import { MatPaginator, MatTabChangeEvent } from '@angular/material';
-import { array, clone, numberWithSeperator } from '../../common/helper';
+import {
+    array,
+    clone,
+    numberWithSeperator,
+    toNumber
+} from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
 import { DataSource } from '@angular/cdk/table';
@@ -39,7 +44,14 @@ export class EditComponent implements OnInit, OnDestroy {
     @ViewChild('tabGroup') tabGroup;
 
     public head: MenuEntry = {};
-    public units: IUnit<IAsset>[];
+    public get units(): IUnit<IAsset>[] {
+        return this.current[this.subType];
+    }
+
+    public set units(value: IUnit<IAsset>[]) {
+        this.current[this.subType] = value;
+    }
+
     public get unit(): IUnit<IAsset> {
         return this.units[this.unitId];
     }
@@ -57,9 +69,11 @@ export class EditComponent implements OnInit, OnDestroy {
 
     public update: EventEmitter<{}> = new EventEmitter<{}>();
 
+    private id: number;
+    private current: any;
+
     public type: string;
     public subType: string;
-
     public columns: DataSourceColumn[];
     public dataSources: DataSourceFactory<IUnit<IAsset>[], IAsset>[];
 
@@ -101,10 +115,16 @@ export class EditComponent implements OnInit, OnDestroy {
             if (e.key == 'Insert') this.add();
         });
 
+        let id = this.route.snapshot.params['id'];
         this.type = this.route.snapshot.params['type'];
         this.subType = this.route.snapshot.params['subtype'];
 
-        this.units = array(this.fileService.current[this.type][this.subType]);
+        this.current =
+            id === undefined
+                ? this.fileService.current[this.type]
+                : this.fileService.current[this.type][toNumber(id)];
+
+        this.units = array(this.units);
         this.units.forEach(u => (u.elements = array(u.elements)));
 
         this.label = this.config.getName(`${this.type}.${this.subType}`);
@@ -117,6 +137,13 @@ export class EditComponent implements OnInit, OnDestroy {
         if (this.type == 'revenue')
             this.columns.push({ key: 'year', name: 'Year', type: 'number' });
 
+        if (this.type == 'budgets')
+            this.columns.push({
+                key: 'frequency',
+                name: 'Frequency',
+                type: 'number'
+            });
+
         let path = `${this.type}.${this.subType}`;
         this.config.setColor(path);
         this.head = {
@@ -126,9 +153,7 @@ export class EditComponent implements OnInit, OnDestroy {
         };
     }
 
-    ngDoCheck() {
-        this.fileService.current[this.type][this.subType] = this.units;
-    }
+    ngDoCheck() {}
 
     public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         this.unitId = this.tabGroup.selectedIndex;
@@ -230,11 +255,12 @@ export class EditComponent implements OnInit, OnDestroy {
 
     public delete() {
         console.info('delete');
-        this.unit.elements.forEach((x, i) => {
-            if (!x.checked) return;
+        for (let i = 0; i < this.unit.elements.length; i++) {
+            let x = this.unit.elements[i];
+            if (!x.checked) continue;
             this.unit.elements.splice(i, 1);
-        });
-
+            i--;
+        }
         this.onUpdate();
     }
 

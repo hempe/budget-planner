@@ -15,5 +15,10 @@ export const AppRoutes: Routes = [
         component: EditComponent,
         data: { state: 'edit' }
     },
+    {
+        path: 'edit/:type/:id/:subtype',
+        component: EditComponent,
+        data: { state: 'edit' }
+    },
     { path: '**', component: HomeComponent, data: { state: 'home' } }
 ];

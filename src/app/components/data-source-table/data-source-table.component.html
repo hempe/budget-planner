@@ -19,9 +19,10 @@
 
         <ng-container matColumnDef="" *ngIf="selectable">
             <mat-header-cell *matHeaderCellDef class="checkbox-row">
+                <mat-checkbox class="checkbox" [(ngModel)]="checked" (change)="check($event)" [indeterminate]="indeterminate"></mat-checkbox>
             </mat-header-cell>
             <mat-cell *matCellDef="let row" class="checkbox-row">
-                <mat-checkbox class="checkbox" (click)="toggleChecked(row)" [(ngModel)]="row.checked"></mat-checkbox>
+                <mat-checkbox class="checkbox" (change)="setIndeterminate()" [(ngModel)]="row.checked"></mat-checkbox>
             </mat-cell>
         </ng-container>
 
