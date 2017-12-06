@@ -10,25 +10,25 @@
         <span flex=2.5>
             <div class="wrapper">
                 <doughnut [label]="config.getName('assets.positiv')" [units]="assets.positiv" [color]="config.getColor('assets.positiv')"
-                    (edit)="edit('assets.positiv')"></doughnut>
+                    (edit)="edit('assets.positiv',$event)"></doughnut>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
                 <doughnut [label]="config.getName('assets.negativ')" [units]="assets.negativ" [color]="config.getColor('assets.negativ')"
-                    (edit)="edit('assets.negativ')"></doughnut>
+                    (edit)="edit('assets.negativ',$event)"></doughnut>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
                 <doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
-                    (edit)="edit('revenue.positiv')"></doughnut>
+                    (edit)="edit('revenue.positiv',$event)"></doughnut>
             </div>
         </span>
         <span flex=2.5>
             <div class="wrapper">
                 <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
-                    (edit)="edit('revenue.negativ')"></doughnut>
+                    (edit)="edit('revenue.negativ',$event)"></doughnut>
             </div>
         </span>
 

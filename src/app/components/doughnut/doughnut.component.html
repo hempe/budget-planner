@@ -27,7 +27,7 @@
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                             <span (click)="back()" class="edit-button-text">{{unit.name}}</span>
-                            <button mat-icon-button class="edit-button" (click)="onEdit()">
+                            <button mat-icon-button class="edit-button" (click)="onEdit(unit.name)">
                                 <mat-icon>create</mat-icon>
                             </button>
                         </h3>

@@ -68,9 +68,9 @@ export class DoughnutComponent implements OnInit, OnDestroy {
     private total: string[];
     private totalUnit: IUnit<IAsset>;
 
-    @Output() edit: EventEmitter<{}> = new EventEmitter();
-    public onEdit() {
-        this.edit.emit();
+    @Output() edit: EventEmitter<string> = new EventEmitter();
+    public onEdit(tab: string) {
+        this.edit.emit(tab);
     }
 
     @Input() editView: boolean = false;

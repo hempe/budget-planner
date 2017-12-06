@@ -40,10 +40,26 @@ export class EditComponent implements OnInit, OnDestroy {
 
     public head: MenuEntry = {};
     public units: IUnit<IAsset>[];
+    public get unit(): IUnit<IAsset> {
+        return this.units[this.unitId];
+    }
+
+    private _unitId: number;
+    private get unitId(): number {
+        return this._unitId;
+    }
+
+    private set unitId(value: number) {
+        this.tabGroup.selectedIndex = value;
+        this._unitId = value;
+        this.onUpdate();
+    }
+
     public update: EventEmitter<{}> = new EventEmitter<{}>();
 
     public type: string;
     public subType: string;
+
     public columns: DataSourceColumn[];
     public dataSources: DataSourceFactory<IUnit<IAsset>[], IAsset>[];
 
@@ -71,13 +87,23 @@ export class EditComponent implements OnInit, OnDestroy {
 
             if (e.key == 'ArrowDown') this.down();
             if (e.key == 'ArrowUp') this.up();
+            if (e.key == 'ArrowRight') {
+                if (this.unitId < this.units.length - 1) {
+                    this.unitId++;
+                }
+            }
+            if (e.key == 'ArrowLeft') {
+                if (this.unitId > 0) {
+                    this.unitId--;
+                }
+            }
             if (e.key == 'Delete') this.delete();
             if (e.key == 'Insert') this.add();
         });
 
         this.type = this.route.snapshot.params['type'];
         this.subType = this.route.snapshot.params['subtype'];
-        this.fileService.current.assets.negativ;
+
         this.units = array(this.fileService.current[this.type][this.subType]);
         this.units.forEach(u => (u.elements = array(u.elements)));
 
@@ -100,16 +126,31 @@ export class EditComponent implements OnInit, OnDestroy {
         };
     }
 
-    public tabChanged(tabChangeEvent: MatTabChangeEvent): void {}
+    ngDoCheck() {
+        this.fileService.current[this.type][this.subType] = this.units;
+    }
+
+    public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+        this.unitId = this.tabGroup.selectedIndex;
+    }
 
     ngOnDestroy(): void {
         this.keyDown.unsubscribe();
     }
 
     ngOnInit(): void {
+        let startTab = this.route.snapshot.params['tab'];
+
         this.dataSources = this.units.map((unit, index) =>
             this.buidDataSource(unit, index)
         );
+
+        if (startTab) {
+            let index = this.units.findIndex(u => u.name == startTab);
+            if (index >= 0) this.unitId = index;
+        }
+
+        if (!this.unitId) this.unitId = 0;
     }
 
     private buidDataSource(
@@ -121,81 +162,91 @@ export class EditComponent implements OnInit, OnDestroy {
             new ListDataSource(this.updateEvents[index], unit.elements, ref);
     }
 
-    public changed(row: any) {
-        this.update.emit();
+    public selected(row: any) {}
+    public addFolder() {
+        this.units.push({ elements: [], name: 'New' });
+        this.onFoldersModified();
     }
 
-    public selected(row: any) {}
+    public deleteFolder() {
+        this.units.splice(this.unitId, 1);
+        this.unitId--;
+        this.onFoldersModified();
+    }
+
+    public onFoldersModified() {
+        if (!this.units.length) {
+            this.addFolder();
+            return;
+        }
+
+        this.dataSources = this.units.map((unit, index) =>
+            this.buidDataSource(unit, index)
+        );
+        if (this.unitId > this.units.length)
+            this.unitId = this.units.length - 1;
+        if (this.unitId < 0) this.unitId = 0;
+
+        this.onUpdate();
+    }
+
     public up() {
         console.info('up');
-        let group = this.tabGroup.selectedIndex;
-        let unit = this.units[group];
-
-        unit.elements.forEach((x, i) => {
+        this.unit.elements.forEach((x, i) => {
             if (!x.checked) return;
-            if (i <= 0 || unit.elements[i - 1].checked) return;
-            let el = unit.elements.splice(i, 1)[0];
-            unit.elements.splice(i - 1, 0, el);
+            if (i <= 0 || this.unit.elements[i - 1].checked) return;
+            let el = this.unit.elements.splice(i, 1)[0];
+            this.unit.elements.splice(i - 1, 0, el);
         });
 
-        this.updateEvents[group].emit();
-        this.update.emit({});
+        this.onUpdate();
     }
 
     public down() {
         console.info('down');
-        let group = this.tabGroup.selectedIndex;
-        let unit = this.units[group];
-
-        unit.elements.reverse().forEach((x, i) => {
+        this.unit.elements.reverse().forEach((x, i) => {
             if (!x.checked) return;
-            if (i <= 0 || unit.elements[i - 1].checked) return;
-            let el = unit.elements.splice(i, 1)[0];
-            unit.elements.splice(i - 1, 0, el);
+            if (i <= 0 || this.unit.elements[i - 1].checked) return;
+            let el = this.unit.elements.splice(i, 1)[0];
+            this.unit.elements.splice(i - 1, 0, el);
         });
-        unit.elements.reverse();
+        this.unit.elements.reverse();
 
-        this.updateEvents[group].emit();
-        this.update.emit({});
+        this.onUpdate();
     }
 
     public copy() {
         console.info('copy');
-        let group = this.tabGroup.selectedIndex;
-        let unit = this.units[group];
-
-        unit.elements.forEach((x, i) => {
+        this.unit.elements.forEach((x, i) => {
             if (!x.checked) return;
             x.checked = false;
             let y = clone(x);
             y.name = y.name + '(Copy)';
-            unit.elements.splice(i + 1, 0, y);
+            this.unit.elements.splice(i + 1, 0, y);
         });
 
-        this.updateEvents[group].emit();
-        this.update.emit({});
+        this.onUpdate();
     }
 
     public delete() {
         console.info('delete');
-        let group = this.tabGroup.selectedIndex;
-        let unit = this.units[group];
-
-        unit.elements.forEach((x, i) => {
+        this.unit.elements.forEach((x, i) => {
             if (!x.checked) return;
-            unit.elements.splice(i, 1);
+            this.unit.elements.splice(i, 1);
         });
 
-        this.updateEvents[group].emit();
-        this.update.emit({});
+        this.onUpdate();
     }
 
     public add() {
         console.info('add');
-        let group = this.tabGroup.selectedIndex;
-        let unit = this.units[group];
-        unit.elements.push(<any>{});
-        this.updateEvents[group].emit();
+        this.unit.elements.push(<any>{});
+        this.onUpdate();
+    }
+
+    private onUpdate() {
+        if (this.updateEvents[this.unitId])
+            this.updateEvents[this.unitId].emit();
         this.update.emit({});
     }
 }

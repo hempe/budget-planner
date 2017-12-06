@@ -39,7 +39,9 @@ export class HomeComponent {
         //fileService.current.revenue.negativ
     }
 
-    public edit(path: any) {
-        this.router.navigate(['edit'].concat(path.split('.')));
+    public edit(path: any, tab: string) {
+        let route = ['edit'].concat(path.split('.'));
+        if (tab) route.push(<any>{ tab: tab });
+        this.router.navigate(route);
     }
 }
