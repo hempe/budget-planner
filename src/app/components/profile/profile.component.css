@@ -1,10 +1,48 @@
-.edit {
-    margin-top: 2em;
+.menu-entry {
+    user-select: none;
+    padding: 12px 12px 12px 36px;
+    display: block;
+    cursor: pointer;
+    position: relative;
 }
-mat-progress-spinner {
-    margin: auto;
+.menu-entry > mat-icon {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+}
+.menu-container {
+    background-color: white;
+    padding: 24px 24px 12px 24px;
 }
 
-.break {
-    flex-basis: 100%;
+.menu-header {
+    background: #fafafa;
+    font-weight: 400;
+    display: flex;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 20px;
+    padding-bottom: 21px;
+    display: flex;
+    position: relative;
+}
+.menu-title {
+    font-size: 14px;
+    line-height: 24px;
+}
+.menu-header > button {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+}
+
+.menu {
+    background: transparent;
+    color: rgba(0, 0, 0, 0.54);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.menu-padding {
+    padding: 12px 0px 12px 24px;
 }

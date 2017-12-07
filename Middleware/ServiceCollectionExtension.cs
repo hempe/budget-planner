@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using BudgetPlanner.Models;
 using BudgetPlanner.Services;
@@ -17,12 +18,22 @@ namespace BudgetPlanner.Middleware {
                 .AddTransient<IUserStore<User>, Services.UserStore>()
                 .AddTransient<IRoleStore<IdentityRole>, Services.RoleStore>()
                 .AddTransient<TableStore>()
-                .AddTransient<Services.ProfileStore>()
-                .AddTransient<Services.IStoreUserInfo, Services.ProfileStore>()
+                .AddUserDataSores()
                 .Configure<TableStoreOption>(x => {
                     x.Prefix = tablePrefix;
                     x.ConnectionString = connectionString;
                 });
+
+            return services;
+        }
+
+        public static IServiceCollection AddUserDataSores(this IServiceCollection services) {
+
+            typeof(ServiceCollectionExtension).Assembly.GetTypes()
+                .Where(t => !t.IsAbstract && typeof(UserDataEntity).IsAssignableFrom(t))
+                .Select(t => typeof(Services.UserDataStore<>).MakeGenericType(t))
+                .ToList()
+                .ForEach(t => services.AddTransient(t));
 
             return services;
         }

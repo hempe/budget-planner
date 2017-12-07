@@ -85,6 +85,7 @@ export class EditComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
+        private http: Http,
         private fileService: FileService,
         private config: ConfigurationService,
         private keyboardService: KeyboardService
@@ -114,15 +115,12 @@ export class EditComponent implements OnInit, OnDestroy {
             if (e.key == 'Insert') this.add();
         });
 
-        let id = this.route.snapshot.params['id'];
+        this.id = this.route.snapshot.params['id'];
         this.type = this.route.snapshot.params['type'];
         this.subType = this.route.snapshot.params['subtype'];
+    }
 
-        this.current =
-            id === undefined
-                ? this.fileService.current[this.type]
-                : this.fileService.current[this.type][toNumber(id)];
-
+    private init() {
         this.units = array(this.units);
         this.units.forEach(u => (u.elements = array(u.elements)));
 
@@ -140,7 +138,7 @@ export class EditComponent implements OnInit, OnDestroy {
             this.columns.push({
                 key: 'frequency',
                 name: 'Frequency',
-                type: 'number'
+                type: 'frequency'
             });
 
         let path = `${this.type}.${this.subType}`;
@@ -150,6 +148,21 @@ export class EditComponent implements OnInit, OnDestroy {
             name: this.config.getName(path),
             action: () => this.router.navigate(['/'])
         };
+
+        let startTab = this.route.snapshot.params['tab'];
+
+        setTimeout(() => {
+            this.dataSources = this.units.map((unit, index) =>
+                this.buidDataSource(unit, index)
+            );
+
+            if (startTab) {
+                let index = this.units.findIndex(u => u.name == startTab);
+                if (index >= 0) this.unitId = index;
+            }
+
+            if (!this.unitId) this.unitId = 0;
+        });
     }
 
     ngDoCheck() {}
@@ -163,18 +176,20 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        let startTab = this.route.snapshot.params['tab'];
-
-        this.dataSources = this.units.map((unit, index) =>
-            this.buidDataSource(unit, index)
-        );
-
-        if (startTab) {
-            let index = this.units.findIndex(u => u.name == startTab);
-            if (index >= 0) this.unitId = index;
+        if (this.id === undefined) {
+            this.http
+                .get(`/api/data/${this.type}`)
+                .map(x => x.json())
+                .subscribe(x => {
+                    this.current = x;
+                    this.init();
+                });
+        } else {
+            this.current = this.fileService.current[this.type][
+                toNumber(this.id)
+            ];
+            this.init();
         }
-
-        if (!this.unitId) this.unitId = 0;
     }
 
     private buidDataSource(
@@ -266,6 +281,23 @@ export class EditComponent implements OnInit, OnDestroy {
     public add() {
         console.info('add');
         this.unit.elements.push(<any>{});
+        this.onUpdate();
+    }
+
+    public save() {
+        console.info('save');
+        this.http
+            .post(`/api/data/${this.type}`, this.current)
+            .map(x => x.json())
+            .subscribe(
+                x => {
+                    this.current = x;
+                },
+                err => {
+                    console.error(err);
+                    alert(err);
+                }
+            );
         this.onUpdate();
     }
 

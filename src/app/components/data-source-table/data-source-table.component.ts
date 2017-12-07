@@ -20,6 +20,7 @@ import {
 import { MatPaginator, MatSort } from '@angular/material';
 
 import { DataSource } from '@angular/cdk/table';
+import { FREQUENCIES } from '../../common/frequencies';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { Subscription } from 'rxjs/Subscription';
 import { unique } from '../../common/helper';
@@ -31,6 +32,8 @@ import { unique } from '../../common/helper';
 })
 export class DataSourceTableComponent implements OnInit, OnDestroy {
     constructor() {}
+
+    public frequencies = FREQUENCIES;
 
     @ViewChild('filter') filter: ElementRef;
 
@@ -114,5 +117,12 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
         } else if (first && !first.checked !== !this.checked) {
             this.checked = !!first.checked;
         }
+    }
+
+    public onBlur(evn, foc) {
+        console.error('focus', evn, foc);
+    }
+    public onFocus(evn, foc) {
+        console.error('blur', evn, foc);
     }
 }

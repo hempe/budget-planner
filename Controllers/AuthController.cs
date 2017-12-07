@@ -14,12 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace BudgetPlanner.Controllers {
 
     [Route(".auth")]
-    public class HomeController : Controller {
+    public class AuthController : Controller {
 
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
 
-        public HomeController(SignInManager<User> signInManager, UserManager<User> userManager) {
+        public AuthController(SignInManager<User> signInManager, UserManager<User> userManager) {
             this.signInManager = signInManager;
             this.userManager = userManager;
         }

@@ -1,5 +1,6 @@
-<view-wrapper [head]="head">
+<view-wrapper [head]="head" *ngIf="current">
     <div style="display:flex;  justify-content: flex-start">
+
         <mat-tab-group style="flex-grow:1" #tabGroup (selectedTabChange)="tabChanged($event)" [@.disabled]="true">
             <ng-container *ngFor="let dataSource of dataSources; let i = index">
                 <mat-tab label="{{units[i].name}}">
@@ -9,7 +10,6 @@
                 </mat-tab>
             </ng-container>
         </mat-tab-group>
-
         <div class="menu-wrapper">
             <div class="menu">
                 <div class="menu-header">
@@ -34,6 +34,10 @@
                     <field icon="folder" [(ngModel)]="unit.name" name="name" type="text" half="true" flex=5></field>
                 </div>
                 <div class="menu-container">
+                    <span class="menu-entry" translate (click)="save()" title="New element will be added. You can also use the insert key">
+                        <mat-icon>save</mat-icon>
+                        Save
+                    </span>
                     <span class="menu-entry" translate (click)="add()" title="New element will be added. You can also use the insert key">
                         <mat-icon>note_add</mat-icon>
                         Insert

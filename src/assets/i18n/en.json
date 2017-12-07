@@ -13,7 +13,14 @@
         "SignInWithGoogle": "Sign in with Google",
         "SignInWithMicrosoft": "Sign in with Microsoft"
     },
-
+    "frequency": {
+        "never": "Never",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+    },
+    "Edit": "Edit",
     "Login": "Login",
     "Profile": "Profile",
     "Home": "Home",

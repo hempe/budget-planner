@@ -1,7 +1,7 @@
-export const FREQUENCIES: [{ name: string; value: number }] = <any>{
-    0: { name: 'FREQUENCY_NEVER', value: 0 },
-    365: { name: 'FREQUENCY_DAILY', value: 365 },
-    52: { name: 'FREQUENCY_WEEKLY', value: 52 },
-    12: { name: 'FREQUENCY_MONTHLY', value: 12 },
-    1: { name: 'FREQUENCY_YEARLY', value: 1 }
-};
+export const FREQUENCIES: [{ name: string; value: number }] = [
+    { name: 'frequency.never', value: 0 },
+    { name: 'frequency.daily', value: 365 },
+    { name: 'frequency.weekly', value: 52 },
+    { name: 'frequency.monthly', value: 12 },
+    { name: 'frequency.yearly', value: 1 }
+];

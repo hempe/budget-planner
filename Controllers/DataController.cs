@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BudgetPlanner.Models;
+using BudgetPlanner.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,33 +20,45 @@ namespace BudgetPlanner.Controllers {
         }
 
         [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile([FromServices] Services.ProfileStore profileStore) {
-            var value = await profileStore.GetProfileAsync(this.userManager.GetUserId(this.User));
-            if (string.IsNullOrWhiteSpace(value))
-                return this.Ok(new object());
-            try {
-                return this.Ok(JsonConvert.DeserializeObject(value));
-            } catch {
-                return this.Ok(new object());
-            }
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<IActionResult> GetProfile([FromServices] UserDataStore<ProfileEntity> store) {
+            var value = await store.GetAsync(this.userManager.GetUserId(this.User));
+            return this.Ok(value?.Data ?? new object());
         }
 
         [HttpPost("profile")]
-        public async Task<IActionResult> SetProfile([FromServices] Services.ProfileStore profileStore, [FromBody] object profile) {
-            await profileStore.SaveProfileAsync(this.userManager.GetUserId(this.User), JsonConvert.SerializeObject(profile));
-            return this.Ok(profile);
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<IActionResult> SetProfile([FromServices] UserDataStore<ProfileEntity> store, [FromBody] object data) {
+            await store.SaveAsync(new ProfileEntity { UserId = this.userManager.GetUserId(this.User), Data = data });
+            return this.Ok(data);
         }
 
-        public class WeatherForecast {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public string Summary { get; set; }
+        [HttpGet("assets")]
+        [ProducesResponseType(typeof(Group<NamedValue>), 200)]
+        public async Task<IActionResult> GetAssets([FromServices] UserDataStore<AssetsEntity> store) {
+            var value = await store.GetAsync(this.userManager.GetUserId(this.User));
+            return this.Ok(value?.Data ?? new Group<NamedValue>());
+        }
 
-            public int TemperatureF {
-                get {
-                    return 32 + (int) (TemperatureC / 0.5556);
-                }
-            }
+        [HttpPost("assets")]
+        [ProducesResponseType(typeof(Group<NamedValue>), 200)]
+        public async Task<IActionResult> SetAssets([FromServices] UserDataStore<AssetsEntity> store, [FromBody] Group<NamedValue> data) {
+            await store.SaveAsync(new AssetsEntity { UserId = this.userManager.GetUserId(this.User), Data = data });
+            return this.Ok(data);
+        }
+
+        [HttpGet("revenue")]
+        [ProducesResponseType(typeof(Group<object>), 200)]
+        public async Task<IActionResult> GetRevenue([FromServices] UserDataStore<RevenueEntity> store) {
+            var value = await store.GetAsync(this.userManager.GetUserId(this.User));
+            return this.Ok(value?.Data ?? new Group<object>());
+        }
+
+        [HttpPost("revenue")]
+        [ProducesResponseType(typeof(Group<object>), 200)]
+        public async Task<IActionResult> SetRevenue([FromServices] UserDataStore<RevenueEntity> store, [FromBody] Group<object> data) {
+            await store.SaveAsync(new RevenueEntity { UserId = this.userManager.GetUserId(this.User), Data = data });
+            return this.Ok(data);
         }
     }
 }

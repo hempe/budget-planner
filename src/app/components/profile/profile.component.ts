@@ -1,6 +1,6 @@
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 
 import { FileService } from '../../services/file-service';
@@ -8,6 +8,7 @@ import { Http } from '@angular/http';
 import { IClient } from '../../common/file';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { clone } from '../../common/helper';
 
 @Component({
@@ -23,13 +24,14 @@ export class ProfileComponent implements OnInit {
         private fileService: FileService
     ) {}
 
-    public showForm = false;
-
     ngOnInit() {
         this.http
             .get('/api/data/profile')
             .map(x => x.json())
-            .subscribe(x => this.setValue(x), err => this.resetForm());
+            .subscribe(
+                x => this.setValue(x, null),
+                err => this.resetForm(null)
+            );
     }
 
     public back(): void {
@@ -38,12 +40,14 @@ export class ProfileComponent implements OnInit {
 
     public value: IClient;
 
-    public submit(): void {
-        this.showForm = false;
+    public onSubmit(form: NgForm): void {
         this.http
             .post('/api/data/profile', this.value)
             .map(x => x.json())
-            .subscribe(x => this.setValue(x), err => this.resetForm());
+            .subscribe(
+                x => this.setValue(x, form),
+                err => this.resetForm(form)
+            );
     }
 
     public head: MenuEntry = {
@@ -52,15 +56,15 @@ export class ProfileComponent implements OnInit {
         action: () => {}
     };
 
-    private setValue(x: any) {
+    private setValue(x: any, form: NgForm) {
         this.value = clone(x);
-        this.resetForm();
+        this.resetForm(form);
     }
 
-    private resetForm() {
-        this.showForm = false;
-        setTimeout(() => {
-            this.showForm = true;
-        }, 0);
+    private resetForm(form: NgForm) {
+        if (form) {
+            form.control.markAsUntouched();
+            form.control.markAsPristine();
+        }
     }
 }

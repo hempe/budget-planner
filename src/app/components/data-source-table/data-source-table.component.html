@@ -10,9 +10,34 @@
         <ng-container *ngFor="let header of headers">
             <ng-container matColumnDef="{{header.key}}">
                 <mat-header-cell *matHeaderCellDef translate mat-sort-header>{{ header.name }}</mat-header-cell>
-                <mat-cell *matCellDef="let row">
+                <mat-cell *matCellDef="let row" style="position:relative;">
+
+
+                    <ng-container [ngSwitch]="header.type">
+                        <ng-container *ngSwitchCase="'frequency'">
+                            <div class="select-placeholder">{{ row[header.key] || row[header.key] === 0 ? '' : header.name }}</div>
+                            <mat-select name="{{header.key}}" name="header.key" [(ngModel)]="row[header.key]">
+                                <mat-option *ngFor="let option of frequencies" [value]="option.value">
+                                    {{ option.name | translate }}
+                                </mat-option>
+                            </mat-select>
+                        </ng-container>
+                        <ng-container *ngSwitchDefault>
+                            <flat-field name="{{header.name}}" [(ngModel)]="row[header.key]" [type]="header.type" (change)="onChange(row)"></flat-field>
+                        </ng-container>
+                    </ng-container>
+                    <!--[placeholder]="row[header.key] ? 'yea' : 'no' "-->
                     <!-- Todo: besseres input feld? -->
-                    <input matInput [placeholder]="header.name" [(ngModel)]="row[header.key]" [type]="header.type" (change)="onChange(row)">
+
+                    <!--
+                    <mat-form-field>
+                        <mat-select placeholder="Favorite food">
+                            <mat-option *ngFor="let option of options" [value]="option.value">
+                                {{ option.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                -->
                 </mat-cell>
             </ng-container>
         </ng-container>

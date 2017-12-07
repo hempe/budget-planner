@@ -16,6 +16,11 @@
 .mat-paginator {
     background: transparent;
 }
+.select-placeholder {
+    color: rgba(0, 0, 0, 0.54);
+    position: absolute;
+    left: 0;
+}
 
 .selectable ::ng-deep mat-header-row,
 .selectable ::ng-deep mat-row {

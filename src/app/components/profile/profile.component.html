@@ -1,24 +1,78 @@
 <view-wrapper [head]="head" [button]="button">
-    <mat-card>
-        <form #form="ngForm" (ngSubmit)="submit()" *ngIf="showForm">
-            <h2 translate>User</h2>
-            <mat-card-content *ngIf="value" flexContainer class="flex-container">
-                <field icon="person" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
-                <field [(ngModel)]="value.prename" name="prename" type="text" flex=5></field>
-                <field icon="domain" [(ngModel)]="value.company" name="company" type="text" flex=10></field>
+    <div style="display:flex;  justify-content: flex-start" flexContainer>
+        <div flex=8>
+            <div class="menu-padding">
+                <div class="menu">
+                    <div class="menu-header">
+                        <span class="menu-title" translate>User</span>
+                        <!--
+                <button mat-icon-button [matMenuTriggerFor]="editMenu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                -->
+                    </div>
 
-                <field icon="phone" [(ngModel)]="value.telNumber" name="telNumber" type="tel" flex=5></field>
-                <field icon="smartphone" [(ngModel)]="value.mobilNumber" name="mobilNumber" type="tel" flex=5></field>
-                <field icon="mail" [(ngModel)]="value.eMail" name="eMail" type="email" flex=10></field>
+                    <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+                        <div class="menu-container">
+                            <mat-card-content *ngIf="value" flexContainer class="flex-container">
+                                <field icon="person" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
+                                <field [(ngModel)]="value.prename" name="prename" type="text" flex=5></field>
+                                <field icon="domain" [(ngModel)]="value.company" name="company" type="text" flex=10></field>
 
-                <field icon="my_location" [(ngModel)]="value.city" name="city" type="text" flex=5></field>
-                <field [(ngModel)]="value.street" name="street" type="text" flex=3></field>
-                <field [(ngModel)]="value.zipCode" name="zipCode" type="number" flex=2></field>
-                <field [(ngModel)]="value.comment" name="comment" type="textarea" flex=10></field>
+                                <field icon="phone" [(ngModel)]="value.telNumber" name="telNumber" type="tel" flex=5></field>
+                                <field icon="smartphone" [(ngModel)]="value.mobilNumber" name="mobilNumber" type="tel" flex=5></field>
+                                <field icon="mail" [(ngModel)]="value.eMail" name="eMail" type="email" flex=10></field>
 
-            </mat-card-content>
-            <button mat-raised-button type="submit" [color]="form.dirty ? 'primary' : ''" [disabled]="form.invalid" translate="">Save</button>
-        </form>
-        <mat-progress-spinner color="primary" mode="indeterminate" *ngIf="!showForm"></mat-progress-spinner>
-    </mat-card>
+                                <field icon="my_location" [(ngModel)]="value.city" name="city" type="text" flex=5></field>
+                                <field [(ngModel)]="value.street" name="street" type="text" flex=3></field>
+                                <field [(ngModel)]="value.zipCode" name="zipCode" type="number" flex=2></field>
+                                <field [(ngModel)]="value.comment" name="comment" type="textarea" flex=10></field>
+
+                            </mat-card-content>
+                            <button mat-raised-button type="submit" [color]="f.dirty ? 'primary' : ''" [disabled]="f.invalid" translate="">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div flex=2>
+            <div class="menu-padding">
+                <div class="menu">
+                    <div class="menu-header">
+                        <span class="menu-title" translate>Edit</span>
+                        <button mat-icon-button [matMenuTriggerFor]="editMenu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                    </div>
+
+                    <mat-menu #editMenu="matMenu">
+                        <div class="mat-menu-items">
+                            <button mat-menu-item (click)="addFolder()">
+                                <mat-icon>create_new_folder</mat-icon> Add new folder
+                            </button>
+                            <button mat-menu-item (click)="deleteFolder()">
+                                <mat-icon>delete_forever</mat-icon> Delete this folder
+                            </button>
+                        </div>
+                    </mat-menu>
+
+                    <div *ngIf="unit" style="background-color:white;padding:16px 36px 0px 16px;">
+                        <field icon="folder" [(ngModel)]="unit.name" name="name" type="text" half="true" flex=5></field>
+                    </div>
+                    <div class="menu-container">
+                        <span class="menu-entry" translate>
+                            Hier kommt der avatar?
+                        </span>
+
+                        <span class="menu-entry" translate>
+                            <mat-icon>delete_forever</mat-icon>
+                            Upload
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </view-wrapper>

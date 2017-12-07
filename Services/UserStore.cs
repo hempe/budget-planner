@@ -76,6 +76,7 @@ namespace BudgetPlanner.Services {
             var entity = await this.tableStore.GetByPropertiesAsync<LoginInfoEntity>(
                 new Args { { LoginInfoEntity.LoginProviderProperty, loginProvider }, { LoginInfoEntity.ProviderKeyProperty, providerKey }
                 });
+
             if (entity == null)
                 return null;
 

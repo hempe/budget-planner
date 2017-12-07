@@ -31,6 +31,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { ErrorStateMatcher } from '@angular/material';
 import { FieldComponent } from './components/field/field.component';
 import { FileService } from './services/file-service';
+import { FlatFieldComponent } from './components/flat-field/flat-field.component';
 import { FormsModule } from '@angular/forms';
 import { HomeComponent } from './components/home/home.component';
 import { KeyboardService } from './services/keyboard';
@@ -51,6 +52,7 @@ import { httpFactory } from './services/http-interceptor';
         AppComponent,
         ViewWrapperComponent,
         FieldComponent,
+        FlatFieldComponent,
         LoginComponent,
         HomeComponent,
         BudgetsComponent,
