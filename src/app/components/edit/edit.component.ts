@@ -79,7 +79,7 @@ export class EditComponent implements OnInit, OnDestroy {
     public label: string;
     public color: string;
 
-    private updateEvents: EventEmitter<{}>[] = [];
+    private updateEvents: EventEmitter<IAsset[]>[] = [];
     private keyDown: Subscription;
 
     constructor(
@@ -162,6 +162,7 @@ export class EditComponent implements OnInit, OnDestroy {
             }
 
             if (!this.unitId) this.unitId = 0;
+            this.onUpdate();
         });
     }
 
@@ -197,8 +198,7 @@ export class EditComponent implements OnInit, OnDestroy {
         index: number
     ): DataSourceFactory<IUnit<IAsset>[], IAsset> {
         this.updateEvents[index] = new EventEmitter();
-        return ref =>
-            new ListDataSource(this.updateEvents[index], unit.elements, ref);
+        return ref => new ListDataSource(this.updateEvents[index], ref);
     }
 
     public selected(row: any) {}
@@ -292,18 +292,21 @@ export class EditComponent implements OnInit, OnDestroy {
             .subscribe(
                 x => {
                     this.current = x;
+                    this.units = this.units;
+                    this.unitId = this.unitId;
+                    this.onUpdate();
                 },
                 err => {
                     console.error(err);
                     alert(err);
                 }
             );
-        this.onUpdate();
     }
 
     private onUpdate() {
-        if (this.updateEvents[this.unitId])
-            this.updateEvents[this.unitId].emit();
+        for (let i = 0; i < this.units.length; i++) {
+            this.updateEvents[i].emit(this.units[i].elements);
+        }
         this.update.emit({});
     }
 }

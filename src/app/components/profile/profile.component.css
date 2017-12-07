@@ -44,5 +44,24 @@
 }
 
 .menu-padding {
-    padding: 12px 0px 12px 24px;
+    padding: 48px 0px 12px 24px;
+}
+
+.left {
+    display: inline-block;
+    width: calc(100% - 350px);
+}
+.right {
+    display: inline-block;
+    min-width: 350px;
+    max-width: 350px;
+    overflow: hidden;
+}
+@media (max-width: 900px) {
+    .left,
+    .right {
+        min-width: 100%;
+        max-width: 100%;
+        width: 100%;
+    }
 }

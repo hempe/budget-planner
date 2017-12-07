@@ -37,8 +37,7 @@ export class ListDataSource<TValue> extends DataSource<TValue>
     changed: EventEmitter<TValue[]> = new EventEmitter();
 
     constructor(
-        private updateEvent: EventEmitter<{}>,
-        private list: TValue[],
+        private list: Observable<TValue[]>,
         private refs: DataSourceRefs
     ) {
         super();
@@ -67,35 +66,41 @@ export class ListDataSource<TValue> extends DataSource<TValue>
         const displayDataChanges = [
             this.refs.paginator.page,
             this.filterChange,
-            this.updateEvent,
-            this.refs.sort.sortChange
+            this.refs.sort.sortChange,
+            this.list
         ];
 
-        return Observable.merge(...displayDataChanges).map(() => {
-            this.refs.paginator.length = this.list.length;
+        return Observable.merge(...displayDataChanges).mergeMap(() => {
+            return this.list.map(list => {
+                this.refs.paginator.length = list.length;
 
-            let result = this.list.map(x => x);
-            if (this.filter) {
-                let expr = new RegExp(this.filter, 'i');
-                result = this.list.filter(
-                    t =>
-                        this.properties.findIndex(
-                            p => t[p] && t[p].toString().match(expr)
-                        ) >= 0
+                let result = list.map(x => x);
+                if (this.filter) {
+                    let expr = new RegExp(this.filter, 'i');
+                    result = list.filter(
+                        t =>
+                            this.properties.findIndex(
+                                p => t[p] && t[p].toString().match(expr)
+                            ) >= 0
+                    );
+                }
+                if (this.refs.sort.active && this.refs.sort.direction) {
+                    result = result.sort(
+                        getCompare(
+                            this.refs.sort.active,
+                            this.refs.sort.direction
+                        )
+                    );
+                }
+                let paged = result.slice(
+                    this.refs.paginator.pageIndex *
+                        this.refs.paginator.pageSize,
+                    (this.refs.paginator.pageIndex + 1) *
+                        this.refs.paginator.pageSize
                 );
-            }
-            if (this.refs.sort.active && this.refs.sort.direction) {
-                result = result.sort(
-                    getCompare(this.refs.sort.active, this.refs.sort.direction)
-                );
-            }
-            let paged = result.slice(
-                this.refs.paginator.pageIndex * this.refs.paginator.pageSize,
-                (this.refs.paginator.pageIndex + 1) *
-                    this.refs.paginator.pageSize
-            );
-            this.changed.emit(paged);
-            return paged;
+                this.changed.emit(paged);
+                return paged;
+            });
         });
     }
 
