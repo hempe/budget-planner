@@ -1,0 +1,114 @@
+.label {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    left: 50%;
+    color: white;
+}
+
+.title {
+    position: absolute;
+    color: white;
+    font-size: 1.5em;
+    bottom: 24px;
+    cursor: pointer;
+}
+
+.header {
+    position: relative;
+    padding: 24px;
+    display: inline-block;
+    width: calc(100% - 48px);
+}
+
+.mat-list-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+mat-list-item.isBase {
+    cursor: pointer;
+}
+.value {
+    color: rgba(0, 0, 0, 0.54);
+}
+.isBase {
+    display: none;
+}
+canvas {
+    margin: auto;
+}
+
+mat-card {
+    width: 100%;
+    padding: 0px;
+    display: inline-block;
+}
+
+.hidden {
+    height: 0px;
+    /*overflow: hidden;*/
+    transition: height 2s;
+    transition: opacity 2s;
+    opacity: 0;
+}
+.dropdown {
+    transition: opacity 2s;
+    transition: height 2s;
+    opacity: 1;
+}
+
+.dropdown {
+    overflow: hidden;
+    opacity: 0;
+    transform: scaleY(0);
+    transition: transform 100ms ease, opacity 100ms ease;
+    transform-origin: top;
+    position: absolute;
+    padding-bottom: 24px;
+    left: 0;
+    right: 0;
+    top: 0px;
+    z-index: 10;
+}
+
+.dropdown-show {
+    opacity: 100;
+    transform-origin: top;
+    transform: scaleY(1);
+    height: auto;
+    overflow: auto;
+}
+
+.dropdown > mat-card {
+    padding: 0;
+}
+.dropdown > mat-card > div {
+    padding: 12px 0;
+}
+
+.more-button {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    color: white;
+}
+
+.edit-button-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: white;
+}
+
+.edit-button {
+    position: absolute;
+    top: 0px;
+    right: 12px;
+}
+.edit-button-text {
+    cursor: pointer;
+}
+
+.relative {
+    position: relative;
+}

@@ -18,7 +18,7 @@ namespace BudgetPlanner.Middleware {
                 .AddTransient<IUserStore<User>, Services.UserStore>()
                 .AddTransient<IRoleStore<IdentityRole>, Services.RoleStore>()
                 .AddTransient<TableStore>()
-                .AddUserDataSores()
+                //.AddUserDataSores()
                 .Configure<TableStoreOption>(x => {
                     x.Prefix = tablePrefix;
                     x.ConnectionString = connectionString;
@@ -26,16 +26,17 @@ namespace BudgetPlanner.Middleware {
 
             return services;
         }
-
+        /*
         public static IServiceCollection AddUserDataSores(this IServiceCollection services) {
 
             typeof(ServiceCollectionExtension).Assembly.GetTypes()
-                .Where(t => !t.IsAbstract && typeof(UserDataEntity).IsAssignableFrom(t))
+                .Where(t => !t.IsAbstract && typeof(UserData).IsAssignableFrom(t))
                 .Select(t => typeof(Services.UserDataStore<>).MakeGenericType(t))
                 .ToList()
                 .ForEach(t => services.AddTransient(t));
 
             return services;
         }
+        */
     }
 }

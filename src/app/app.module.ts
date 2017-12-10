@@ -19,13 +19,15 @@ import { AppRoutes } from './app.router';
 import { BarComponent } from './components/bar/bar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { BudgetsComponent } from './components/budgets/budgets.component';
+import { BudgetComponent } from './components/budget/budget.component';
+import { BudgetListComponent } from './components/budget/budget-list.component';
 import { CdkTableModule } from '@angular/cdk/table';
 import { ChartsModule } from 'ng2-charts';
 import { ConfigurationService } from './services/configuration';
 import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
+import { DashboardBarComponent } from './components/dashboard/bar/bar.component';
+import { DashboardDoughnutComponent } from './components/dashboard/doughnut/doughnut.component';
 import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
-import { DoughnutComponent } from './components/doughnut/doughnut.component';
 import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
 import { ErrorStateMatcher } from '@angular/material';
@@ -55,9 +57,9 @@ import { httpFactory } from './services/http-interceptor';
         FlatFieldComponent,
         LoginComponent,
         HomeComponent,
-        BudgetsComponent,
+        BudgetComponent,
+        BudgetListComponent,
         EditComponent,
-        DoughnutComponent,
         BarComponent,
         ProfileComponent,
         ReloadOnResizeDirective,
@@ -66,7 +68,9 @@ import { httpFactory } from './services/http-interceptor';
         FlexBreakDirective,
         ErrorComponent,
         NumberWithSeperatorPipe,
-        DataSourceTableComponent
+        DataSourceTableComponent,
+        DashboardDoughnutComponent,
+        DashboardBarComponent
     ],
     imports: [
         BrowserModule,

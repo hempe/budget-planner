@@ -11,22 +11,19 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { Files, IAsset, IBudget, IFile, IUnit } from '../../common/file';
-import { array, numberWithSeperator, toSum } from '../../common/helper';
+import { NamedValue, OverviewContainer } from '../../../common/file';
+import { array, numberWithSeperator, toSum } from '../../../common/helper';
 
-import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { MouseService } from '../../services/mouse';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-    selector: 'doughnut',
+    selector: 'dashboard-doughnut',
     templateUrl: 'doughnut.component.html',
     styleUrls: ['./doughnut.component.css']
 })
-export class DoughnutComponent implements OnInit, OnDestroy {
+export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     public datasets: Colors[] = [];
     public labels: string[];
 
@@ -65,24 +62,25 @@ export class DoughnutComponent implements OnInit, OnDestroy {
     public colors: Color[] = [{}];
     public tooltip: string[];
     private total: string[];
-    private totalUnit: IUnit<IAsset>;
+    private totalUnit: OverviewContainer;
 
     @Output() edit: EventEmitter<string> = new EventEmitter();
     public onEdit(tab: string) {
         this.edit.emit(tab);
     }
 
-    @Input() editView: boolean = false;
-
     @Input() public chartType: string = 'doughnut';
     @Input() public color: string = '';
     @Input() public label: string = '';
     @Input()
-    public set units(value: IUnit<IAsset>[]) {
+    public set units(value: OverviewContainer[]) {
         value = array(value);
         value.forEach(val => (val.elements = array(val.elements)));
         this._units = value;
         this.updateGraphic();
+    }
+    public get units(): OverviewContainer[] {
+        return this._units;
     }
 
     @Input() public update: Observable<{}>;
@@ -96,37 +94,18 @@ export class DoughnutComponent implements OnInit, OnDestroy {
             });
     }
 
-    private valueSelector(x: IAsset) {
-        if (!x) return 0;
-        if (x.hasOwnProperty('frequency'))
-            return (<IBudget>x).frequency * x.value;
-        return x.value;
-    }
-
     private updateGraphic() {
         let value = this._units;
 
         this.total = [
             'Total',
-            numberWithSeperator(
-                value
-                    .map(x =>
-                        array(x.elements)
-                            .map(this.valueSelector)
-                            .reduce(toSum, 0)
-                    )
-                    .reduce(toSum, 0)
-            )
+            numberWithSeperator(value.map(x => x.value).reduce(toSum, 0))
         ];
         this.tooltip = this.total;
 
         this.datasets = [
             {
-                data: value.map(x =>
-                    array(x.elements)
-                        .map(this.valueSelector)
-                        .reduce(toSum, 0)
-                ),
+                data: value.map(x => x.value),
                 backgroundColor: value.map(
                     (x, i) =>
                         `rgba(255,255,255,${0.5 + i / (2 * value.length)})`
@@ -144,13 +123,12 @@ export class DoughnutComponent implements OnInit, OnDestroy {
             name: 'Total',
             elements: value.map(
                 x =>
-                    <IAsset>{
+                    <NamedValue>{
                         name: x.name,
-                        value: x.elements
-                            .map(this.valueSelector)
-                            .reduce(toSum, 0)
+                        value: x.value
                     }
-            )
+            ),
+            value: value.map(x => x.value).reduce(toSum, 0)
         };
 
         this.unit = this.totalUnit;
@@ -158,16 +136,12 @@ export class DoughnutComponent implements OnInit, OnDestroy {
 
     public more: boolean = false;
 
-    public get units(): IUnit<IAsset>[] {
-        return this._units;
-    }
-
     public get isBase(): boolean {
         return this.unit == this.totalUnit;
     }
 
-    private _units: IUnit<IAsset>[];
-    public unit: IUnit<IAsset> = undefined;
+    private _units: OverviewContainer[];
+    public unit: OverviewContainer = undefined;
 
     public back(): void {
         this.unit = this.totalUnit;
@@ -177,12 +151,14 @@ export class DoughnutComponent implements OnInit, OnDestroy {
     }
 
     public chartClicked(e: any): void {
+        debugger;
         if (!e || !e.active || !e.active[0]) {
             this.unit = this.totalUnit;
             return;
         }
-        this.more = true;
-        this.setUnitByName(e.active[0]._model.label);
+        let label = e.active[0]._model.label;
+        this.more = this.getUnitByName(label) !== this.unit;
+        this.setUnitByName(label);
     }
 
     public toggleTotals() {
@@ -194,14 +170,12 @@ export class DoughnutComponent implements OnInit, OnDestroy {
         this.unit = this.totalUnit;
     }
 
-    private setUnitByName(label: string) {
+    private getUnitByName(label: string): OverviewContainer {
         let filter = this.units.filter(x => x.name === label);
         let newUnit = filter && filter[0] ? filter[0] : this.totalUnit;
-
-        if (newUnit == this.unit) {
-            this.more = false;
-        } else {
-            this.unit = newUnit;
-        }
+        return newUnit;
+    }
+    private setUnitByName(label: string) {
+        this.unit = this.getUnitByName(label);
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using BudgetPlanner.Attributes;
+using BudgetPlanner.Middleware;
 using BudgetPlanner.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.WindowsAzure.Storage;
@@ -10,25 +12,24 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace BudgetPlanner.Services {
 
-    internal class UserLoginInfoEntity : TableEntity {
-        internal const string TableName = "UserLoginInfoEntity";
-        public string LoginProvider { get; set; }
-        public string ProviderKey { get; set; }
-        public string DisplayName { get; set; }
-        public UserLoginInfo Convert() => new UserLoginInfo(this.LoginProvider, this.ProviderKey, this.DisplayName);
-    }
-
     internal class UserStore : IUserStore<User>, IUserLoginStore<User>, IUserAuthenticationTokenStore<User> {
+        private static List<Type> Types;
         private readonly TableStore tableStore;
-        private readonly List<IStoreUserInfo> userStores;
-        public UserStore(TableStore tableStore, IEnumerable<IStoreUserInfo> userStores) {
+
+        static UserStore() {
+            Types = typeof(UserStore).Assembly.GetTypes().Where(t => typeof(UserData).IsAssignableFrom(t)).Where(t => t.IsTable()).ToList();
+        }
+
+        public UserStore(TableStore tableStore) {
             this.tableStore = tableStore;
-            this.userStores = userStores.ToList();
+
         }
 
         public async Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken) {
 
-            var entity = login.Convert(user.Id);
+            LoginInfo entity = login;
+            entity.UserId = user.Id;
+
             var result = await this.tableStore.AddOrUpdateAsync(entity);
             if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
                 return;
@@ -36,7 +37,7 @@ namespace BudgetPlanner.Services {
         }
 
         public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken) {
-            var result = await this.tableStore.AddOrUpdateAsync(user.Convert());
+            var result = await this.tableStore.AddOrUpdateAsync<UserEntity>(user);
             if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
                 return IdentityResult.Success;
             return IdentityResult.Failed();
@@ -53,13 +54,17 @@ namespace BudgetPlanner.Services {
                 await this.RemoveTokenAsync(user, t.PartitionKey, t.Name, cancellationToken);
             }
 
-            foreach (var s in this.userStores) {
+            foreach (var type in Types) {
                 try {
-                    await s.DeleteUserDataAsync(user);
+
+                    var entities = await this.tableStore.GetAllAsync(type, new Args { { nameof(UserData.UserId), user.Id } });
+                    foreach (var e in entities) {
+                        await this.tableStore.DeleteAsync(type, e);
+                    }
                 } catch { }
             }
 
-            var result = await this.tableStore.DeleteAsync(user.Convert());
+            var result = await this.tableStore.DeleteAsync<UserEntity>(user);
             if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
                 return IdentityResult.Success;
             return IdentityResult.Failed();
@@ -68,14 +73,12 @@ namespace BudgetPlanner.Services {
         public void Dispose() { }
 
         public async Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetAsync(new UserEntity(userId));
-            return entity?.Convert();
+            var entity = await this.tableStore.GetAsync(new UserEntity { UserId = userId });
+            return entity;
         }
 
         public async Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetByPropertiesAsync<LoginInfoEntity>(
-                new Args { { LoginInfoEntity.LoginProviderProperty, loginProvider }, { LoginInfoEntity.ProviderKeyProperty, providerKey }
-                });
+            var entity = await this.tableStore.GetAsync<LoginInfo>(new LoginInfo { LoginProvider = loginProvider, ProviderKey = providerKey });
 
             if (entity == null)
                 return null;
@@ -84,18 +87,18 @@ namespace BudgetPlanner.Services {
         }
 
         public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetByPropertiesAsync<UserEntity>(
+            var entity = await this.tableStore.GetAsync<UserEntity>(
                 new Args { { nameof(UserEntity.NormalizedUserName), normalizedUserName }
                 });
-            return entity?.Convert();
+            return entity;
         }
 
         public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken) {
-            var entities = await this.tableStore.GetAllByPropertiesAsync<LoginInfoEntity>(
-                new Args { { nameof(LoginInfoEntity.UserId), user.Id } }
+            var entities = await this.tableStore.GetAllAsync<LoginInfo>(
+                new Args { { nameof(LoginInfo.UserId), user.Id } }
             );
 
-            return entities.Select(x => x.Convert()).ToList();
+            return entities.Cast<UserLoginInfo>().ToList();
         }
 
         public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken) {
@@ -111,7 +114,7 @@ namespace BudgetPlanner.Services {
         }
 
         public async Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            var result = await this.tableStore.DeleteAsync(user.Convert());
+            var result = await this.tableStore.DeleteAsync<UserEntity>(user);
             if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
                 throw new Exception("Update failed");
         }
@@ -122,13 +125,20 @@ namespace BudgetPlanner.Services {
         }
 
         public async Task RemoveTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) {
-            var result = await this.tableStore.DeleteAsync(new TokenEntity(loginProvider, user, name));
+            var result = await this.tableStore.DeleteAsync(new Token {
+                LoginProvider = loginProvider,
+                    UserId = user.Id,
+                    Name = name
+            });
             if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
                 throw new Exception("Update failed");
         }
 
         public async Task SetTokenAsync(User user, string loginProvider, string name, string value, CancellationToken cancellationToken) {
-            var entity = new TokenEntity(loginProvider, user, name) {
+            var entity = new Token {
+                LoginProvider = loginProvider,
+                UserId = user.Id,
+                Name = name,
                 Value = value
             };
 
@@ -140,7 +150,12 @@ namespace BudgetPlanner.Services {
         }
 
         public async Task<string> GetTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetAsync(new TokenEntity(loginProvider, user, name));
+            var entity = await this.tableStore.GetAsync(new Token {
+                LoginProvider = loginProvider,
+                    UserId = user.Id,
+                    Name = name
+            });
+
             return entity?.Value;
         }
 
@@ -150,17 +165,15 @@ namespace BudgetPlanner.Services {
         }
 
         public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken) {
-
-            var entity = user.Convert();
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
+            var result = await this.tableStore.AddOrUpdateAsync<UserEntity>(user);
             if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
                 return IdentityResult.Success;
             return IdentityResult.Failed();
         }
 
-        private async Task<List<TokenEntity>> GetTokensAsync(User user) {
-            var entities = await this.tableStore.GetAllByPropertiesAsync<TokenEntity>(
-                new Args { { nameof(TokenEntity.UserId), user.Id } }
+        private async Task<List<Token>> GetTokensAsync(User user) {
+            var entities = await this.tableStore.GetAllAsync<Token>(
+                new Args { { nameof(Token.UserId), user.Id } }
             );
             return entities;
         }

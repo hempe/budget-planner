@@ -32,11 +32,15 @@ export class ConfigurationService {
 
     public getIcon(type?: string) {
         switch (type) {
+            case 'assets':
             case 'assets.positiv':
             case 'assets.negativ':
+            case 'revenue':
             case 'revenue.positiv':
             case 'revenue.negativ':
                 return 'assessment';
+            case 'budgets':
+                return 'trending_up';
             default:
                 return 'home';
         }
@@ -44,10 +48,12 @@ export class ConfigurationService {
 
     public getName(type?: string) {
         switch (type) {
+            case 'assets':
             case 'assets.positiv':
                 return 'Assets';
             case 'assets.negativ':
                 return 'Debts';
+            case 'revenue':
             case 'revenue.positiv':
                 return 'Revenue';
             case 'revenue.negativ':

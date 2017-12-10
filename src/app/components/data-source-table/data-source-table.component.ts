@@ -39,12 +39,29 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
 
     @Input() public dataSourceFactory: DataSourceFactory<any, any> | null;
     @Input() public columns: DataSourceColumn[];
-    @Input() public selectable: boolean;
+    @Input()
+    public get selectable(): boolean {
+        return this._selectable;
+    }
+    public set selectable(value: boolean) {
+        this._selectable = value === true || <any>value === 'true';
+    }
+
+    @Input()
+    public get editable(): boolean {
+        return this._editable;
+    }
+    public set editable(value: boolean) {
+        this._editable = value === true || <any>value === 'true';
+    }
 
     @Output() public changed: EventEmitter<any> = new EventEmitter<any>();
     @Output() public selected: EventEmitter<any> = new EventEmitter<any>();
     @ViewChild(MatPaginator) public paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
+
+    private _selectable: boolean;
+    private _editable: boolean;
 
     private subscription: Subscription;
     private values: any[];

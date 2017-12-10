@@ -8,11 +8,11 @@ import {
 } from '@angular/core';
 import {
     Files,
-    IAsset,
-    IBudget,
+    FrequencyValue,
     IFile,
     IGroup,
-    IUnit
+    NamedValue,
+    Unit
 } from '../../common/file';
 import { array, numberWithSeperator } from '../../common/helper';
 
@@ -27,7 +27,7 @@ import { MouseService } from '../../services/mouse';
     styleUrls: ['./bar.component.css']
 })
 export class BarComponent {
-    public totalUnit: IUnit<IAsset>;
+    public totalUnit: Unit<NamedValue>;
     public datasets: Colors[] = [];
     public labels: string[];
 
@@ -91,7 +91,7 @@ export class BarComponent {
     @Input() public color: string = '';
     @Input() public label: string = '';
     @Input()
-    public set units(units: IGroup<IBudget>) {
+    public set units(units: IGroup<FrequencyValue>) {
         let value = [units];
 
         value.forEach(val => {
@@ -175,7 +175,7 @@ export class BarComponent {
         this.labels = value.map(x => x.name);
         this._units = units;
     }
-    public get units(): IGroup<IBudget> {
+    public get units(): IGroup<FrequencyValue> {
         return this._units;
     }
 
@@ -184,9 +184,9 @@ export class BarComponent {
         //return this.current === this.units;
     }
 
-    private _units: IGroup<IBudget>;
+    private _units: IGroup<FrequencyValue>;
 
-    public unit: IUnit<IAsset> = undefined;
+    public unit: Unit<NamedValue> = undefined;
     constructor() {}
 
     public back(): void {

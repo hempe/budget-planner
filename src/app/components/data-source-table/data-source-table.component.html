@@ -16,14 +16,17 @@
                     <ng-container [ngSwitch]="header.type">
                         <ng-container *ngSwitchCase="'frequency'">
                             <div class="select-placeholder">{{ row[header.key] || row[header.key] === 0 ? '' : header.name }}</div>
-                            <mat-select name="{{header.key}}" name="header.key" [(ngModel)]="row[header.key]">
+                            <mat-select name="{{header.key}}" name="header.key" [(ngModel)]="row[header.key]" [disabled]="!editable">
                                 <mat-option *ngFor="let option of frequencies" [value]="option.value">
                                     {{ option.name | translate }}
                                 </mat-option>
                             </mat-select>
                         </ng-container>
                         <ng-container *ngSwitchDefault>
-                            <flat-field name="{{header.name}}" [(ngModel)]="row[header.key]" [type]="header.type" (change)="onChange(row)"></flat-field>
+                            <ng-container *ngIf="!editable">{{ row[header.key] }}</ng-container>
+                            <ng-container *ngIf="editable">
+                                <flat-field name="{{header.name}}" [(ngModel)]="row[header.key]" [type]="header.type" (change)="onChange(row)"></flat-field>
+                            </ng-container>
                         </ng-container>
                     </ng-container>
                     <!--[placeholder]="row[header.key] ? 'yea' : 'no' "-->

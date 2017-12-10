@@ -1,35 +1,51 @@
+using System.Collections.Generic;
+using System.Reflection;
+using BudgetPlanner.Attributes;
+using BudgetPlanner.Middleware;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 
 namespace BudgetPlanner.Models {
+    public enum SubType {
+        Positiv,
+        Negativ,
+    }
 
-    public abstract class UserDataEntity : TableEntity {
+    [Table("Budgets")]
+    public class Budget : UserData<Group<FrequencyValue>> {
         [IgnoreProperty]
-        public string UserId {
-            get => this.RowKey;
-            set {
-                this.RowKey = value;
-                this.PartitionKey = value.Substring(0, 3);
-            }
+        [RowKey]
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    [Table("Profile")]
+    public class Profile : UserData<object> { }
+
+    [Table("Assets")]
+    public class Asset : UserData<Group<NamedValue>> { }
+
+    [Table("Revenue")]
+    public class Revenue : UserData<Group<DatedValue>> { }
+
+    public abstract class UserData : TableEntity {
+
+        [IgnoreProperty]
+        [PartitionKey]
+        public string UserId { get; set; }
+
+        public UserData() {
+            this.RowKey = "0";
         }
     }
 
-    public abstract class UserDataEntity<T> : UserDataEntity where T : new() {
+    public abstract class UserData<T> : UserData where T : new() {
 
         [IgnoreProperty]
-        public T Data {
-            get {
-                try {
-                    return string.IsNullOrEmpty(this.Value) ? new T() : JsonConvert.DeserializeObject<T>(this.Value);
-                } catch {
-                    return new T();
-                }
-            }
-            set {
-                this.Value = value == null ? null : JsonConvert.SerializeObject(value);
-            }
-        }
+        [JsonData(nameof(Value))]
+        public T Data { get; set; }
 
         public string Value { get; set; }
     }

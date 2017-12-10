@@ -50,7 +50,6 @@ export class ListDataSource<TValue> extends DataSource<TValue>
                     this.filter = refs.filter.nativeElement.value;
                 });
         }
-
         this.properties = this.refs.columns.map(x => x.key);
     }
     URLSearchParams;
@@ -70,38 +69,36 @@ export class ListDataSource<TValue> extends DataSource<TValue>
             this.list
         ];
 
-        return Observable.merge(...displayDataChanges).mergeMap(() => {
-            return this.list.map(list => {
-                this.refs.paginator.length = list.length;
+        let list: TValue[] = [];
+        this.list.subscribe(x => (list = x));
 
-                let result = list.map(x => x);
-                if (this.filter) {
-                    let expr = new RegExp(this.filter, 'i');
-                    result = list.filter(
-                        t =>
-                            this.properties.findIndex(
-                                p => t[p] && t[p].toString().match(expr)
-                            ) >= 0
-                    );
-                }
-                if (this.refs.sort.active && this.refs.sort.direction) {
-                    result = result.sort(
-                        getCompare(
-                            this.refs.sort.active,
-                            this.refs.sort.direction
-                        )
-                    );
-                }
-                let paged = result.slice(
-                    this.refs.paginator.pageIndex *
-                        this.refs.paginator.pageSize,
-                    (this.refs.paginator.pageIndex + 1) *
-                        this.refs.paginator.pageSize
+        Observable.merge(...displayDataChanges).subscribe(() => {
+            if (!list) return;
+            this.refs.paginator.length = list.length;
+            let result = list.map(x => x);
+            if (this.filter) {
+                let expr = new RegExp(this.filter, 'i');
+                result = list.filter(
+                    t =>
+                        this.properties.findIndex(
+                            p => t[p] && t[p].toString().match(expr)
+                        ) >= 0
                 );
-                this.changed.emit(paged);
-                return paged;
-            });
+            }
+            if (this.refs.sort.active && this.refs.sort.direction) {
+                result = result.sort(
+                    getCompare(this.refs.sort.active, this.refs.sort.direction)
+                );
+            }
+            let paged = result.slice(
+                this.refs.paginator.pageIndex * this.refs.paginator.pageSize,
+                (this.refs.paginator.pageIndex + 1) *
+                    this.refs.paginator.pageSize
+            );
+            this.changed.emit(paged);
         });
+
+        return this.changed.asObservable();
     }
 
     disconnect() {}

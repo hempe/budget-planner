@@ -1,6 +1,6 @@
 import { Color, Colors } from 'ng2-charts';
 import { Component, HostListener } from '@angular/core';
-import { Files, IFile } from '../../common/file';
+import { Files, IFile, IGroup, OverviewValue } from '../../common/file';
 import { array, numberWithSeperator } from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
@@ -21,28 +21,40 @@ export class HomeComponent {
         name: 'Home'
     };
 
-    public assets: any;
-    public revenue: any;
-    public budget: any;
+    public assets: OverviewValue;
+    public revenue: OverviewValue;
+    public budgets: OverviewValue[];
 
     constructor(
         private router: Router,
-        private fileService: FileService,
+        private http: Http,
         private config: ConfigurationService
     ) {
-        this.assets = fileService.current.assets;
-        this.revenue = fileService.current.revenue;
-        this.budget = fileService.current.budgets;
         this.config.resetColor();
-        //this.positiv = fileService.current.assets.positiv;
-        //fileService.current.revenue.negativ
     }
 
-    public budgets(id: number) {
+    ngOnInit(): void {
+        this.http
+            .get(`/api/data/assets`)
+            .map(x => x.json())
+            .subscribe(x => (this.assets = x));
+
+        this.http
+            .get(`/api/data/revenue`)
+            .map(x => x.json())
+            .subscribe(x => (this.revenue = x));
+
+        this.http
+            .get(`/api/data/budgets`)
+            .map(x => x.json())
+            .subscribe(x => (this.budgets = x));
+    }
+
+    public budget(id: number) {
         this.router.navigate(['budgets', id]);
     }
     public edit(path: any, tab: string) {
-        let route = ['edit'].concat(path.split('.'));
+        let route = [].concat(path.split('.'));
         if (tab) route.push(<any>{ tab: tab });
         this.router.navigate(route);
     }

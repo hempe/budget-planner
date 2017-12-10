@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BudgetPlanner.Middleware;
 using BudgetPlanner.Models;
 using BudgetPlanner.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,55 +11,32 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace BudgetPlanner.Controllers {
+
     [Route("api/data")]
     [Authorize]
     public class DataController : Controller {
         private readonly UserManager<User> userManager;
-
-        public DataController(UserManager<User> userManager) {
+        private readonly TableStore tableStore;
+        public DataController(UserManager<User> userManager, TableStore tableStore) {
             this.userManager = userManager;
+            this.tableStore = tableStore;
         }
 
         [HttpGet("profile")]
         [ProducesResponseType(typeof(object), 200)]
-        public async Task<IActionResult> GetProfile([FromServices] UserDataStore<ProfileEntity> store) {
-            var value = await store.GetAsync(this.userManager.GetUserId(this.User));
+        public async Task<IActionResult> GetProfile() {
+            var value = await this.tableStore.GetAsync(new Profile { UserId = this.UserId });
             return this.Ok(value?.Data ?? new object());
         }
 
         [HttpPost("profile")]
         [ProducesResponseType(typeof(object), 200)]
-        public async Task<IActionResult> SetProfile([FromServices] UserDataStore<ProfileEntity> store, [FromBody] object data) {
-            await store.SaveAsync(new ProfileEntity { UserId = this.userManager.GetUserId(this.User), Data = data });
+        public async Task<IActionResult> SetProfile([FromBody] object data) {
+            await this.tableStore.AddOrUpdateAsync(new Profile { UserId = this.UserId, Data = data });
             return this.Ok(data);
         }
 
-        [HttpGet("assets")]
-        [ProducesResponseType(typeof(Group<NamedValue>), 200)]
-        public async Task<IActionResult> GetAssets([FromServices] UserDataStore<AssetsEntity> store) {
-            var value = await store.GetAsync(this.userManager.GetUserId(this.User));
-            return this.Ok(value?.Data ?? new Group<NamedValue>());
-        }
+        private string UserId { get => this.userManager.GetUserId(this.User); }
 
-        [HttpPost("assets")]
-        [ProducesResponseType(typeof(Group<NamedValue>), 200)]
-        public async Task<IActionResult> SetAssets([FromServices] UserDataStore<AssetsEntity> store, [FromBody] Group<NamedValue> data) {
-            await store.SaveAsync(new AssetsEntity { UserId = this.userManager.GetUserId(this.User), Data = data });
-            return this.Ok(data);
-        }
-
-        [HttpGet("revenue")]
-        [ProducesResponseType(typeof(Group<object>), 200)]
-        public async Task<IActionResult> GetRevenue([FromServices] UserDataStore<RevenueEntity> store) {
-            var value = await store.GetAsync(this.userManager.GetUserId(this.User));
-            return this.Ok(value?.Data ?? new Group<object>());
-        }
-
-        [HttpPost("revenue")]
-        [ProducesResponseType(typeof(Group<object>), 200)]
-        public async Task<IActionResult> SetRevenue([FromServices] UserDataStore<RevenueEntity> store, [FromBody] Group<object> data) {
-            await store.SaveAsync(new RevenueEntity { UserId = this.userManager.GetUserId(this.User), Data = data });
-            return this.Ok(data);
-        }
     }
 }

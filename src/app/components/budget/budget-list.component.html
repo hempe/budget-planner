@@ -1,0 +1,7 @@
+<view-wrapper [head]="head" [button]="button">
+    <div class="menu-padding">
+        <div class="menu">
+            <data-source-table [columns]="columns" [dataSourceFactory]="dataSource" (selected)="selected($event)"></data-source-table>
+        </div>
+    </div>
+</view-wrapper>

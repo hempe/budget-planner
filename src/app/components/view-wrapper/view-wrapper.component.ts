@@ -42,8 +42,13 @@ export class ViewWrapperComponent implements OnInit {
                 ]
             },
             {
-                name: '',
+                name: 'User',
                 entries: [
+                    {
+                        name: 'Budget',
+                        icon: 'trending_up',
+                        action: () => this.router.navigate(['budgets'])
+                    },
                     {
                         name: 'Profile',
                         icon: 'person',

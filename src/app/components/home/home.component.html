@@ -1,34 +1,71 @@
 <view-wrapper [head]="head">
     <div flexContainer>
+
         <span flex=2.5>
-            <div class="wrapper">
-                <doughnut [label]="config.getName('assets.positiv')" [units]="assets.positiv" [color]="config.getColor('assets.positiv')"
-                    (edit)="edit('assets.positiv',$event)"></doughnut>
-            </div>
-        </span>
-        <span flex=2.5>
-            <div class="wrapper">
-                <doughnut [label]="config.getName('assets.negativ')" [units]="assets.negativ" [color]="config.getColor('assets.negativ')"
-                    (edit)="edit('assets.negativ',$event)"></doughnut>
-            </div>
-        </span>
-        <span flex=2.5>
-            <div class="wrapper">
-                <doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
-                    (edit)="edit('revenue.positiv',$event)"></doughnut>
-            </div>
-        </span>
-        <span flex=2.5>
-            <div class="wrapper">
-                <doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
-                    (edit)="edit('revenue.negativ',$event)"></doughnut>
-            </div>
-        </span>
-        <span flex=2.5 *ngFor="let b of budget;let i = index">
-            <div class="wrapper">
-                <bar [label]='b.name' [units]="b" [color]="config.getColor('budgets')" (edit)="budgets(i)"></bar>
+            <div class="wrapper" *ngIf="assets">
+                <dashboard-bar [units]="assets" path="assets" (edit)="edit('assets',$event)"></dashboard-bar>
             </div>
         </span>
 
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue && revenue.positiv">
+                <dashboard-doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
+                    (edit)="edit('revenue.positiv',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue && revenue.negativ">
+                <dashboard-doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
+                    (edit)="edit('revenue.negativ',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+
+        <ng-container *ngFor="let b of budgets;let i = index">
+            <span flex=2.5>
+                <div class="wrapper" *ngIf="b">
+                    <dashboard-bar [units]="b" path="budgets" (edit)="edit('budgets',$event)"></dashboard-bar>
+                </div>
+            </span>
+        </ng-container>
+
+        <!--
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="assets.negativ">
+                <dashboard-doughnut [label]="config.getName('assets.negativ')" [units]="assets.negativ" [color]="config.getColor('assets.negativ')"
+                    (edit)="edit('assets.negativ',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue.positiv">
+                <dashboard-doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
+                    (edit)="edit('revenue.positiv',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue.negativ">
+                <dashboard-doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
+                    (edit)="edit('revenue.negativ',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+        <ng-container *ngFor="let b of budgets;let i = index">
+            <span flex=2.5>
+                <div class="wrapper">
+                    <dashboard-doughnut [label]="config.getName('budgets')" [units]="b.positiv" [color]="config.getColor('budgets')" (edit)="budget(i)"></dashboard-doughnut>
+                </div>
+            </span>
+            <span flex=2.5>
+                <div class="wrapper">
+                    <dashboard-doughnut [label]="config.getName('budgets')" [units]="b.negativ" [color]="config.getColor('budgets')" (edit)="budget(i)"></dashboard-doughnut>
+                </div>
+            </span>
+
+            <span flex=2.5>
+                <div class="wrapper">
+                    <bar [label]='b.name' [units]="b" [color]="config.getColor('budgets')" (edit)="budget(i)"></bar>
+                </div>
+            </span>
+        
+        </ng-container>
+        -->
     </div>
 </view-wrapper>

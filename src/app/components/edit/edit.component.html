@@ -1,4 +1,4 @@
-<view-wrapper [head]="head" *ngIf="current">
+<view-wrapper [head]="head" *ngIf="units">
     <div flexContainer>
         <div class="left">
             <div class="menu-padding">
@@ -7,7 +7,8 @@
                     <ng-container *ngFor="let dataSource of dataSources; let i = index">
                         <mat-tab label="{{units[i].name}}">
                             <mat-card style="padding:0">
-                                <data-source-table selectable="true" [columns]="columns" [dataSourceFactory]="dataSource" (changed)="onUpdate()" (selected)="selected($event)"></data-source-table>
+                                <data-source-table editable="true" selectable="true" [columns]="columns" [dataSourceFactory]="dataSource" (changed)="onUpdate()"
+                                    (selected)="selected($event)"></data-source-table>
                             </mat-card>
                         </mat-tab>
                     </ng-container>
@@ -66,7 +67,10 @@
                     </div>
                 </div>
                 <div class="wrapper">
+                    todo wil come back
+                    <!--
                     <doughnut editView="true" [label]="label" [units]="units" [color]="color" [update]="update"></doughnut>
+                    -->
                 </div>
 
             </div>

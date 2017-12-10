@@ -1,35 +1,45 @@
-export interface IUnit<T> {
+export interface OverviewValue extends NamedValue {
+    id: string;
+    positiv: OverviewContainer[];
+    negativ: OverviewContainer[];
+}
+
+export interface OverviewContainer extends Unit<NamedValue> {
+    value: number;
+}
+
+export interface Unit<T> {
     name: string;
     elements: T[];
 }
 
 export interface IGroup<T> {
     name: string;
-    positiv: IUnit<T>[];
-    negativ: IUnit<T>[];
+    positiv: Unit<T>[];
+    negativ: Unit<T>[];
 }
 
 export interface IFile {
-    budgets: IGroup<IBudget>[];
-    assets: IGroup<IAsset>;
-    revenue: IGroup<IRevenue>;
+    budgets: IGroup<FrequencyValue>[];
+    assets: IGroup<NamedValue>;
+    revenue: IGroup<DatedValue>;
     development: IDevelopmentGroup;
     client: IClient;
     name: string;
     language?: string;
 }
 
-export interface IBudget extends IAsset {
+export interface FrequencyValue extends NamedValue {
     frequency?: number;
 }
 
-export interface IAsset {
+export interface NamedValue {
     name: string;
     value: number;
     checked?: boolean;
 }
 
-export interface IRevenue extends IAsset {
+export interface DatedValue extends NamedValue {
     year?: number;
 }
 

@@ -1,5 +1,6 @@
 import { AppComponent } from './app.component';
-import { BudgetsComponent } from './components/budgets/budgets.component';
+import { BudgetComponent } from './components/budget/budget.component';
+import { BudgetListComponent } from './components/budget/budget-list.component';
 import { EditComponent } from './components/edit/edit.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
@@ -12,19 +13,20 @@ export const AppRoutes: Routes = [
         data: { state: 'profile' }
     },
     {
+        path: 'budgets',
+        component: BudgetListComponent
+    },
+    {
         path: 'budgets/:id',
-        component: BudgetsComponent,
-        data: { state: 'edit' }
+        component: BudgetComponent
     },
     {
-        path: 'edit/:type/:subtype',
-        component: EditComponent,
-        data: { state: 'edit' }
+        path: ':type/:subtype',
+        component: EditComponent
     },
     {
-        path: 'edit/:type/:id/:subtype',
-        component: EditComponent,
-        data: { state: 'edit' }
+        path: ':type/:id/:subtype',
+        component: EditComponent
     },
     { path: '**', component: HomeComponent, data: { state: 'home' } }
 ];

@@ -15,7 +15,7 @@ import {
     DataSourceValue,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { Files, IAsset, IFile, IGroup, IUnit } from '../../common/file';
+import { Files, IFile, IGroup, NamedValue, Unit } from '../../common/file';
 import { MatPaginator, MatTabChangeEvent } from '@angular/material';
 import {
     array,
@@ -43,15 +43,9 @@ export class EditComponent implements OnInit, OnDestroy {
     @ViewChild('tabGroup') tabGroup;
 
     public head: MenuEntry = {};
-    public get units(): IUnit<IAsset>[] {
-        return this.current[this.subType];
-    }
+    public units: Unit<NamedValue>[];
 
-    public set units(value: IUnit<IAsset>[]) {
-        this.current[this.subType] = value;
-    }
-
-    public get unit(): IUnit<IAsset> {
+    public get unit(): Unit<NamedValue> {
         return this.units[this.unitId];
     }
 
@@ -68,18 +62,17 @@ export class EditComponent implements OnInit, OnDestroy {
 
     public update: EventEmitter<{}> = new EventEmitter<{}>();
 
-    private id: number;
-    private current: any;
+    private url: string;
 
     public type: string;
     public subType: string;
     public columns: DataSourceColumn[];
-    public dataSources: DataSourceFactory<IUnit<IAsset>[], IAsset>[];
+    public dataSources: DataSourceFactory<Unit<NamedValue>[], NamedValue>[];
 
     public label: string;
     public color: string;
 
-    private updateEvents: EventEmitter<IAsset[]>[] = [];
+    private updateEvents: EventEmitter<NamedValue[]>[] = [];
     private keyDown: Subscription;
 
     constructor(
@@ -115,9 +108,14 @@ export class EditComponent implements OnInit, OnDestroy {
             if (e.key == 'Insert') this.add();
         });
 
-        this.id = this.route.snapshot.params['id'];
+        let id = this.route.snapshot.params['id'];
         this.type = this.route.snapshot.params['type'];
         this.subType = this.route.snapshot.params['subtype'];
+
+        this.url =
+            id === undefined
+                ? `/api/data/${this.type}/${this.subType}`
+                : `/api/data/${this.type}/${id}/${this.subType}`;
     }
 
     private init() {
@@ -144,9 +142,10 @@ export class EditComponent implements OnInit, OnDestroy {
         let path = `${this.type}.${this.subType}`;
         this.config.setColor(path);
         this.head = {
-            icon: this.config.getIcon(path),
+            icon: 'arrow_back',
             name: this.config.getName(path),
-            action: () => this.router.navigate(['/'])
+            action: () =>
+                this.router.navigate(['../'], { relativeTo: this.route })
         };
 
         let startTab = this.route.snapshot.params['tab'];
@@ -177,26 +176,19 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        if (this.id === undefined) {
-            this.http
-                .get(`/api/data/${this.type}`)
-                .map(x => x.json())
-                .subscribe(x => {
-                    this.current = x;
-                    this.init();
-                });
-        } else {
-            this.current = this.fileService.current[this.type][
-                toNumber(this.id)
-            ];
-            this.init();
-        }
+        this.http
+            .get(this.url)
+            .map(x => x.json())
+            .subscribe(x => {
+                this.units = x;
+                this.init();
+            });
     }
 
     private buidDataSource(
-        unit: IUnit<IAsset>,
+        unit: Unit<NamedValue>,
         index: number
-    ): DataSourceFactory<IUnit<IAsset>[], IAsset> {
+    ): DataSourceFactory<Unit<NamedValue>[], NamedValue> {
         this.updateEvents[index] = new EventEmitter();
         return ref => new ListDataSource(this.updateEvents[index], ref);
     }
@@ -287,11 +279,11 @@ export class EditComponent implements OnInit, OnDestroy {
     public save() {
         console.info('save');
         this.http
-            .post(`/api/data/${this.type}`, this.current)
+            .post(this.url, this.units)
             .map(x => x.json())
             .subscribe(
                 x => {
-                    this.current = x;
+                    this.units = x;
                     this.units = this.units;
                     this.unitId = this.unitId;
                     this.onUpdate();

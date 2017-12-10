@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
+import { ConfigurationService } from '../../services/configuration';
 import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { IClient } from '../../common/file';
@@ -21,8 +22,10 @@ export class ProfileComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private http: Http,
-        private fileService: FileService
-    ) {}
+        private config: ConfigurationService
+    ) {
+        this.config.resetColor();
+    }
 
     ngOnInit() {
         this.http

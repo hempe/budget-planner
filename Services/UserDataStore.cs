@@ -1,13 +1,17 @@
+/*
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using BudgetPlanner.Attributes;
 using BudgetPlanner.Models;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace BudgetPlanner.Services {
     public class UserDataStore<T> : IStoreUserInfo
-    where T : UserDataEntity, new() {
+    where T : UserData, new() {
 
         private readonly TableStore tableStore;
+
         public UserDataStore(TableStore tableStore) {
             this.tableStore = tableStore;
         }
@@ -20,8 +24,13 @@ namespace BudgetPlanner.Services {
             throw new Exception("Update failed");
         }
 
-        public async Task<T> GetAsync(string userId) {
-            var entity = await this.tableStore.GetAsync(new T { UserId = userId });
+        public async Task<T> GetAsync(T entity) {
+            entity = await this.tableStore.GetAsync(entity);
+            return entity;
+        }
+
+        public async Task<T> GetAllAsync(string userId) {
+            var entity = await this.tableStore.GetAsync(new T { Id = string.Empty, UserId = userId });
             return entity;
         }
 
@@ -33,3 +42,4 @@ namespace BudgetPlanner.Services {
         }
     }
 }
+*/
