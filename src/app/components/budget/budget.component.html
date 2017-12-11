@@ -1,56 +1,44 @@
 <view-wrapper [head]="head" [button]="button">
     <div flexContainer>
-        <div class="left">
-            <div class="menu-padding">
-                <div class="menu">
-                    <div class="menu-header">
-                        <span class="menu-title" translate>Budget</span>
-                    </div>
-                    <form novalidate>
-                        <div class="menu-container">
-                            <mat-card-content *ngIf="budget" flexContainer class="flex-container">
-                                Hier kommt wohl eine grafik?
-                            </mat-card-content>
+        <menu-left>
+            <menu-header>
+                <menu-title>{{ 'Budget' | translate }}</menu-title>
+            </menu-header>
+            <menu-container>
+                <mat-card-content *ngIf="budget" flexContainer class="flex-container">
+                    Hier kommt wohl eine grafik?
+                </mat-card-content>
 
-                            <button mat-raised-button color="accent" (click)="goto('positiv')" translate>Income</button>
-                            <button mat-raised-button color="warn" (click)="goto('negativ')" translate>Expeses</button>
-                        </div>
-                    </form>
+                <button mat-raised-button color="accent" (click)="goto('positiv')" translate>Income</button>
+                <button mat-raised-button color="warn" (click)="goto('negativ')" translate>Expeses</button>
+            </menu-container>
+        </menu-left>
+        <menu-right>
+            <menu-header>
+                <menu-title>{{ 'Edit' | translate }}</menu-title>
+                <button mat-icon-button [matMenuTriggerFor]="editMenu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            </menu-header>
+            <menu-input *ngIf="budget">
+                <field icon="folder" [(ngModel)]="budget.name" name="name" type="text" half="true" flex=5></field>
+            </menu-input>
+            <menu-container noTop="true">
+                <menu-entry (click)="save()">
+                    <mat-icon>save</mat-icon>{{ 'Save' | translate }}
+                </menu-entry>
+            </menu-container>
+
+            <mat-menu #editMenu="matMenu">
+                <div class="mat-menu-items">
+                    <button mat-menu-item (click)="copy()">
+                        <mat-icon>content_copy</mat-icon> Copy this budget
+                    </button>
+                    <button mat-menu-item (click)="delete()">
+                        <mat-icon>delete_forever</mat-icon> Delete this budget
+                    </button>
                 </div>
-            </div>
-        </div>
-        <div class="right">
-            <div class="menu-padding">
-                <div class="menu">
-                    <div class="menu-header">
-                        <span class="menu-title" translate>Edit</span>
-                        <button mat-icon-button [matMenuTriggerFor]="editMenu">
-                            <mat-icon>more_vert</mat-icon>
-                        </button>
-                    </div>
-
-                    <mat-menu #editMenu="matMenu">
-                        <div class="mat-menu-items">
-                            <button mat-menu-item (click)="copy()">
-                                <mat-icon>content_copy</mat-icon> Copy this budget
-                            </button>
-                            <button mat-menu-item (click)="delete()">
-                                <mat-icon>delete_forever</mat-icon> Delete this budget
-                            </button>
-                        </div>
-                    </mat-menu>
-
-                    <div *ngIf="budget" style="background-color:white;padding:16px 36px 0px 16px;">
-                        <field icon="folder" [(ngModel)]="budget.name" name="name" type="text" half="true" flex=5></field>
-                    </div>
-                    <div class="menu-container">
-                        <span class="menu-entry" translate (click)="save()">
-                            <mat-icon>save</mat-icon>
-                            Save
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </mat-menu>
+        </menu-right>
     </div>
 </view-wrapper>

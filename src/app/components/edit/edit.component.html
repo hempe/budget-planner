@@ -1,80 +1,73 @@
 <view-wrapper [head]="head" *ngIf="units">
     <div flexContainer>
-        <div class="left">
-            <div class="menu-padding">
+        <menu-left noTop="true">
+            <mat-tab-group style="flex-grow:1" #tabGroup (selectedTabChange)="tabChanged($event)" [@.disabled]="true">
+                <ng-container *ngFor="let dataSource of dataSources; let i = index">
+                    <mat-tab label="{{units[i].name}}">
+                        <mat-card style="padding:0">
+                            <data-source-table editable="true" selectable="true" [columns]="columns" [dataSourceFactory]="dataSource" (changed)="onUpdate()"
+                                (selected)="selected($event)"></data-source-table>
+                        </mat-card>
+                    </mat-tab>
+                </ng-container>
+            </mat-tab-group>
+        </menu-left>
+        <menu-right>
+            <menu-header>
+                <menu-title>{{'Edit' | translate}}</menu-title>
+                <button mat-icon-button [matMenuTriggerFor]="editMenu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            </menu-header>
+            <menu-input *ngIf="unit">
+                <field icon="folder" [(ngModel)]="unit.name" name="name" type="text" half="true" flex=5></field>
+            </menu-input>
 
-                <mat-tab-group style="flex-grow:1" #tabGroup (selectedTabChange)="tabChanged($event)" [@.disabled]="true">
-                    <ng-container *ngFor="let dataSource of dataSources; let i = index">
-                        <mat-tab label="{{units[i].name}}">
-                            <mat-card style="padding:0">
-                                <data-source-table editable="true" selectable="true" [columns]="columns" [dataSourceFactory]="dataSource" (changed)="onUpdate()"
-                                    (selected)="selected($event)"></data-source-table>
-                            </mat-card>
-                        </mat-tab>
-                    </ng-container>
-                </mat-tab-group>
-            </div>
-        </div>
-        <div class="right">
-            <div class="menu-wrapper">
-                <div class="menu">
-                    <div class="menu-header">
-                        <span class="menu-title" translate>Edit</span>
-                        <button mat-icon-button [matMenuTriggerFor]="editMenu">
-                            <mat-icon>more_vert</mat-icon>
-                        </button>
-                    </div>
-
-                    <mat-menu #editMenu="matMenu">
-                        <div class="mat-menu-items">
-                            <button mat-menu-item (click)="addFolder()">
-                                <mat-icon>create_new_folder</mat-icon> Add new folder
-                            </button>
-                            <button mat-menu-item (click)="deleteFolder()">
-                                <mat-icon>delete_forever</mat-icon> Delete this folder
-                            </button>
-                        </div>
-                    </mat-menu>
-
-                    <div *ngIf="unit" style="background-color:white;padding:16px 36px 0px 16px;">
-                        <field icon="folder" [(ngModel)]="unit.name" name="name" type="text" half="true" flex=5></field>
-                    </div>
-                    <div class="menu-container">
-                        <span class="menu-entry" translate (click)="save()" title="New element will be added. You can also use the insert key">
-                            <mat-icon>save</mat-icon>
-                            Save
-                        </span>
-                        <span class="menu-entry" translate (click)="add()" title="New element will be added. You can also use the insert key">
-                            <mat-icon>note_add</mat-icon>
-                            Insert
-                        </span>
-                        <span class="menu-entry" translate (click)="copy()" title="Selected elements will be copied down.">
-                            <mat-icon>content_copy</mat-icon>
-                            Copy
-                        </span>
-                        <span class="menu-entry" translate (click)="delete()" title="Selected elements will be deleted. You can also use the delete key">
-                            Delete
-                            <mat-icon>delete</mat-icon>
-                        </span>
-                        <span class="menu-entry" translate (click)="up()" title="Selected elements will move up. You can also use the arrow key">
-                            Up
-                            <mat-icon>arrow_upward</mat-icon>
-                        </span>
-                        <span class="menu-entry" translate (click)="down()" title="Selected elements will move down. You can also use the arrow key">
-                            Down
-                            <mat-icon>arrow_downward</mat-icon>
-                        </span>
-                    </div>
+            <mat-menu #editMenu="matMenu">
+                <div class="mat-menu-items">
+                    <button mat-menu-item (click)="addFolder()">
+                        <mat-icon>create_new_folder</mat-icon> Add new folder
+                    </button>
+                    <button mat-menu-item (click)="deleteFolder()">
+                        <mat-icon>delete_forever</mat-icon> Delete this folder
+                    </button>
                 </div>
-                <div class="wrapper">
-                    todo wil come back
-                    <!--
+            </mat-menu>
+
+            <menu-container noTop="true">
+                <menu-entry (click)="save()" title="New element will be added. You can also use the insert key">
+                    {{'Save' | translate}}
+                    <mat-icon>save</mat-icon>
+                </menu-entry>
+                <menu-entry (click)="add()" title="New element will be added. You can also use the insert key">
+                    {{'Insert' | translate}}
+                    <mat-icon>note_add</mat-icon>
+                </menu-entry>
+                <menu-entry (click)="copy()" title="Selected elements will be copied down.">
+                    {{'Copy' | translate}}
+                    <mat-icon>content_copy</mat-icon>
+                </menu-entry>
+                <menu-entry (click)="delete()" title="Selected elements will be deleted. You can also use the delete key">
+                    {{'Delete' | translate}}
+                    <mat-icon>delete</mat-icon>
+                </menu-entry>
+                <menu-entry (click)="up()" title="Selected elements will move up. You can also use the arrow key">
+                    {{'Up' | translate}}
+                    <mat-icon>arrow_upward</mat-icon>
+                </menu-entry>
+                <menu-entry (click)="down()" title="Selected elements will move down. You can also use the arrow key">
+                    {{'Down' | translate}}
+                    <mat-icon>arrow_downward</mat-icon>
+                </menu-entry>
+            </menu-container>
+
+
+            <div class="wrapper">
+                todo wil come back
+                <!--
                     <doughnut editView="true" [label]="label" [units]="units" [color]="color" [update]="update"></doughnut>
                     -->
-                </div>
-
             </div>
-        </div>
+        </menu-right>
     </div>
-
 </view-wrapper>

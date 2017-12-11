@@ -39,6 +39,7 @@ import { HomeComponent } from './components/home/home.component';
 import { KeyboardService } from './services/keyboard';
 import { LoginComponent } from './components/login/login.component';
 import { MaterialModule } from './app.material';
+import { MenuModule } from './components/menu/menu.module';
 import { MouseService } from './services/mouse';
 import { NgModule } from '@angular/core';
 import { NumberWithSeperatorPipe } from './common/helper';
@@ -78,6 +79,7 @@ import { httpFactory } from './services/http-interceptor';
         FormsModule,
         BrowserAnimationsModule,
         MaterialModule,
+        MenuModule,
         CdkTableModule,
         ChartsModule,
         RouterModule.forRoot(

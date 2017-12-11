@@ -10,9 +10,7 @@
         <ng-container *ngFor="let header of headers">
             <ng-container matColumnDef="{{header.key}}">
                 <mat-header-cell *matHeaderCellDef translate mat-sort-header>{{ header.name }}</mat-header-cell>
-                <mat-cell *matCellDef="let row" style="position:relative;">
-
-
+                <mat-cell *matCellDef="let row" style="position:relative;line-height:46px" (click)="onSelected(row)">
                     <ng-container [ngSwitch]="header.type">
                         <ng-container *ngSwitchCase="'frequency'">
                             <div class="select-placeholder">{{ row[header.key] || row[header.key] === 0 ? '' : header.name }}</div>
@@ -29,18 +27,6 @@
                             </ng-container>
                         </ng-container>
                     </ng-container>
-                    <!--[placeholder]="row[header.key] ? 'yea' : 'no' "-->
-                    <!-- Todo: besseres input feld? -->
-
-                    <!--
-                    <mat-form-field>
-                        <mat-select placeholder="Favorite food">
-                            <mat-option *ngFor="let option of options" [value]="option.value">
-                                {{ option.name }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                -->
                 </mat-cell>
             </ng-container>
         </ng-container>
@@ -55,6 +41,6 @@
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="cols"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: cols;" (click)="onSelected(row)"></mat-row>
+        <mat-row *matRowDef="let row; columns: cols;"></mat-row>
     </mat-table>
 </div>
