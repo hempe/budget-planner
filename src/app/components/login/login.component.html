@@ -9,12 +9,9 @@
                     <div class="welcome-message-wrapper">
                         <p class="welcome-message">Hello there! Sign in and start managing your budget.</p>
                     </div>
-                    <div class="signIn-buttons">
-                        <button mat-raised-button (click)="signInWith('Google')" class="signIn">
-                            <img class="logo" src="assets/img/auth/google.svg" /> {{ 'Auth.SignInWithGoogle' | translate }}
-                        </button>
-                        <button mat-raised-button (click)="signInWith('Microsoft')" class="signIn">
-                            <img class="logo" src="assets/img/auth/microsoft.svg" /> {{ 'Auth.SignInWithMicrosoft' | translate }}
+                    <div class="signIn-buttons" *ngIf="providers">
+                        <button *ngFor="let provider of providers" mat-raised-button (click)="signInWith(provider.name)" class="signIn">
+                            <img class="logo" src="{{ 'assets/img/auth/'+provider.key+'.svg'}}" /> {{ 'Auth.SignInWith' + provider.displayName | translate }}
                         </button>
                     </div>
                 </div>

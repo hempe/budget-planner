@@ -20,8 +20,8 @@ namespace BudgetPlanner {
         public Startup(IHostingEnvironment env) {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile("appsettings.json", optional : false, reloadOnChange : true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional : true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -37,7 +37,6 @@ namespace BudgetPlanner {
             services.AddCustomStores(Configuration.GetConnectionString("TableStore"), Configuration.GetValue<string>("TableStore:TablePrefix"));
 
             services.AddAuthentication()
-                .AddCookie()
                 .AddGoogle(option => {
                     option.ClientId = Configuration["Authentication:Google:ClientId"];
                     option.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
@@ -51,6 +50,17 @@ namespace BudgetPlanner {
                     option.CallbackPath = "/.auth/signin/microsoft/callback";
                     option.SaveTokens = true;
                 });
+
+            services.ConfigureApplicationCookie(options => {
+                options.LoginPath = "/.auth/error/401";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                options.AccessDeniedPath = "/.auth/error/403";
+                options.LogoutPath = "/.auth/signout";
+                options.ReturnUrlParameter = "";
+                options.SlidingExpiration = true;
+                options.Cookie.Name = "auth";
+                options.Cookie.Expiration = TimeSpan.FromMinutes(15);
+            });
 
             services
                 .AddMvc()

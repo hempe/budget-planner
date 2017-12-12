@@ -43,8 +43,11 @@ import { MenuModule } from './components/menu/menu.module';
 import { MouseService } from './services/mouse';
 import { NgModule } from '@angular/core';
 import { NumberWithSeperatorPipe } from './common/helper';
+import { OverviewBarComponent } from './components/overview/bar/bar.component';
+import { OverviewComponent } from './components/overview/overview.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ReloadOnResizeDirective } from './directives/reload-onresize/reload-onresize.directive';
+import { ResizeService } from './services/resize';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
 import { WarnMissingTranslationHandler } from './services/warn-missing-translation-handler';
@@ -71,7 +74,9 @@ import { httpFactory } from './services/http-interceptor';
         NumberWithSeperatorPipe,
         DataSourceTableComponent,
         DashboardDoughnutComponent,
-        DashboardBarComponent
+        DashboardBarComponent,
+        OverviewBarComponent,
+        OverviewComponent
     ],
     imports: [
         BrowserModule,
@@ -112,6 +117,7 @@ import { httpFactory } from './services/http-interceptor';
     providers: [
         ConfigurationService,
         MouseService,
+        ResizeService,
         KeyboardService,
         ApiService,
         FileService,

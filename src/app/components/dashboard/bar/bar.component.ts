@@ -21,6 +21,7 @@ import { array, numberWithSeperator, toSum } from '../../../common/helper';
 import { ConfigurationService } from '../../../services/configuration';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { ResizeService } from '../../../services/resize';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -32,7 +33,10 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     public datasets: Colors[] = [];
     public labels: string[];
 
-    constructor(private config: ConfigurationService) {}
+    constructor(
+        private config: ConfigurationService,
+        private resize: ResizeService
+    ) {}
 
     public options: any = {
         scales: {
@@ -81,56 +85,6 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         }
     };
 
-    /*
-    public options: any = {
-        scales: {
-            
-            xAxes: [
-                {
-                    display: false,
-                    stacked: true
-                }
-            ],
-            yAxes: [
-                {
-                    display: false,
-                    stacked: true
-                }
-            ]
-        },
-        maintainAspectRatio: false,
-        responsive: false,
-        legend: {
-            display: false
-        },
-        hover: {
-            onHover: function(e) {
-                var point = this.getElementAtEvent(e);
-                if (point.length) e.target.style.cursor = 'pointer';
-                else e.target.style.cursor = 'default';
-            }
-        },
-        tooltips: {
-            enabled: false,
-            custom: tooltipModel => {
-                if (tooltipModel.opacity === 0) {
-                    this.tooltip = undefined;
-                    return;
-                }
-
-                if (tooltipModel.body) {
-                    // prettier-ignore
-                    this.tooltip = (<string[]>tooltipModel.body[0].lines[0].split(':'))
-                                        .map(x => numberWithSeperator(x.trim()));
-
-                    this.tooltip.unshift(tooltipModel.title);
-                } else {
-                    this.tooltip = undefined;
-                }
-            }
-        }
-    };
-    */
     public colors: Color[] = [{}];
     public tooltip: string[];
     private total: string[];
@@ -162,10 +116,13 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     }
 
     @Input() public update: Observable<{}>;
-    private updateSub: Subscription;
+    private resizeSub: Subscription;
 
-    ngOnDestroy(): void {}
+    ngOnDestroy(): void {
+        if (this.resizeSub) this.resizeSub.unsubscribe();
+    }
     ngOnInit(): void {
+        this.resizeSub = this.resize.resized.subscribe(x => {});
         this.label = this.config.getName(this.path);
         this.color = this.config.getColor(this.path);
 

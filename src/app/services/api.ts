@@ -4,6 +4,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { TranslateService } from '@ngx-translate/core';
 
+export interface Provider {
+    name: string;
+    displayName: string;
+    key: string;
+}
 @Injectable()
 export class ApiService {
     constructor(
@@ -16,6 +21,22 @@ export class ApiService {
         window.location.href = `.auth/signin/${provider}?returnUrl=${
             window.location.pathname
         }`;
+    }
+
+    public getProviders(): Observable<Provider[]> {
+        return this.http
+            .get('/.auth')
+            .map(x => x.json())
+            .map((x: { name: string; displayName: string }[]) =>
+                x.map(
+                    y =>
+                        <Provider>{
+                            name: y.name,
+                            displayName: y.displayName,
+                            key: y.name.toLowerCase()
+                        }
+                )
+            );
     }
 
     public signOut() {

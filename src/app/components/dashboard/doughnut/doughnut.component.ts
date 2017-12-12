@@ -151,7 +151,6 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     public chartClicked(e: any): void {
-        debugger;
         if (!e || !e.active || !e.active[0]) {
             this.unit = this.totalUnit;
             return;

@@ -1,0 +1,50 @@
+<view-wrapper [head]="head" [button]="button">
+    <div flexContainer>
+        <menu-left>
+            <menu-header>
+                <menu-title>{{ name | translate }}</menu-title>
+            </menu-header>
+            <menu-container *ngIf="value" flexContainer>
+
+                <div flex=1>
+                    <div flexContainer>
+                        <span flex=10>{{positiv | translate}}</span>
+                        <div style='flex: 5; border: 1px solid transparent; min-width:0'>
+                            <overview-bar [units]="value.positiv" path="{{type + '.positiv'}}" (edit)="goto('positiv', $event)"></overview-bar>
+                        </div>
+                        <div flex=10 style="text-align:right;padding:12px 0px;">
+                            <button mat-button (click)="goto('positiv')">
+                                {{'Edit' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div flex=1>
+                    <div flexContainer>
+                        <span flex=10>{{negativ | translate}}</span>
+                        <div style='flex: 5; border: 1px solid transparent; min-width:0'>
+                            <overview-bar [units]="value.negativ" path="{{type + '.negativ'}}" (edit)="goto('negativ',$event)"></overview-bar>
+                        </div>
+                        <div flex=10 style="text-align:right;padding:12px 0px;">
+                            <button mat-button (click)="goto('negativ')">
+                                {{'Edit' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </menu-container>
+        </menu-left>
+
+        <menu-right>
+            <menu-header>
+                <menu-title>{{ 'Edit' | translate }}</menu-title>
+            </menu-header>
+            <menu-container noTop="true">
+                <menu-entry (click)="save()">
+                    <mat-icon>save</mat-icon>{{ 'Save' | translate }}
+                </menu-entry>
+            </menu-container>
+            Dont know what will come here
+        </menu-right>
+    </div>
+</view-wrapper>

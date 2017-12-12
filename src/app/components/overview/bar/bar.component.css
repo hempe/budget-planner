@@ -1,0 +1,30 @@
+:host {
+    /*
+    margin: auto;
+    display: flex;
+    flex: auto;
+    */
+    display: block;
+    position: relative;
+}
+
+canvas {
+    margin: auto;
+    max-width: 500px;
+    min-width: 150px;
+    /*
+    width: 100%;
+    margin: auto;
+    flex-grow: 1;
+    */
+}
+
+.tooltip {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    left: 50%;
+    user-select: none;
+    z-index: 1;
+}

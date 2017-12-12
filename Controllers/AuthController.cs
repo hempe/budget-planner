@@ -24,6 +24,8 @@ namespace BudgetPlanner.Controllers {
             this.userManager = userManager;
         }
 
+        [AllowAnonymous]
+
         [HttpGet]
         public async Task<IActionResult> Index() {
             var schemes = await this.signInManager.GetExternalAuthenticationSchemesAsync();
@@ -31,8 +33,18 @@ namespace BudgetPlanner.Controllers {
             return this.Ok(loginProviders);
         }
 
-        [HttpGet("self")]
+        [AllowAnonymous, Route("error/{code}"), HttpGet, HttpDelete, HttpPost, HttpPut, HttpPatch]
+        public IActionResult accessdenied([FromRoute] int code) {
+            return this.StatusCode(code);
+        }
+
+        public IActionResult unauthorized() {
+            return this.Unauthorized();
+        }
+
         [AllowAnonymous]
+
+        [HttpGet("self")]
         public IActionResult UserInfo() {
             if (!this.User.Identity.IsAuthenticated)
                 return this.Ok(new {
@@ -50,6 +62,11 @@ namespace BudgetPlanner.Controllers {
             await this.signInManager.SignOutAsync();
             return this.RedirectToLocal(returnUrl);
         }
+
+        [HttpGet("iframe")]
+
+        [Authorize]
+        public IActionResult IFrame() => this.View("~/Views/iframe.html");
 
         [HttpGet("signin/{provider}")]
         public async Task<IActionResult> ExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl = null) {

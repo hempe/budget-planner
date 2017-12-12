@@ -1,11 +1,13 @@
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { array, makeid } from './common/helper';
+
 import { ApiService } from './services/api';
-import { Component } from '@angular/core';
 import { ConfigurationService } from './services/configuration';
 import { FileService } from './services/file-service';
 import { IClient } from './common/file';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { array } from './common/helper';
+
 declare var Chart: any;
 @Component({
     selector: 'app-root',
@@ -13,6 +15,8 @@ declare var Chart: any;
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+    private iframeUrl = '/.auth/iframe';
+    @ViewChild('iframe') public iframe: ElementRef;
     constructor(
         private configuraton: ConfigurationService,
         private router: Router,
@@ -22,7 +26,10 @@ export class AppComponent {
     ) {
         Chart.defaults.global.defaultFontFamily = 'roboto';
 
-        this.api.init().then(x => (this.loading = false));
+        this.api.init().then(x => {
+            this.refreshIFrame();
+            this.loading = false;
+        });
 
         //fileService.loadMemory();
         if (!fileService.current) {
@@ -86,6 +93,21 @@ export class AppComponent {
         }
 
         fileService.current.budgets = array(fileService.current.budgets);
+    }
+
+    private refreshIFrame() {
+        setInterval(() => {
+            if (
+                this.configuration.loggedIn &&
+                this.iframe &&
+                this.iframe.nativeElement
+            ) {
+                this.iframe.nativeElement.src = `${
+                    this.iframeUrl
+                }?q=${makeid()}`;
+                console.debug('Refresh iframe', this.iframe.nativeElement.src);
+            }
+        }, 4 * 60 * 1000);
     }
 
     public loading: boolean = true;
