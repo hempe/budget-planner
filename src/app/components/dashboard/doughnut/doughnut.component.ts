@@ -28,6 +28,20 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     public labels: string[];
 
     public options: any = {
+        scales: {
+            xAxes: [
+                {
+                    display: false,
+                    stacked: true
+                }
+            ],
+            yAxes: [
+                {
+                    display: false,
+                    stacked: true
+                }
+            ]
+        },
         maintainAspectRatio: false,
         responsive: false,
         legend: {
@@ -50,8 +64,12 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
                 }
                 if (tooltipModel.body) {
                     // prettier-ignore
-                    this.tooltip = (<string[]>tooltipModel.body[0].lines[0].split(':'))
-                                        .map(x => numberWithSeperator(x.trim()));
+
+                    this.tooltip = tooltipModel.title.concat(
+                        (<string[]>tooltipModel.body[0].lines[0].split(
+                            ':'
+                        )).map(x => numberWithSeperator(x.trim()))
+                    );
                 } else {
                     this.tooltip = this.total;
                 }

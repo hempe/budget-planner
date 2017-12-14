@@ -41,12 +41,12 @@ namespace BudgetPlanner.Models {
     }
 
     public static class GroupExtensions {
-        public static OverviewValue ToOverview<T>(this Group<T> value, Func<T, decimal> valueSelector, string id = "0", string name = null) where T : NamedValue, new() {
+        public static OverviewValue ToOverview<T>(this Group<T> value, Func<T, decimal> valueSelector, string id, string name) where T : NamedValue, new() {
             var overview = new OverviewValue {
-            Id = string.IsNullOrWhiteSpace(id) ? "0" : id,
-            Name = string.IsNullOrWhiteSpace(name) ? value?.GetType() ? .Name : name,
-            Negativ = value.Negativ.ToOverview(valueSelector),
-            Positiv = value.Positiv.ToOverview(valueSelector),
+                Id = string.IsNullOrWhiteSpace(id) ? "0" : id,
+                Name = string.IsNullOrWhiteSpace(name) ? typeof(T).Name : name,
+                Negativ = value.Negativ.ToOverview(valueSelector),
+                Positiv = value.Positiv.ToOverview(valueSelector),
             };
 
             overview.Value = overview.Positiv.Sum(x => x.Value) - overview.Negativ.Sum(x => x.Value);

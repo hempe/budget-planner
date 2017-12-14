@@ -26,7 +26,7 @@ namespace BudgetPlanner.Controllers {
         [ProducesResponseType(typeof(OverviewValue[]), 200)]
         public async Task<IActionResult> GetOverview() {
             var value = await this.tableStore.GetAsync(new Revenue { UserId = this.UserId });
-            return this.Ok((value?.Data ?? new Group<DatedValue>()).ToOverview(x => x.Value));
+            return this.Ok((value?.Data ?? new Group<DatedValue>()).ToOverview(x => x.Value, "", nameof(Revenue)));
         }
 
         [HttpGet("{subType}")]

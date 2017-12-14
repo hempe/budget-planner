@@ -19,7 +19,7 @@
                         <field [(ngModel)]="value.street" name="street" type="text" flex=3></field>
                         <field [(ngModel)]="value.zipCode" name="zipCode" type="number" flex=2></field>
                         <field [(ngModel)]="value.comment" name="comment" type="textarea" flex=10></field>
-
+                        <field [(ngModel)]="value.color" [options]="colors" (change)="setCustomColor($event)" name="color" type="select" flex=10></field>
                     </mat-card-content>
                     <button mat-raised-button type="submit" [color]="f.dirty ? 'primary' : ''" [disabled]="f.invalid" translate="">Save</button>
                 </form>

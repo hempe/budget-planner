@@ -18,8 +18,13 @@ namespace BudgetPlanner.Services {
 
     public class Args : Dictionary<string, string> { }
     public class TableStore {
-        private static Dictionary<Type, CloudTable> Tables = new Dictionary<Type, CloudTable>();
-        private static Dictionary<Type, TableAttribute> Attributes = new Dictionary<Type, TableAttribute>();
+        private static readonly Dictionary<Type, CloudTable> Tables;
+        private static readonly Dictionary<Type, TableAttribute> Attributes;
+
+        static TableStore() {
+            Tables = new Dictionary<Type, CloudTable>();
+            Attributes = new Dictionary<Type, TableAttribute>();
+        }
 
         private readonly CloudTableClient tableClient;
         private readonly TableStoreOption options;
@@ -44,7 +49,12 @@ namespace BudgetPlanner.Services {
 
             var table = tableClient.GetTableReference($"{this.options.Prefix}{this.GetAttribute(type).Name}");
             await table.CreateIfNotExistsAsync();
-            Tables[type] = table;
+            try {
+                Tables[type] = table;
+            } catch {
+                Tables[type] = table;
+                return table;
+            }
             return table;
         }
 

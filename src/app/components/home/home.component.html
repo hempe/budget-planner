@@ -1,6 +1,56 @@
 <view-wrapper [head]="head">
     <div flexContainer>
 
+        <!--
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="assets && assets.positiv">
+                <dashboard-doughnut chartType="bar" [label]="config.getName('assets.positiv')" [units]="assets.positiv" [color]="config.getColor('assets.positiv')"
+                    (edit)="edit('assets.positiv',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="assets && assets.negativ">
+                <dashboard-doughnut chartType="horizontalBar" [label]="config.getName('assets.negativ')" [units]="assets.negativ" [color]="config.getColor('assets.negativ')"
+                    (edit)="edit('assets.negativ',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+    -->
+        <!--
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue && revenue.positiv">
+                <dashboard-doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
+                    (edit)="edit('revenue.positiv',$event)"></dashboard-doughnut>
+            </div>
+        </span>
+    -->
+        <ng-container *ngFor="let item of items">
+            <span flex=2.5>
+                <div class="wrapper">
+                    <dashboard-bar *ngIf="item.type == 'bar'" [config]="item"></dashboard-bar>
+                    <!--
+                    <dashboard-doughnut *ngIf="item.type == 'doughnut'" [config]="item"></dashboard-doughnut>
+                    -->
+                </div>
+            </span>
+        </ng-container>
+        <!--
+        <ng-container *ngFor="let b of budgets;let i = index">
+
+            <span flex=2.5>
+                <div class="wrapper" *ngIf="b">
+                    <dashboard-doughnut [label]="config.getName('budgets.positiv')" [units]="b.positiv" [color]="config.getColor('budgets.positiv')"
+                        (edit)="edit('budgets',$event)"></dashboard-doughnut>
+                </div>
+            </span>
+            <span flex=2.5>
+                <div class="wrapper" *ngIf="b">
+                    <dashboard-doughnut [label]="config.getName('budgets.negativ')" [units]="b.negativ" [color]="config.getColor('budgets.negativ')"
+                        (edit)="edit('budgets',$event)"></dashboard-doughnut>
+                </div>
+            </span>
+        </ng-container>
+    
         <span flex=2.5>
             <div class="wrapper" *ngIf="assets">
                 <dashboard-bar [units]="assets" path="assets" (edit)="edit('assets',$event)"></dashboard-bar>
@@ -8,11 +58,45 @@
         </span>
 
         <span flex=2.5>
-            <div class="wrapper" *ngIf="revenue && revenue.positiv">
-                <dashboard-doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
-                    (edit)="edit('revenue.positiv',$event)"></dashboard-doughnut>
+            <div class="wrapper" *ngIf="assets">
+                <dashboard-bar theme="dark" [units]="assets" path="assets" (edit)="edit('assets',$event)"></dashboard-bar>
             </div>
         </span>
+
+        Was braucht die dashboard com?
+        url:
+        property:
+        clickUrl:
+        theme:
+
+        ... das können wir über path machen:
+        {
+            path:'',
+            id:'',
+            theme:
+        }
+    -->
+        <!--
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue">
+                <dashboard-bar theme="dark" [units]="revenue" path="revenue" (edit)="edit('revenue',$event)"></dashboard-bar>
+            </div>
+        </span>
+
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="assets">
+                <dashboard-bar theme="dark" [units]="assets" path="assets" (edit)="edit('assets',$event)"></dashboard-bar>
+            </div>
+        </span>
+
+        <ng-container *ngFor="let b of budgets;let i = index">
+            <span flex=2.5>
+                <div class="wrapper" *ngIf="b">
+                    <dashboard-bar theme="dark" [units]="b" path="budgets" (edit)="edit('budgets',$event)"></dashboard-bar>
+                </div>
+            </span>
+        </ng-container>
+
         <span flex=2.5>
             <div class="wrapper" *ngIf="revenue && revenue.negativ">
                 <dashboard-doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
@@ -20,52 +104,31 @@
             </div>
         </span>
 
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="revenue">
+                <dashboard-bar theme="light" [units]="revenue" path="revenue" (edit)="edit('revenue',$event)"></dashboard-bar>
+            </div>
+        </span>
+
+
+        <span flex=2.5>
+            <div class="wrapper" *ngIf="assets">
+                <dashboard-bar theme="light" [units]="assets" path="assets" (edit)="edit('assets',$event)"></dashboard-bar>
+            </div>
+        </span>
+
+
         <ng-container *ngFor="let b of budgets;let i = index">
             <span flex=2.5>
                 <div class="wrapper" *ngIf="b">
                     <dashboard-bar [units]="b" path="budgets" (edit)="edit('budgets',$event)"></dashboard-bar>
                 </div>
             </span>
-        </ng-container>
 
+        </ng-container>
+    -->
         <!--
-        <span flex=2.5>
-            <div class="wrapper" *ngIf="assets.negativ">
-                <dashboard-doughnut [label]="config.getName('assets.negativ')" [units]="assets.negativ" [color]="config.getColor('assets.negativ')"
-                    (edit)="edit('assets.negativ',$event)"></dashboard-doughnut>
-            </div>
-        </span>
-        <span flex=2.5>
-            <div class="wrapper" *ngIf="revenue.positiv">
-                <dashboard-doughnut [label]="config.getName('revenue.positiv')" [units]="revenue.positiv" [color]="config.getColor('revenue.positiv')"
-                    (edit)="edit('revenue.positiv',$event)"></dashboard-doughnut>
-            </div>
-        </span>
-        <span flex=2.5>
-            <div class="wrapper" *ngIf="revenue.negativ">
-                <dashboard-doughnut [label]="config.getName('revenue.negativ')" [units]="revenue.negativ" [color]="config.getColor('revenue.negativ')"
-                    (edit)="edit('revenue.negativ',$event)"></dashboard-doughnut>
-            </div>
-        </span>
-        <ng-container *ngFor="let b of budgets;let i = index">
-            <span flex=2.5>
-                <div class="wrapper">
-                    <dashboard-doughnut [label]="config.getName('budgets')" [units]="b.positiv" [color]="config.getColor('budgets')" (edit)="budget(i)"></dashboard-doughnut>
-                </div>
-            </span>
-            <span flex=2.5>
-                <div class="wrapper">
-                    <dashboard-doughnut [label]="config.getName('budgets')" [units]="b.negativ" [color]="config.getColor('budgets')" (edit)="budget(i)"></dashboard-doughnut>
-                </div>
-            </span>
-
-            <span flex=2.5>
-                <div class="wrapper">
-                    <bar [label]='b.name' [units]="b" [color]="config.getColor('budgets')" (edit)="budget(i)"></bar>
-                </div>
-            </span>
-        
-        </ng-container>
-        -->
+        <field [(ngModel)]="color" [options]="colors" (change)="setCustomColor($event)" name="color" type="select" flex=10></field>
+-->
     </div>
 </view-wrapper>

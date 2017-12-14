@@ -1,15 +1,15 @@
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Colors, ConfigurationService } from '../../services/configuration';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-import { ConfigurationService } from '../../services/configuration';
 import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
-import { IClient } from '../../common/file';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
+import { Profile } from '../../common/file';
 import { clone } from '../../common/helper';
 
 @Component({
@@ -25,6 +25,18 @@ export class ProfileComponent implements OnInit {
         private config: ConfigurationService
     ) {
         this.config.resetColor();
+        this.colors = Object.keys(Colors).map(x => {
+            return {
+                name: x,
+                value: Colors[x]
+            };
+        });
+    }
+
+    public colors: { name: string; value: string }[];
+
+    public setCustomColor() {
+        this.config.setCustomColor(this.value.color);
     }
 
     ngOnInit() {
@@ -41,7 +53,7 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['../'], { relativeTo: this.route });
     }
 
-    public value: IClient;
+    public value: Profile;
 
     public onSubmit(form: NgForm): void {
         this.http
@@ -60,6 +72,8 @@ export class ProfileComponent implements OnInit {
     };
 
     private setValue(x: any, form: NgForm) {
+        this.config.profile = x;
+        this.config.resetColor();
         this.value = clone(x);
         this.resetForm(form);
     }

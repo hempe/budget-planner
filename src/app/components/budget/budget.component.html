@@ -2,17 +2,39 @@
     <div flexContainer>
         <menu-left>
             <menu-header>
-                <menu-title>{{ 'Budget' | translate }}</menu-title>
+                <menu-title>{{ name | translate }}</menu-title>
             </menu-header>
-            <menu-container>
-                <mat-card-content *ngIf="budget" flexContainer class="flex-container">
-                    Hier kommt wohl eine grafik?
-                </mat-card-content>
+            <menu-container *ngIf="value" flexContainer>
 
-                <button mat-raised-button color="accent" (click)="goto('positiv')" translate>Income</button>
-                <button mat-raised-button color="warn" (click)="goto('negativ')" translate>Expeses</button>
+                <div flex=1>
+                    <div flexContainer>
+                        <span flex=10>{{positiv | translate}}</span>
+                        <div style='flex: 5; border: 1px solid transparent; min-width:0'>
+                            <overview-chart [units]="value.positiv" path="{{type + '.positiv'}}" (edit)="goto('positiv', $event)"></overview-chart>
+                        </div>
+                        <div flex=10 style="text-align:right;padding:12px 0px;">
+                            <button mat-button (click)="goto('positiv')">
+                                {{'Edit' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div flex=1>
+                    <div flexContainer>
+                        <span flex=10>{{negativ | translate}}</span>
+                        <div style='flex: 5; border: 1px solid transparent; min-width:0'>
+                            <overview-chart [units]="value.negativ" path="{{type + '.negativ'}}" (edit)="goto('negativ',$event)"></overview-chart>
+                        </div>
+                        <div flex=10 style="text-align:right;padding:12px 0px;">
+                            <button mat-button (click)="goto('negativ')">
+                                {{'Edit' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </menu-container>
         </menu-left>
+
         <menu-right>
             <menu-header>
                 <menu-title>{{ 'Edit' | translate }}</menu-title>
@@ -20,8 +42,8 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
             </menu-header>
-            <menu-input *ngIf="budget">
-                <field icon="folder" [(ngModel)]="budget.name" name="name" type="text" half="true" flex=5></field>
+            <menu-input *ngIf="value">
+                <field icon="folder" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
             </menu-input>
             <menu-container noTop="true">
                 <menu-entry (click)="save()">

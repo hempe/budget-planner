@@ -1,3 +1,4 @@
+import { ErrorStateMatcher, MatSnackBar } from '@angular/material';
 import {
     FlexBreakDirective,
     FlexContainerDirective,
@@ -16,7 +17,6 @@ import { Router, RouterModule } from '@angular/router';
 import { ApiService } from './services/api';
 import { AppComponent } from './app.component';
 import { AppRoutes } from './app.router';
-import { BarComponent } from './components/bar/bar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { BudgetComponent } from './components/budget/budget.component';
@@ -28,9 +28,9 @@ import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
 import { DashboardBarComponent } from './components/dashboard/bar/bar.component';
 import { DashboardDoughnutComponent } from './components/dashboard/doughnut/doughnut.component';
 import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
+import { EditChartComponent } from './components/edit/chart/chart.component';
 import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
-import { ErrorStateMatcher } from '@angular/material';
 import { FieldComponent } from './components/field/field.component';
 import { FileService } from './services/file-service';
 import { FlatFieldComponent } from './components/flat-field/flat-field.component';
@@ -43,7 +43,7 @@ import { MenuModule } from './components/menu/menu.module';
 import { MouseService } from './services/mouse';
 import { NgModule } from '@angular/core';
 import { NumberWithSeperatorPipe } from './common/helper';
-import { OverviewBarComponent } from './components/overview/bar/bar.component';
+import { OverviewChartComponent } from './components/overview/chart/chart.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ReloadOnResizeDirective } from './directives/reload-onresize/reload-onresize.directive';
@@ -64,7 +64,7 @@ import { httpFactory } from './services/http-interceptor';
         BudgetComponent,
         BudgetListComponent,
         EditComponent,
-        BarComponent,
+        EditChartComponent,
         ProfileComponent,
         ReloadOnResizeDirective,
         FlexContainerDirective,
@@ -75,7 +75,7 @@ import { httpFactory } from './services/http-interceptor';
         DataSourceTableComponent,
         DashboardDoughnutComponent,
         DashboardBarComponent,
-        OverviewBarComponent,
+        OverviewChartComponent,
         OverviewComponent
     ],
     imports: [
@@ -124,7 +124,14 @@ import { httpFactory } from './services/http-interceptor';
         {
             provide: Http,
             useFactory: httpFactory,
-            deps: [XHRBackend, RequestOptions, ConfigurationService, Router]
+            deps: [
+                XHRBackend,
+                RequestOptions,
+                ConfigurationService,
+                Router,
+                MatSnackBar,
+                TranslateService
+            ]
         }
         //{ provide: ErrorStateMatcher, useClass: CustomErrorStateMatcher }
     ],

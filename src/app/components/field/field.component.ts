@@ -1,9 +1,17 @@
-import { Component, OnInit, Input, forwardRef } from '@angular/core';
-import { Router } from '@angular/router';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    forwardRef
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { retry } from 'rxjs/operators/retry';
-import { ErrorStateMatcher } from '@angular/material';
+
 import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
+import { ErrorStateMatcher } from '@angular/material';
+import { Router } from '@angular/router';
+import { retry } from 'rxjs/operators/retry';
 
 const noop = () => {};
 const inputTypes = [
@@ -66,12 +74,18 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
         if (v !== this.innerValue) {
             this.innerValue = v;
             this.onChangeCallback(v);
+            this.change.emit(v);
         }
     }
 
     //Set touched on blur
     onBlur() {
         this.onTouchedCallback();
+        this.blur.emit();
+    }
+
+    onFocus() {
+        this.focus.emit();
     }
 
     //From ControlValueAccessor interface
@@ -91,9 +105,14 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
         this.onTouchedCallback = fn;
     }
 
+    @Output() public blur: EventEmitter<{}> = new EventEmitter();
+    @Output() public focus: EventEmitter<{}> = new EventEmitter();
+    @Output() public change: EventEmitter<any> = new EventEmitter();
+
     @Input() public icon: string;
     @Input() public name: string;
     @Input() public type: string;
+    @Input() public options: { name: string; value: string }[];
 
     public matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
 

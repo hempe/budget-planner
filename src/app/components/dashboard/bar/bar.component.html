@@ -1,19 +1,19 @@
-<mat-card [style.background-color]="color">
+<mat-card [style.background-color]="color" *ngIf="loaded">
     <div class="header">
-        <div class="title" (click)="toggleTotals()">{{label}}</div>
+        <div class="title" [ngClass]="theme" (click)="toggleTotals()">{{label}}</div>
 
-        <button mat-icon-button class="edit-button-top" (click)="onEdit()">
+        <button mat-icon-button class="edit-button-top" [ngClass]="theme" (click)="onEdit()">
             <mat-icon>create</mat-icon>
         </button>
 
-        <div *ngIf="tooltip" class="label">
+        <div *ngIf="tooltip" class="label" [ngClass]="theme">
             <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'">{{t}}</div>
         </div>
 
         <canvas baseChart height="250" width="250" [colors]="colors" [datasets]="datasets" [labels]="labels" [options]="options"
             [chartType]="chartType" (chartClick)="chartClicked($event)"></canvas>
 
-        <button mat-icon-button class="more-button" (click)="more=!more">
+        <button mat-icon-button class="more-button" [ngClass]="theme" (click)="more=!more">
             <mat-icon *ngIf="!more">expand_more</mat-icon>
             <mat-icon *ngIf="more">expand_less</mat-icon>
         </button>

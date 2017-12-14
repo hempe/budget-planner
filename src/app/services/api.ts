@@ -48,7 +48,7 @@ export class ApiService {
             this.translate.setDefaultLang('en');
             this.translate.use(this.configuration.language);
 
-            return this.http
+            this.http
                 .get('.auth/self')
                 .map(x => x.json())
                 .subscribe(
@@ -56,7 +56,16 @@ export class ApiService {
                         x = x ? x : {};
                         this.configuration.loggedIn = x.loggedIn;
                         this.configuration.username = x.userName;
-                        resolve(true);
+                        this.http
+                            .get('/api/data/profile')
+                            .map(y => y.json())
+                            .subscribe(
+                                y => {
+                                    this.configuration.profile = y;
+                                    resolve(true);
+                                },
+                                ex => resolve(true)
+                            );
                     },
                     err => {
                         resolve(true);

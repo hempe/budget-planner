@@ -3,9 +3,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import {
     FrequencyValue,
-    IClient,
-    IGroup,
-    OverviewValue
+    Group,
+    OverviewValue,
+    Profile
 } from '../../common/file';
 import { Observable, Subject } from 'rxjs';
 import { array, clone, toNumber } from '../../common/helper';
@@ -38,7 +38,7 @@ export class OverviewComponent implements OnInit {
         private http: Http
     ) {}
     ngOnInit() {
-        this.type = this.route.snapshot.params['type'];
+        this.type = this.route.snapshot.data.type;
 
         this.head = {
             icon: 'arrow_back',

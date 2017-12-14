@@ -31,11 +31,11 @@ import { ResizeService } from '../../../services/resize';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-    selector: 'overview-bar',
-    templateUrl: 'bar.component.html',
-    styleUrls: ['./bar.component.css']
+    selector: 'overview-chart',
+    templateUrl: 'chart.component.html',
+    styleUrls: ['./chart.component.css']
 })
-export class OverviewBarComponent implements OnInit, OnDestroy {
+export class OverviewChartComponent implements OnInit, OnDestroy {
     public datasets: Colors[] = [];
     public labels: string[];
 
@@ -169,7 +169,6 @@ export class OverviewBarComponent implements OnInit, OnDestroy {
 
     @Output() edit: EventEmitter<string> = new EventEmitter();
     public chartClicked(e: any): void {
-        debugger;
         if (!e || !e.active || !e.active[0] || !e.active[0]._model) {
             return;
         }

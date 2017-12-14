@@ -4,7 +4,7 @@ import { array, makeid } from './common/helper';
 import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
 import { FileService } from './services/file-service';
-import { IClient } from './common/file';
+import { Profile } from './common/file';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -64,7 +64,7 @@ export class AppComponent {
                         }
                     ]
                 },
-                client: <IClient>{},
+                client: <Profile>{},
                 name: 'Example',
                 budgets: [
                     {

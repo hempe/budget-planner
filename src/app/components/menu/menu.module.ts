@@ -7,11 +7,13 @@ import { MenuHeaderComponent } from './header/header.component';
 import { MenuInputComponent } from './input/input.component';
 import { MenuLeftComponent } from './left/left.component';
 import { MenuRightComponent } from './right/right.component';
+import { MenuRightSpacerComponent } from './right-spacer/right-spacer.component';
 import { MenuTitleComponent } from './title/title.component';
 import { NgModule } from '@angular/core';
 
 const MEUN_MODULES = [
     MenuRightComponent,
+    MenuRightSpacerComponent,
     MenuTitleComponent,
     MenuLeftComponent,
     MenuHeaderComponent,

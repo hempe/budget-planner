@@ -14,12 +14,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-    selector: 'menu-entry',
-    templateUrl: 'entry.component.html',
-    styleUrls: ['./entry.component.css']
+    selector: 'menu-right-spacer',
+    templateUrl: 'right-spacer.component.html',
+    styleUrls: ['./right-spacer.component.css']
 })
-export class MenuEntryComponent {
-    @Input()
-    @HostBinding('style.color')
-    public color: string;
-}
+export class MenuRightSpacerComponent {}

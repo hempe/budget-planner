@@ -12,21 +12,27 @@ import {
 import { ConfigurationService } from './configuration';
 import { CustomErrorStateMatcher } from './custom-error-state-matcher';
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 export function httpFactory(
     xhrBackend: XHRBackend,
     requestOptions: RequestOptions,
     configurationService: ConfigurationService,
-    router: Router
+    router: Router,
+    snackBar: MatSnackBar,
+    translateService: TranslateService
 ): Http {
     return new HttpInterceptor(
         xhrBackend,
         requestOptions,
         configurationService,
-        router
+        router,
+        snackBar,
+        translateService
     );
 }
 
@@ -37,7 +43,9 @@ export class HttpInterceptor extends Http {
         backend: ConnectionBackend,
         defaultOptions: RequestOptions,
         private configurationService: ConfigurationService,
-        private router: Router
+        private router: Router,
+        private snackBar: MatSnackBar,
+        private translateService: TranslateService
     ) {
         super(backend, defaultOptions);
     }
@@ -97,10 +105,10 @@ export class HttpInterceptor extends Http {
                 try {
                     console.error(err.status, err);
                     if (err.status == 0) {
-                        alert('Server not reachable');
+                        this.alert('Server not reachable');
                     }
                     if (err.status >= 500) {
-                        alert('Unkown error');
+                        this.alert('Unkown error');
                     }
                     CustomErrorStateMatcher.errors = err.json();
                     console.error(err.json());
@@ -113,6 +121,13 @@ export class HttpInterceptor extends Http {
         return subject.asObservable();
     }
 
+    private alert(msg) {
+        let trx = this.translateService.get(msg).subscribe(x => {
+            this.snackBar.open(x, undefined, {
+                duration: 3000
+            });
+        });
+    }
     private getRequestOptionArgs(
         options?: RequestOptionsArgs
     ): RequestOptionsArgs {

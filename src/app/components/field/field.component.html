@@ -3,7 +3,7 @@
         <mat-icon *ngIf="icon">{{icon}}</mat-icon>
         <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
             <input matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
-                email [errorStateMatcher]="matcher">
+                (focus)="onFocus()" email [errorStateMatcher]="matcher">
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>
@@ -11,15 +11,29 @@
         <mat-icon *ngIf="icon">{{icon}}</mat-icon>
         <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
             <textarea matInput type="{{type}}" rows="10" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
-                [errorStateMatcher]="matcher"></textarea>
+                (focus)="onFocus()" [errorStateMatcher]="matcher"></textarea>
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>
+    <div *ngSwitchCase="'select'">
+        <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+        <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
+            <mat-select placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()" (focus)="onFocus()"
+                [errorStateMatcher]="matcher">
+                <mat-option></mat-option>
+                <mat-option *ngFor="let option of options" [value]="option.value">
+                    {{ option.name }}
+                </mat-option>
+            </mat-select>
+            <mat-error error [name]="name"></mat-error>
+        </mat-form-field>
+    </div>
+
     <div *ngSwitchCase="isInputType(type)">
         <mat-icon *ngIf="icon">{{icon}}</mat-icon>
         <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
             <input matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
-                [errorStateMatcher]="matcher">
+                (focus)="onFocus()" [errorStateMatcher]="matcher">
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>

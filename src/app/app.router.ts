@@ -16,23 +16,53 @@ export const AppRoutes: Routes = [
     },
     {
         path: 'budgets',
-        component: BudgetListComponent
+        component: BudgetListComponent,
+        data: { type: 'budgets' }
     },
     {
         path: 'budgets/:id',
-        component: BudgetComponent
+        component: BudgetComponent,
+        data: { type: 'budgets' }
     },
     {
-        path: ':type',
-        component: OverviewComponent
+        path: 'budgets/:id/positiv',
+        component: EditComponent,
+        data: { type: 'budgets', subType: 'positiv' }
     },
     {
-        path: ':type/:subtype',
-        component: EditComponent
+        path: 'budgets/:id/negativ',
+        component: EditComponent,
+        data: { type: 'budgets', subType: 'negativ' }
     },
     {
-        path: ':type/:id/:subtype',
-        component: EditComponent
+        path: 'assets',
+        component: OverviewComponent,
+        data: { type: 'assets' }
+    },
+    {
+        path: 'assets/positiv',
+        component: EditComponent,
+        data: { type: 'assets', subType: 'positiv' }
+    },
+    {
+        path: 'assets/negativ',
+        component: EditComponent,
+        data: { type: 'assets', subType: 'negativ' }
+    },
+    {
+        path: 'revenue',
+        component: OverviewComponent,
+        data: { type: 'revenue' }
+    },
+    {
+        path: 'revenue/positiv',
+        component: EditComponent,
+        data: { type: 'revenue', subType: 'positiv' }
+    },
+    {
+        path: 'revenue/negativ',
+        component: EditComponent,
+        data: { type: 'revenue', subType: 'negativ' }
     },
     { path: '**', component: HomeComponent }
 ];

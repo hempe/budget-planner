@@ -130,3 +130,7 @@ export function unique(array: any[], byProperty?: string) {
     }
     return arr;
 }
+
+export function isNumber(value: any) {
+    return !isNaN(value) && value !== null && value !== undefined;
+}

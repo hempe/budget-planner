@@ -11,17 +11,26 @@ import {
     OnInit,
     Output
 } from '@angular/core';
+import { DashboardConfig, Themes } from '../dashboard';
 import {
     NamedValue,
     OverviewContainer,
-    OverviewValue
+    OverviewValue,
+    UnitKey
 } from '../../../common/file';
-import { array, numberWithSeperator, toSum } from '../../../common/helper';
+import {
+    array,
+    hexToRgb,
+    isNumber,
+    numberWithSeperator,
+    toSum
+} from '../../../common/helper';
 
 import { ConfigurationService } from '../../../services/configuration';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ResizeService } from '../../../services/resize';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -30,12 +39,11 @@ import { Subscription } from 'rxjs/Subscription';
     styleUrls: ['./bar.component.css']
 })
 export class DashboardBarComponent implements OnInit, OnDestroy {
-    public datasets: Colors[] = [];
-    public labels: string[];
-
     constructor(
-        private config: ConfigurationService,
-        private resize: ResizeService
+        private http: Http,
+        private configService: ConfigurationService,
+        private resizeService: ResizeService,
+        private router: Router
     ) {}
 
     public options: any = {
@@ -70,7 +78,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
             custom: tooltipModel => {
                 if (tooltipModel.opacity === 0) {
-                    this.tooltip = this.total;
+                    this.tooltip = this._total;
                     return;
                 }
                 if (tooltipModel.body) {
@@ -79,74 +87,175 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                     .concat((<string[]>tooltipModel.body[0].lines[0].split(':'))
                         .map(x => numberWithSeperator(x.trim())));
                 } else {
-                    this.tooltip = this.total;
+                    this.tooltip = this._total;
                 }
             }
         }
     };
 
+    @Input() public config: DashboardConfig;
+
+    public datasets: Colors[] = [];
+    public labels: string[];
     public colors: Color[] = [{}];
     public tooltip: string[];
-    private total: string[];
-    private totalUnits: { key: string; value: OverviewContainer };
+    public loaded: boolean = false;
 
-    @Output() edit: EventEmitter<string> = new EventEmitter();
-    public onEdit(tab: string) {
-        this.edit.emit(tab);
-    }
-
-    @Input() public chartType: string = 'bar';
-    @Input() path: string = '';
-
+    public chartType: string = 'bar';
     public color: string = '';
     public label: string = '';
+    public more: boolean = false;
+    public unit: OverviewContainer = undefined;
 
-    @Input()
+    private _total: string[];
+    private _totalUnits: { key: string; value: OverviewContainer };
+    private _units: OverviewValue;
+    private _key: string = 'total';
+    private _colorPositiv = '';
+    private _colorNegativ = '';
+    private _resizeSub: Subscription;
+
     public set units(value: OverviewValue) {
+        if (!value) return;
         value.negativ = array(value.negativ);
         value.positiv = array(value.positiv);
 
         value.negativ.forEach(val => (val.elements = array(val.elements)));
         value.positiv.forEach(val => (val.elements = array(val.elements)));
         this._units = value;
-        this.updateGraphic();
     }
+
     public get units(): OverviewValue {
         return this._units;
     }
 
-    @Input() public update: Observable<{}>;
-    private resizeSub: Subscription;
-
-    ngOnDestroy(): void {
-        if (this.resizeSub) this.resizeSub.unsubscribe();
+    public get isBase(): boolean {
+        return (
+            this.unit == this._totalUnits[UnitKey.total] ||
+            this.unit == this._totalUnits[UnitKey.positiv] ||
+            this.unit == this._totalUnits[UnitKey.negativ]
+        );
     }
-    ngOnInit(): void {
-        this.resizeSub = this.resize.resized.subscribe(x => {});
-        this.label = this.config.getName(this.path);
-        this.color = this.config.getColor(this.path);
 
-        if (this.update)
-            this.update.subscribe(x => {
+    public get theme(): string {
+        return this.config ? this.config.theme : '';
+    }
+
+    public onEdit(tab: string) {
+        let route = [].concat(this.config.path.split('.'));
+        if (isNumber(this.config.id)) {
+            route.push(this.config.id);
+        }
+        if (this._key != UnitKey.total) {
+            route.push(this._key);
+            if (tab) route.push(<any>{ tab: tab });
+        }
+        this.router.navigate(route);
+    }
+
+    public back(): void {
+        if (this.unit == this._totalUnits[this._key]) this._key = UnitKey.total;
+        this.unit = this._totalUnits[this._key];
+    }
+
+    public itemClick(label: any): void {
+        if (label.key) this._key = label.key;
+        if (this.isBase) this.setUnitByName(this._key, label.name);
+    }
+
+    public chartClicked(e: any): void {
+        if (!e || !e.active || !e.active[0]) {
+            this._key = UnitKey.total;
+            this.unit = this._totalUnits[this._key];
+            return;
+        }
+
+        this._key = e.active[0]._model.borderColor;
+        let label = e.active[0]._model.label;
+
+        this.more = this.getUnitByName(this._key, label) !== this.unit;
+        this.setUnitByName(this._key, label);
+    }
+
+    public toggleTotals() {
+        if (this.unit == this._totalUnits[UnitKey.total]) {
+            this.more = !this.more;
+        } else {
+            this.more = true;
+        }
+        this.unit = this._totalUnits[UnitKey.total];
+    }
+
+    public ngOnDestroy(): void {
+        if (this._resizeSub) this._resizeSub.unsubscribe();
+    }
+
+    public ngOnInit(): void {
+        if (!this.config) return;
+        let url = isNumber(this.config.id)
+            ? `api/data/${this.config.path}/${this.config.id}`
+            : `api/data/${this.config.path}`;
+
+        this.http
+            .get(url)
+            .map(x => x.json())
+            .subscribe((x: OverviewValue) => {
+                this.units = x;
+
+                this._resizeSub = this.resizeService.resized.subscribe(x => {});
+                this.label = x.name; // this.configService.getName(this.config.path);
+
+                this.color =
+                    this.config.theme == Themes.light
+                        ? '#fff'
+                        : this.configService.getColor(this.config.path);
+
+                this._colorPositiv = this.configService.getColor(
+                    this.config.path,
+                    UnitKey.positiv
+                );
+
+                this._colorNegativ = this.configService.getColor(
+                    this.config.path,
+                    UnitKey.negativ
+                );
+
                 this.updateGraphic();
+                this.loaded = true;
             });
     }
 
     private rgba(x: any) {
-        // prettier-ignore
-        return `${x.key == 'positiv' ? '255' : '0'},${x.key == 'positiv' ? '255' : '0'},${x.key == 'positiv' ? '255' : '0'}`;
+        var arr: number[];
+        if (this.config.theme == Themes.light) {
+            arr =
+                x.key == UnitKey.positiv
+                    ? hexToRgb(this._colorPositiv)
+                    : hexToRgb(this._colorNegativ);
+        } else {
+            let v = x.key == UnitKey.positiv ? 255 : 0;
+            arr = [v, v, v];
+        }
+        return arr.join(',');
     }
 
     private updateGraphic() {
         if (!this.units) return;
-        this.total = ['Total', numberWithSeperator(this.units.value)];
-        this.tooltip = this.total;
+        this._total = ['Total', numberWithSeperator(this.units.value)];
+        this.tooltip = this._total;
 
         let all = this.units.positiv
-            .map(x => <any>{ name: x.name, value: x.value, key: 'positiv' })
+            .map(
+                x => <any>{ name: x.name, value: x.value, key: UnitKey.positiv }
+            )
             .concat(
                 this.units.negativ.map(
-                    x => <any>{ name: x.name, value: -x.value, key: 'negativ' }
+                    x =>
+                        <any>{
+                            name: x.name,
+                            value: -x.value,
+                            key: UnitKey.negativ
+                        }
                 )
             );
 
@@ -155,7 +264,10 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                 data: all.map(x => x.value),
                 backgroundColor: all.map(
                     (x, i) =>
-                        `rgba(${this.rgba(x)},${0.25 + i / (4 * all.length)})`
+                        this.config.theme == Themes.light
+                            ? `rgb(${this.rgba(x)})`
+                            : `rgba(${this.rgba(x)},${0.25 +
+                                  i / (4 * all.length)})`
                 ),
                 hoverBackgroundColor: all.map(x => `rgba(${this.rgba(x)},0.5)`),
                 borderColor: this.color ? this.color : 'transparent',
@@ -166,96 +278,56 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
         this.labels = all.map(x => x.name);
 
-        this.totalUnits = <any>{};
-        this.totalUnits['total'] = {
+        this._totalUnits = <any>{};
+        this._totalUnits[UnitKey.total] = {
             name: 'Total',
             elements: [
                 <NamedValue>{
-                    name: this.config.getName(`${this.path}.positiv`),
+                    name: this.configService.getName(
+                        this.config.path,
+                        UnitKey.positiv
+                    ),
                     value: this.units.positiv
                         .map(x => x.value)
                         .reduce(toSum, 0),
-                    key: 'positiv'
+                    key: UnitKey.positiv
                 },
                 <NamedValue>{
-                    name: this.config.getName(`${this.path}.negativ`),
+                    name: this.configService.getName(
+                        this.config.path,
+                        UnitKey.negativ
+                    ),
                     value: this.units.negativ
                         .map(x => x.value)
                         .reduce(toSum, 0),
-                    key: 'negativ'
+                    key: UnitKey.negativ
                 }
             ],
             value: 0
         };
 
-        this.totalUnits['positiv'] = {
-            name: this.config.getName(`${this.path}.positiv`),
+        this._totalUnits[UnitKey.positiv] = {
+            name: this.configService.getName(this.config.path, UnitKey.positiv),
             elements: this.units.positiv
         };
-        this.totalUnits['negativ'] = {
-            name: this.config.getName(`${this.path}.negativ`),
+        this._totalUnits[UnitKey.negativ] = {
+            name: this.configService.getName(this.config.path, UnitKey.negativ),
             elements: this.units.negativ
         };
 
-        this.unit = this.totalUnits['total'];
-    }
-
-    public more: boolean = false;
-
-    public get isBase(): boolean {
-        return (
-            this.unit == this.totalUnits['total'] ||
-            this.unit == this.totalUnits['positiv'] ||
-            this.unit == this.totalUnits['negativ']
-        );
-    }
-
-    private _units: OverviewValue;
-    public unit: OverviewContainer = undefined;
-
-    public back(): void {
-        if (this.unit == this.totalUnits[this.key]) this.key = 'total';
-        this.unit = this.totalUnits[this.key];
-    }
-
-    private key: string = 'total';
-    public itemClick(label: any): void {
-        if (label.key) this.key = label.key;
-        if (this.isBase) this.setUnitByName(this.key, label.name);
-    }
-
-    public chartClicked(e: any): void {
-        if (!e || !e.active || !e.active[0]) {
-            this.key = 'total';
-            this.unit = this.totalUnits['total'];
-            return;
-        }
-
-        this.key = e.active[0]._model.borderColor;
-        let label = e.active[0]._model.label;
-
-        this.more = this.getUnitByName(this.key, label) !== this.unit;
-        this.setUnitByName(this.key, label);
-    }
-
-    public toggleTotals() {
-        if (this.unit == this.totalUnits['total']) {
-            this.more = !this.more;
-        } else {
-            this.more = true;
-        }
-        this.unit = this.totalUnits['total'];
+        this.unit = this._totalUnits[UnitKey.total];
     }
 
     private getUnitByName(key: string, label: string): OverviewContainer {
         if (this.units[key]) {
             let unit: OverviewContainer[] = this.units[key];
             let filter = unit.filter(x => x.name === label);
-            return filter && filter[0] ? filter[0] : this.totalUnits[key];
+            return filter && filter[0] ? filter[0] : this._totalUnits[key];
         }
 
-        return this.totalUnits['total'];
+        return this._totalUnits[UnitKey.total];
     }
+
     private setUnitByName(key: string, label: string) {
         this.unit = this.getUnitByName(key, label);
     }

@@ -50,6 +50,16 @@ export class ViewWrapperComponent implements OnInit {
                         action: () => this.router.navigate(['budgets'])
                     },
                     {
+                        name: 'Assets',
+                        icon: 'attach_money',
+                        action: () => this.router.navigate(['assets'])
+                    },
+                    {
+                        name: 'Revenue',
+                        icon: 'date_range',
+                        action: () => this.router.navigate(['revenue'])
+                    },
+                    {
                         name: 'Profile',
                         icon: 'person',
                         action: () => this.router.navigate(['profile'])

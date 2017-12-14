@@ -23,13 +23,13 @@ namespace BudgetPlanner.Controllers {
         }
 
         [HttpGet("")]
-        [ProducesResponseType(typeof(OverviewValue), 200)]
+        [ProducesResponseType(typeof(OverviewValue[]), 200)]
         public async Task<IActionResult> GetAll() {
             var values = await this.tableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
             if (values.Count == 0)
                 values.Add(new Budget { Data = new Group<FrequencyValue> { }, Name = "Budget", Id = "0" });
 
-            return this.Ok(values.Select(b => b.Data.ToOverview(x => x.Value * x.Frequency, b.Name, b.Id)));
+            return this.Ok(values.Select(b => b.Data.ToOverview(x => x.Value * x.Frequency, b.Id, b.Name ?? nameof(Budget))));
         }
 
         [HttpGet("{id}")]
@@ -37,7 +37,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> GetOverview([FromRoute] string id) {
             var value = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId });
             value = value ?? new Budget { Name = "Budget", Id = id };
-            return this.Ok((value?.Data ?? new Group<FrequencyValue>()).ToOverview(x => x.Value * x.Frequency, value.Id, value.Name));
+            return this.Ok((value?.Data ?? new Group<FrequencyValue>()).ToOverview(x => x.Value * x.Frequency, value.Id, value.Name ?? nameof(Budget)));
         }
 
         [HttpGet("{id}/{subType}")]

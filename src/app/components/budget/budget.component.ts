@@ -3,9 +3,9 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import {
     FrequencyValue,
-    IClient,
-    IGroup,
-    OverviewValue
+    Group,
+    OverviewValue,
+    Profile
 } from '../../common/file';
 import { Observable, Subject } from 'rxjs';
 import { array, clone, toNumber } from '../../common/helper';
@@ -24,7 +24,8 @@ import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 export class BudgetComponent implements OnInit {
     public head: MenuEntry = {};
 
-    private budget: OverviewValue;
+    public type: string = 'budgets';
+    private value: OverviewValue;
     private id: string;
     private url: string;
 
@@ -46,7 +47,7 @@ export class BudgetComponent implements OnInit {
     ngOnInit() {
         this.id = this.route.snapshot.params['id'];
         this.url = `/api/data/budgets/${this.id}`;
-        this.getData().subscribe(x => (this.budget = x));
+        this.getData().subscribe(x => (this.value = x));
     }
 
     public goto(path: string) {

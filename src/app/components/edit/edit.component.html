@@ -1,11 +1,11 @@
-<view-wrapper [head]="head" *ngIf="units">
+<view-wrapper [head]="head">
     <div flexContainer>
         <menu-left noTop="true">
             <mat-tab-group style="flex-grow:1" #tabGroup (selectedTabChange)="tabChanged($event)" [@.disabled]="true">
                 <ng-container *ngFor="let dataSource of dataSources; let i = index">
-                    <mat-tab label="{{units[i].name}}">
+                    <mat-tab *ngIf="units" label="{{units[i].name}}">
                         <mat-card style="padding:0">
-                            <data-source-table editable="true" selectable="true" [columns]="columns" [dataSourceFactory]="dataSource" (changed)="onUpdate()"
+                            <data-source-table editable="true" selectable="true" [columns]="columns" [dataSourceFactory]="dataSource" (changed)="onUpdate(true)"
                                 (selected)="selected($event)"></data-source-table>
                         </mat-card>
                     </mat-tab>
@@ -35,7 +35,7 @@
             </mat-menu>
 
             <menu-container noTop="true">
-                <menu-entry (click)="save()" title="New element will be added. You can also use the insert key">
+                <menu-entry (click)="save()" color="{{touched ? color : 'rgba(0,0,0,0.54)' }}" title="New element will be added. You can also use the insert key">
                     {{'Save' | translate}}
                     <mat-icon>save</mat-icon>
                 </menu-entry>
@@ -60,13 +60,10 @@
                     <mat-icon>arrow_downward</mat-icon>
                 </menu-entry>
             </menu-container>
-
-
-            <div class="wrapper">
-                todo wil come back
-                <!--
-                    <doughnut editView="true" [label]="label" [units]="units" [color]="color" [update]="update"></doughnut>
-                    -->
+            <menu-right-spacer></menu-right-spacer>
+            <div *ngIf="units" class="wrapper">
+                <edit-chart [units]="units" [type]="type" (edit)="onEdit($event)" [color]="color" [label]="label" [update]="update">
+                </edit-chart>
             </div>
         </menu-right>
     </div>

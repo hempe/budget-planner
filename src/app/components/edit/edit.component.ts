@@ -15,7 +15,7 @@ import {
     DataSourceValue,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { Files, IFile, IGroup, NamedValue, Unit } from '../../common/file';
+import { Files, Group, IFile, NamedValue, Unit } from '../../common/file';
 import { MatPaginator, MatTabChangeEvent } from '@angular/material';
 import {
     array,
@@ -46,7 +46,9 @@ export class EditComponent implements OnInit, OnDestroy {
     public units: Unit<NamedValue>[];
 
     public get unit(): Unit<NamedValue> {
-        return this.units[this.unitId];
+        return this.units && this.unitId !== undefined
+            ? this.units[this.unitId]
+            : undefined;
     }
 
     private _unitId: number;
@@ -74,6 +76,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
     private updateEvents: EventEmitter<NamedValue[]>[] = [];
     private keyDown: Subscription;
+    public touched: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -109,8 +112,8 @@ export class EditComponent implements OnInit, OnDestroy {
         });
 
         let id = this.route.snapshot.params['id'];
-        this.type = this.route.snapshot.params['type'];
-        this.subType = this.route.snapshot.params['subtype'];
+        this.type = this.route.snapshot.data.type;
+        this.subType = this.route.snapshot.data.subType;
 
         this.url =
             id === undefined
@@ -161,7 +164,7 @@ export class EditComponent implements OnInit, OnDestroy {
             }
 
             if (!this.unitId) this.unitId = 0;
-            this.onUpdate();
+            this.onUpdate(false);
         });
     }
 
@@ -218,7 +221,9 @@ export class EditComponent implements OnInit, OnDestroy {
             this.unitId = this.units.length - 1;
         if (this.unitId < 0) this.unitId = 0;
 
-        this.onUpdate();
+        this.unitId = this.unitId;
+        this.onUpdate(true);
+        setTimeout(() => this.onUpdate(true), 0);
     }
 
     public up() {
@@ -230,7 +235,7 @@ export class EditComponent implements OnInit, OnDestroy {
             this.unit.elements.splice(i - 1, 0, el);
         });
 
-        this.onUpdate();
+        this.onUpdate(true);
     }
 
     public down() {
@@ -243,7 +248,7 @@ export class EditComponent implements OnInit, OnDestroy {
         });
         this.unit.elements.reverse();
 
-        this.onUpdate();
+        this.onUpdate(true);
     }
 
     public copy() {
@@ -256,7 +261,7 @@ export class EditComponent implements OnInit, OnDestroy {
             this.unit.elements.splice(i + 1, 0, y);
         });
 
-        this.onUpdate();
+        this.onUpdate(true);
     }
 
     public delete() {
@@ -267,13 +272,13 @@ export class EditComponent implements OnInit, OnDestroy {
             this.unit.elements.splice(i, 1);
             i--;
         }
-        this.onUpdate();
+        this.onUpdate(true);
     }
 
     public add() {
         console.info('add');
         this.unit.elements.push(<any>{});
-        this.onUpdate();
+        this.onUpdate(true);
     }
 
     public save() {
@@ -286,7 +291,7 @@ export class EditComponent implements OnInit, OnDestroy {
                     this.units = x;
                     this.units = this.units;
                     this.unitId = this.unitId;
-                    this.onUpdate();
+                    this.onUpdate(false);
                 },
                 err => {
                     console.error(err);
@@ -295,7 +300,14 @@ export class EditComponent implements OnInit, OnDestroy {
             );
     }
 
-    private onUpdate() {
+    public onEdit(name: string) {
+        let index = this.units.findIndex(x => x.name == name);
+        if (index >= 0) this.unitId = index;
+    }
+
+    private onUpdate(touched?: boolean) {
+        if (touched !== undefined) this.touched = touched;
+
         for (let i = 0; i < this.units.length; i++) {
             this.updateEvents[i].emit(this.units[i].elements);
         }

@@ -13,18 +13,24 @@ export interface Unit<T> {
     elements: T[];
 }
 
-export interface IGroup<T> {
+export interface Group<T> {
     name: string;
     positiv: Unit<T>[];
     negativ: Unit<T>[];
 }
 
+export const UnitKey = {
+    positiv: 'positiv',
+    negativ: 'negativ',
+    total: 'total'
+};
+
 export interface IFile {
-    budgets: IGroup<FrequencyValue>[];
-    assets: IGroup<NamedValue>;
-    revenue: IGroup<DatedValue>;
+    budgets: Group<FrequencyValue>[];
+    assets: Group<NamedValue>;
+    revenue: Group<DatedValue>;
     development: IDevelopmentGroup;
-    client: IClient;
+    client: Profile;
     name: string;
     language?: string;
 }
@@ -55,7 +61,7 @@ export interface IDevelopmentGroup {
     to: number;
 }
 
-export interface IClient {
+export interface Profile {
     city?: String;
     comment?: string;
     company?: string;
@@ -66,6 +72,7 @@ export interface IClient {
     street?: string;
     telNumber?: string;
     zipCode?: string;
+    color?: string;
 }
 
 export namespace Files {
