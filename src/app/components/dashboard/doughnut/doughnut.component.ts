@@ -11,11 +11,25 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { NamedValue, OverviewContainer } from '../../../common/file';
-import { array, numberWithSeperator, toSum } from '../../../common/helper';
+import { DashboardConfig, Themes } from '../dashboard';
+import {
+    NamedValue,
+    OverviewContainer,
+    OverviewValue
+} from '../../../common/file';
+import {
+    array,
+    hexToRgb,
+    isNumber,
+    numberWithSeperator,
+    toSum
+} from '../../../common/helper';
 
+import { ConfigurationService } from '../../../services/configuration';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { ResizeService } from '../../../services/resize';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -24,8 +38,12 @@ import { Subscription } from 'rxjs/Subscription';
     styleUrls: ['./doughnut.component.css']
 })
 export class DashboardDoughnutComponent implements OnInit, OnDestroy {
-    public datasets: Colors[] = [];
-    public labels: string[];
+    constructor(
+        private http: Http,
+        private configService: ConfigurationService,
+        private resizeService: ResizeService,
+        private router: Router
+    ) {}
 
     public options: any = {
         scales: {
@@ -74,85 +92,60 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
                     this.tooltip = this.total;
                 }
             }
+        },
+        deferred: {
+            yOffset: '20%',
+            delay: 500
         }
     };
 
+    @Input()
+    public config: DashboardConfig = {
+        path: 'assets.positiv',
+        theme: Themes.light,
+        type: 'doughnut'
+    };
+
+    public chartType: string = 'doughnut';
+    public color: string = '';
     public colors: Color[] = [{}];
+    public datasets: Colors[] = [];
+    public labels: string[];
+    public label: string = '';
+    public loaded: boolean = false;
+    public more: boolean = false;
     public tooltip: string[];
+
     private total: string[];
     private totalUnit: OverviewContainer;
 
-    @Output() edit: EventEmitter<string> = new EventEmitter();
-    public onEdit(tab: string) {
-        this.edit.emit(tab);
+    public get theme(): string {
+        return this.config ? this.config.theme : '';
     }
 
-    @Input() public chartType: string = 'doughnut';
-    @Input() public color: string = '';
-    @Input() public label: string = '';
-    @Input()
+    public onEdit(tab: string) {
+        var type = this.config.path.split('.');
+        var route = [type[0]];
+
+        if (isNumber(this.config.id)) {
+            route.push(<any>this.config.id);
+        }
+
+        route.push(type[1]);
+        if (tab) route.push(<any>{ tab: tab });
+
+        this.router.navigate(route);
+    }
+
     public set units(value: OverviewContainer[]) {
+        if (!value) return;
         value = array(value);
         value.forEach(val => (val.elements = array(val.elements)));
         this._units = value;
-        this.updateGraphic();
     }
     public get units(): OverviewContainer[] {
         return this._units;
     }
-
-    @Input() public update: Observable<{}>;
-    private updateSub: Subscription;
-
-    ngOnDestroy(): void {}
-    ngOnInit(): void {
-        if (this.update)
-            this.update.subscribe(x => {
-                this.updateGraphic();
-            });
-    }
-
-    private updateGraphic() {
-        let value = this._units;
-
-        this.total = [
-            'Total',
-            numberWithSeperator(value.map(x => x.value).reduce(toSum, 0))
-        ];
-        this.tooltip = this.total;
-
-        this.datasets = [
-            {
-                data: value.map(x => x.value),
-                backgroundColor: value.map(
-                    (x, i) =>
-                        `rgba(255,255,255,${0.5 + i / (2 * value.length)})`
-                ),
-                hoverBackgroundColor: value.map(x => '#fff'),
-                borderColor: this.color ? this.color : 'transparent',
-                hoverBorderColor: this.color ? this.color : 'transparent',
-                borderWidth: 10
-            }
-        ];
-
-        this.labels = value.map(x => x.name);
-
-        this.totalUnit = {
-            name: 'Total',
-            elements: value.map(
-                x =>
-                    <NamedValue>{
-                        name: x.name,
-                        value: x.value
-                    }
-            ),
-            value: value.map(x => x.value).reduce(toSum, 0)
-        };
-
-        this.unit = this.totalUnit;
-    }
-
-    public more: boolean = false;
 
     public get isBase(): boolean {
         return this.unit == this.totalUnit;
@@ -184,6 +177,84 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         } else {
             this.more = true;
         }
+        this.unit = this.totalUnit;
+    }
+
+    public ngOnDestroy(): void {}
+    public ngOnInit(): void {
+        if (!this.config) return;
+        let type = this.config.path.split('.');
+        let url = isNumber(this.config.id)
+            ? `api/data/${type[0]}/${this.config.id}`
+            : `api/data/${type[0]}`;
+
+        this.http
+            .get(url)
+            .map(x => x.json())
+            .subscribe((x: OverviewValue) => {
+                this.units = x[type[1]];
+                this.label = this.configService.getName(this.config.path);
+                this.color =
+                    this.config.theme == Themes.light
+                        ? '#fff'
+                        : this.configService.getColor(this.config.path);
+
+                this.updateGraphic();
+                this.loaded = true;
+            });
+    }
+
+    private rgba(x: any) {
+        var arr: number[];
+        if (this.config.theme == Themes.light) {
+            let c = this.configService.getColor(this.config.path);
+            arr = hexToRgb(c);
+        } else {
+            arr = [255, 255, 255];
+        }
+        return arr.join(',');
+    }
+
+    private updateGraphic() {
+        let value = this._units;
+
+        this.total = [
+            'Total',
+            numberWithSeperator(value.map(x => x.value).reduce(toSum, 0))
+        ];
+        this.tooltip = this.total;
+
+        this.datasets = [
+            {
+                data: value.map(x => x.value),
+                backgroundColor: value.map(
+                    (x, i) =>
+                        `rgba(${this.rgba(x)},${0.5 + i / (2 * value.length)})`
+                ),
+                hoverBackgroundColor:
+                    this.config.theme == Themes.light
+                        ? value.map(x => `rgba(${this.rgba(x)},0.5)`)
+                        : value.map(x => '#fff'),
+                borderColor: this.color ? this.color : 'transparent',
+                hoverBorderColor: this.color ? this.color : 'transparent',
+                borderWidth: this.config.theme == Themes.light ? 2 : 4
+            }
+        ];
+
+        this.labels = value.map(x => x.name);
+
+        this.totalUnit = {
+            name: 'Total',
+            elements: value.map(
+                x =>
+                    <NamedValue>{
+                        name: x.name,
+                        value: x.value
+                    }
+            ),
+            value: value.map(x => x.value).reduce(toSum, 0)
+        };
+
         this.unit = this.totalUnit;
     }
 

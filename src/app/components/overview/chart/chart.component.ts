@@ -90,8 +90,8 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
                 }
             ]
         },
-        //maintainAspectRatio: false,
-        responsive: false,
+        maintainAspectRatio: false,
+        responsive: true,
         legend: {
             display: false
         },
@@ -124,6 +124,9 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
                     this.tooltip = this.total;
                 }
             }
+        },
+        deferred: {
+            delay: 500
         }
     };
 

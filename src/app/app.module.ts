@@ -1,3 +1,5 @@
+import 'chartjs-plugin-deferred';
+
 import { ErrorStateMatcher, MatSnackBar } from '@angular/material';
 import {
     FlexBreakDirective,

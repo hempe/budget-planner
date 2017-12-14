@@ -1,4 +1,5 @@
 <div *ngIf="tooltip" class="tooltip">
     <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'">{{t}}</div>
 </div>
-<canvas baseChart [colors]="colors" [options]="options" [datasets]="datasets" [labels]="labels" [chartType]="chartType" (chartClick)="chartClicked($event)"></canvas>
+<canvas baseChart height="250" width="250" [colors]="colors" [options]="options" [datasets]="datasets" [labels]="labels"
+    [chartType]="chartType" (chartClick)="chartClicked($event)"></canvas>

@@ -26,24 +26,100 @@ namespace BudgetPlanner.Controllers {
         [ProducesResponseType(typeof(DashboardConfiguration[]), 200)]
         public async Task<IActionResult> GetAll() {
             await Task.CompletedTask;
-            return this.Ok(new [] {
+            /*
+            var light = new [] {
                 new DashboardConfiguration {
-                    Id = 0,
-                        Theme = "light",
-                        Type = "bar",
-                        Path = "budgets"
+                Id = 0,
+                Theme = "light",
+                Type = "bar",
+                Path = "budgets"
                 },
                 new DashboardConfiguration {
-                    Theme = "dark",
-                        Type = "bar",
-                        Path = "assets"
+                Theme = "ligth",
+                Type = "bar",
+                Path = "assets"
                 },
                 new DashboardConfiguration {
-                    Theme = "dark",
-                        Type = "bar",
-                        Path = "revenue"
+                Theme = "light",
+                Type = "bar",
+                Path = "revenue"
+                },
+                new DashboardConfiguration {
+                Id = 0,
+                Theme = "light",
+                Type = "bar",
+                Path = "budgets.positiv"
+                },
+                new DashboardConfiguration {
+                Id = 0,
+                Theme = "light",
+                Type = "bar",
+                Path = "budgets.negativ"
+                },
+                new DashboardConfiguration {
+                Theme = "light",
+                Type = "bar",
+                Path = "assets.positiv"
+                },
+                new DashboardConfiguration {
+                Theme = "light",
+                Type = "bar",
+                Path = "assets.negativ"
+                },
+                new DashboardConfiguration {
+                Theme = "light",
+                Type = "bar",
+                Path = "revenue.positiv"
+                },
+                new DashboardConfiguration {
+                Theme = "light",
+                Type = "bar",
+                Path = "revenue.negativ"
                 }
-            });
+            };
+
+            */
+            var result = new [] { "budgets", "assets", "revenue" }
+                .SelectMany(x => new [] {
+                    new DashboardConfiguration {
+                        Id = x == "budgets" ? (int?) 0 : null,
+                            Theme = "light",
+                            Type = "bar",
+                            Path = x
+                    },
+                    new DashboardConfiguration {
+                        Id = x == "budgets" ? (int?) 0 : null,
+                            Theme = "dark",
+                            Type = "bar",
+                            Path = x
+                    },
+                    new DashboardConfiguration {
+                        Id = x == "budgets" ? (int?) 0 : null,
+                            Theme = "light",
+                            Type = "doughnut",
+                            Path = x + ".positiv"
+                    },
+                    new DashboardConfiguration {
+                        Id = x == "budgets" ? (int?) 0 : null,
+                            Theme = "dark",
+                            Type = "doughnut",
+                            Path = x + ".positiv"
+                    },
+                    new DashboardConfiguration {
+                        Id = x == "budgets" ? (int?) 0 : null,
+                            Theme = "light",
+                            Type = "doughnut",
+                            Path = x + ".negativ"
+                    },
+                    new DashboardConfiguration {
+                        Id = x == "budgets" ? (int?) 0 : null,
+                            Theme = "dark",
+                            Type = "doughnut",
+                            Path = x + ".negativ"
+                    }
+                });
+            result = result.OrderBy(x => x.Theme).ThenBy(x => x.Type).ThenBy(x => x.Path).ToArray();
+            return this.Ok(result);
 
             /* 
             var values = await this.tableStore.GetAllAsync<Dashboard>(new Args { { nameof(Dashboard.UserId), this.UserId } });

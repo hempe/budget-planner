@@ -12,11 +12,6 @@ canvas {
     margin: auto;
     max-width: 500px;
     min-width: 150px;
-    /*
-    width: 100%;
-    margin: auto;
-    flex-grow: 1;
-    */
 }
 
 .tooltip {

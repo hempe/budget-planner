@@ -1,1 +1,14 @@
-
+.not-loaded {
+    min-width: 298px;
+    min-height: 298px;
+    display: block;
+    position: relative;
+    flex-grow: 1;
+}
+.loading {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    left: 50%;
+}

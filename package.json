@@ -25,6 +25,7 @@
         "@angular/router": "^5.0.4",
         "@ngx-translate/core": "^9.0.1",
         "@ngx-translate/http-loader": "^2.0.0",
+        "chartjs-plugin-deferred": "^0.3.0",
         "core-js": "^2.5.1",
         "ng2-charts": "^1.6.0",
         "rxjs": "^5.5.2",

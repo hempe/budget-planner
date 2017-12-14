@@ -1,3 +1,5 @@
+import {} from 'chartjs-plugin-deferred/sr';
+
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { array, makeid } from './common/helper';
 

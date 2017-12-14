@@ -42,7 +42,6 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     constructor(
         private http: Http,
         private configService: ConfigurationService,
-        private resizeService: ResizeService,
         private router: Router
     ) {}
 
@@ -90,30 +89,32 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                     this.tooltip = this._total;
                 }
             }
+        },
+        deferred: {
+            yOffset: '20%',
+            delay: 500
         }
     };
 
     @Input() public config: DashboardConfig;
 
-    public datasets: Colors[] = [];
-    public labels: string[];
-    public colors: Color[] = [{}];
-    public tooltip: string[];
-    public loaded: boolean = false;
-
     public chartType: string = 'bar';
     public color: string = '';
+    public colors: Color[] = [{}];
+    public datasets: Colors[] = [];
     public label: string = '';
+    public labels: string[];
+    public loaded: boolean = false;
     public more: boolean = false;
+    public tooltip: string[];
     public unit: OverviewContainer = undefined;
 
+    private _colorPositiv = '';
+    private _colorNegativ = '';
     private _total: string[];
     private _totalUnits: { key: string; value: OverviewContainer };
     private _units: OverviewValue;
     private _key: string = 'total';
-    private _colorPositiv = '';
-    private _colorNegativ = '';
-    private _resizeSub: Subscription;
 
     public set units(value: OverviewValue) {
         if (!value) return;
@@ -128,6 +129,9 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     public get units(): OverviewValue {
         return this._units;
     }
+    public get theme(): string {
+        return this.config ? this.config.theme : '';
+    }
 
     public get isBase(): boolean {
         return (
@@ -135,10 +139,6 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
             this.unit == this._totalUnits[UnitKey.positiv] ||
             this.unit == this._totalUnits[UnitKey.negativ]
         );
-    }
-
-    public get theme(): string {
-        return this.config ? this.config.theme : '';
     }
 
     public onEdit(tab: string) {
@@ -186,9 +186,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         this.unit = this._totalUnits[UnitKey.total];
     }
 
-    public ngOnDestroy(): void {
-        if (this._resizeSub) this._resizeSub.unsubscribe();
-    }
+    public ngOnDestroy(): void {}
 
     public ngOnInit(): void {
         if (!this.config) return;
@@ -202,7 +200,6 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
             .subscribe((x: OverviewValue) => {
                 this.units = x;
 
-                this._resizeSub = this.resizeService.resized.subscribe(x => {});
                 this.label = x.name; // this.configService.getName(this.config.path);
 
                 this.color =
