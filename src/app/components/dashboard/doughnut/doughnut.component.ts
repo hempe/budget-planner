@@ -3,6 +3,7 @@ import {
     Component,
     DoCheck,
     EventEmitter,
+    HostBinding,
     HostListener,
     Input,
     IterableDiffer,
@@ -45,6 +46,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         private router: Router
     ) {}
 
+    @HostBinding('style.display') display: string = 'block';
     public options: any = {
         scales: {
             xAxes: [
@@ -181,6 +183,14 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {}
+    public unpin() {
+        let url = isNumber(this.config.id)
+            ? `api/data/dashboard/${this.config.path}/${this.config.id}`
+            : `api/data/dashboard/${this.config.path}`;
+        this.http.delete(url).subscribe();
+        this.display = 'none';
+    }
+
     public ngOnInit(): void {
         if (!this.config) return;
         let type = this.config.path.split('.');
@@ -217,6 +227,10 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
 
     private updateGraphic() {
         let value = this._units;
+        if (value === undefined) {
+            value = [];
+            this.unpin();
+        }
 
         this.total = [
             'Total',

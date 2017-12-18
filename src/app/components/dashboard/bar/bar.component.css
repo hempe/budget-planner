@@ -14,6 +14,13 @@
     left: 50%;
 }
 
+.unpin-button {
+    position: absolute;
+    top: 48px;
+    opacity: 0.8;
+    right: 12px;
+}
+
 .label {
     position: absolute;
     /*

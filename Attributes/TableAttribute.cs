@@ -22,10 +22,10 @@ namespace BudgetPlanner.Attributes {
             var rowKey = this.RowKey(type);
             var partitionKey = this.PartitionKey(type);
 
-            if (!string.IsNullOrWhiteSpace(partitionKey))
+            if (!string.IsNullOrWhiteSpace(partitionKey) && type.GetProperty(partitionKey).CanRead)
                 entity.PartitionKey = (string) type.GetProperty(partitionKey).GetValue(entity);
 
-            if (!string.IsNullOrWhiteSpace(rowKey))
+            if (!string.IsNullOrWhiteSpace(rowKey) && type.GetProperty(partitionKey).CanRead)
                 entity.RowKey = (string) type.GetProperty(rowKey).GetValue(entity);
 
             foreach (var p in entity.GetType().GetProperties()) {
@@ -45,10 +45,10 @@ namespace BudgetPlanner.Attributes {
             var rowKey = this.RowKey(type);
             var partitionKey = this.PartitionKey(type);
 
-            if (!string.IsNullOrWhiteSpace(partitionKey))
+            if (!string.IsNullOrWhiteSpace(partitionKey) && type.GetProperty(partitionKey).CanWrite)
                 type.GetProperty(partitionKey).SetValue(entity, entity.PartitionKey);
 
-            if (!string.IsNullOrWhiteSpace(rowKey))
+            if (!string.IsNullOrWhiteSpace(rowKey) && type.GetProperty(rowKey).CanWrite)
                 type.GetProperty(rowKey).SetValue(entity, entity.RowKey);
 
             foreach (var p in entity.GetType().GetProperties()) {

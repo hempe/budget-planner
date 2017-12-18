@@ -110,7 +110,12 @@ mat-card {
     top: 12px;
     right: 12px;
 }
-
+.unpin-button {
+    position: absolute;
+    top: 48px;
+    opacity: 0.8;
+    right: 12px;
+}
 .edit-button {
     position: absolute;
     top: 0px;

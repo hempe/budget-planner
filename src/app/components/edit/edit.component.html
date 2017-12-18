@@ -59,6 +59,9 @@
                     {{'Down' | translate}}
                     <mat-icon>arrow_downward</mat-icon>
                 </menu-entry>
+                <menu-entry (click)="pin()">
+                    <mat-icon>{{theme ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (theme ? 'Unpin' : 'Pin') | translate }}
+                </menu-entry>
             </menu-container>
             <menu-right-spacer></menu-right-spacer>
             <div *ngIf="units" class="wrapper">

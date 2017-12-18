@@ -3,6 +3,7 @@ import {
     Component,
     DoCheck,
     EventEmitter,
+    HostBinding,
     HostListener,
     Input,
     IterableDiffer,
@@ -44,6 +45,8 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         private configService: ConfigurationService,
         private router: Router
     ) {}
+
+    @HostBinding('style.display') display: string = 'block';
 
     public options: any = {
         scales: {
@@ -220,6 +223,14 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                 this.updateGraphic();
                 this.loaded = true;
             });
+    }
+
+    public unpin() {
+        let url = isNumber(this.config.id)
+            ? `api/data/dashboard/${this.config.path}/${this.config.id}`
+            : `api/data/dashboard/${this.config.path}`;
+        this.http.delete(url).subscribe();
+        this.display = 'none';
     }
 
     private rgba(x: any) {

@@ -1,5 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DashboardConfig, Themes } from '../dashboard/dashboard';
 import { FormControl, FormGroup } from '@angular/forms';
 import {
     FrequencyValue,
@@ -15,6 +16,7 @@ import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { ThemeSelector } from '../theme-selector/theme-selector.component';
 
 @Component({
     selector: 'overview',
@@ -23,7 +25,7 @@ import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 })
 export class OverviewComponent implements OnInit {
     public head: MenuEntry = {};
-
+    public theme: string = undefined;
     private value: OverviewValue;
     private type: string;
     private url: string;
@@ -35,7 +37,8 @@ export class OverviewComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private config: ConfigurationService,
-        private http: Http
+        private http: Http,
+        private themeSelector: ThemeSelector
     ) {}
     ngOnInit() {
         this.type = this.route.snapshot.data.type;
@@ -47,6 +50,11 @@ export class OverviewComponent implements OnInit {
                 this.router.navigate(['../'], { relativeTo: this.route })
         };
 
+        this.http
+            .get(`/api/data/dashboard/${this.type}`)
+            .map(x => x.json())
+            .subscribe(x => (this.theme = x.theme));
+
         this.name = this.config.getName(this.type);
         this.positiv = this.config.getName(`${this.type}.positiv`);
         this.negativ = this.config.getName(`${this.type}.negativ`);
@@ -57,6 +65,24 @@ export class OverviewComponent implements OnInit {
 
     public goto(path: string, tab: string) {
         this.router.navigate([this.type, path, { tab: tab }]);
+    }
+
+    public pin() {
+        if (this.theme)
+            this.http
+                .delete(`/api/data/dashboard/${this.type}`)
+                .subscribe(x => (this.theme = undefined));
+        else
+            this.themeSelector.selectTheme().subscribe(theme => {
+                this.http
+                    .post('/api/data/dashboard', <DashboardConfig>{
+                        path: this.type,
+                        theme: theme,
+                        type: 'bar'
+                    })
+                    .map(x => x.json())
+                    .subscribe(x => (this.theme = x.theme));
+            });
     }
 
     private getData(): Observable<OverviewValue> {

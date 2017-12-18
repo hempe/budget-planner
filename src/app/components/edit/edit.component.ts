@@ -20,11 +20,13 @@ import { MatPaginator, MatTabChangeEvent } from '@angular/material';
 import {
     array,
     clone,
+    isNumber,
     numberWithSeperator,
     toNumber
 } from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
+import { DashboardConfig } from '../dashboard/dashboard';
 import { DataSource } from '@angular/cdk/table';
 import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
@@ -33,6 +35,7 @@ import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs';
+import { ThemeSelector } from '../theme-selector/theme-selector.component';
 
 @Component({
     selector: 'edit',
@@ -63,20 +66,20 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     public update: EventEmitter<{}> = new EventEmitter<{}>();
-
-    private url: string;
-
-    public type: string;
-    public subType: string;
     public columns: DataSourceColumn[];
     public dataSources: DataSourceFactory<Unit<NamedValue>[], NamedValue>[];
-
     public label: string;
     public color: string;
+    public touched: boolean = false;
+    public type: string;
+    public subType: string;
 
     private updateEvents: EventEmitter<NamedValue[]>[] = [];
     private keyDown: Subscription;
-    public touched: boolean = false;
+    private theme: string;
+    private url: string;
+    private dashboardUrl: string;
+    private id?: number;
 
     constructor(
         private route: ActivatedRoute,
@@ -84,7 +87,8 @@ export class EditComponent implements OnInit, OnDestroy {
         private http: Http,
         private fileService: FileService,
         private config: ConfigurationService,
-        private keyboardService: KeyboardService
+        private keyboardService: KeyboardService,
+        private themeSelector: ThemeSelector
     ) {
         this.keyDown = this.keyboardService.keyDown.subscribe(e => {
             if (
@@ -112,6 +116,8 @@ export class EditComponent implements OnInit, OnDestroy {
         });
 
         let id = this.route.snapshot.params['id'];
+        if (isNumber(id)) this.id = Number(id);
+
         this.type = this.route.snapshot.data.type;
         this.subType = this.route.snapshot.data.subType;
 
@@ -119,6 +125,11 @@ export class EditComponent implements OnInit, OnDestroy {
             id === undefined
                 ? `/api/data/${this.type}/${this.subType}`
                 : `/api/data/${this.type}/${id}/${this.subType}`;
+
+        this.dashboardUrl =
+            id === undefined
+                ? `/api/data/dashboard/${this.type}.${this.subType}`
+                : `/api/data/dashboard/${this.type}.${this.subType}/${id}`;
     }
 
     private init() {
@@ -186,6 +197,11 @@ export class EditComponent implements OnInit, OnDestroy {
                 this.units = x;
                 this.init();
             });
+
+        this.http
+            .get(this.dashboardUrl)
+            .map(x => x.json())
+            .subscribe(x => (this.theme = x.theme));
     }
 
     private buidDataSource(
@@ -303,6 +319,25 @@ export class EditComponent implements OnInit, OnDestroy {
     public onEdit(name: string) {
         let index = this.units.findIndex(x => x.name == name);
         if (index >= 0) this.unitId = index;
+    }
+
+    public pin() {
+        if (this.theme)
+            this.http
+                .delete(this.dashboardUrl)
+                .subscribe(x => (this.theme = undefined));
+        else
+            this.themeSelector.selectTheme().subscribe(theme => {
+                this.http
+                    .post('/api/data/dashboard', <DashboardConfig>{
+                        path: `${this.type}.${this.subType}`,
+                        theme: theme,
+                        id: this.id,
+                        type: 'doughnut'
+                    })
+                    .map(x => x.json())
+                    .subscribe(x => (this.theme = x.theme));
+            });
     }
 
     private onUpdate(touched?: boolean) {

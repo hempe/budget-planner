@@ -10,6 +10,9 @@
         <button mat-icon-button class="edit-button-top" [ngClass]="theme" (click)="onEdit()">
             <mat-icon>create</mat-icon>
         </button>
+        <button mat-icon-button class="unpin-button" [ngClass]="theme" (click)="unpin()">
+            <mat-icon>clear</mat-icon>
+        </button>
 
         <div *ngIf="tooltip" class="label" [ngClass]="theme">
             <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'">{{t}}</div>
@@ -31,6 +34,7 @@
                             <button mat-icon-button *ngIf="!isBase" (click)="back()">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
+
                             <span (click)="back()" class="edit-button-text">{{unit.name}}</span>
                             <button mat-icon-button class="edit-button" (click)="onEdit(unit.name)">
                                 <mat-icon>create</mat-icon>

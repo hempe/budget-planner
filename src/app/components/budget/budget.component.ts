@@ -11,10 +11,12 @@ import { Observable, Subject } from 'rxjs';
 import { array, clone, toNumber } from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
+import { DashboardConfig } from '../dashboard/dashboard';
 import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { ThemeSelector } from '../theme-selector/theme-selector.component';
 
 @Component({
     selector: 'budget',
@@ -28,12 +30,13 @@ export class BudgetComponent implements OnInit {
     private value: OverviewValue;
     private id: string;
     private url: string;
-
+    private theme: string;
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private config: ConfigurationService,
-        private http: Http
+        private http: Http,
+        private themeSelector: ThemeSelector
     ) {
         this.head = {
             icon: 'arrow_back',
@@ -46,8 +49,13 @@ export class BudgetComponent implements OnInit {
     }
     ngOnInit() {
         this.id = this.route.snapshot.params['id'];
-        this.url = `/api/data/budgets/${this.id}`;
+        this.url = `/api/data/${this.type}/${this.id}`;
         this.getData().subscribe(x => (this.value = x));
+
+        this.http
+            .get(`/api/data/dashboard/${this.type}/${this.id}`)
+            .map(x => x.json())
+            .subscribe(x => (this.theme = x.theme));
     }
 
     public goto(path: string) {
@@ -60,6 +68,26 @@ export class BudgetComponent implements OnInit {
             .map(x => x.json())
             .map((x: OverviewValue) => x);
     }
+
+    public pin() {
+        if (this.theme)
+            this.http
+                .delete(`/api/data/dashboard/${this.type}/${this.id}`)
+                .subscribe(x => (this.theme = undefined));
+        else
+            this.themeSelector.selectTheme().subscribe(theme => {
+                this.http
+                    .post('/api/data/dashboard', <DashboardConfig>{
+                        path: this.type,
+                        id: Number(this.id),
+                        theme: theme,
+                        type: 'bar'
+                    })
+                    .map(x => x.json())
+                    .subscribe(x => (this.theme = x.theme));
+            });
+    }
+
     /*
     public selected(row: OverviewValue) {
         this.router.navigate(['budgets', row.id]);

@@ -1,6 +1,6 @@
 import 'chartjs-plugin-deferred';
 
-import { ErrorStateMatcher, MatSnackBar } from '@angular/material';
+import { ErrorStateMatcher, MatDialog, MatSnackBar } from '@angular/material';
 import {
     FlexBreakDirective,
     FlexContainerDirective,
@@ -15,6 +15,10 @@ import {
     TranslateService
 } from '@ngx-translate/core';
 import { Router, RouterModule } from '@angular/router';
+import {
+    ThemeSelector,
+    ThemeSelectorDialog
+} from './components/theme-selector/theme-selector.component';
 
 import { ApiService } from './services/api';
 import { AppComponent } from './app.component';
@@ -78,8 +82,10 @@ import { httpFactory } from './services/http-interceptor';
         DashboardDoughnutComponent,
         DashboardBarComponent,
         OverviewChartComponent,
-        OverviewComponent
+        OverviewComponent,
+        ThemeSelectorDialog
     ],
+    entryComponents: [ThemeSelectorDialog],
     imports: [
         BrowserModule,
         HttpModule,
@@ -134,7 +140,8 @@ import { httpFactory } from './services/http-interceptor';
                 MatSnackBar,
                 TranslateService
             ]
-        }
+        },
+        ThemeSelector
         //{ provide: ErrorStateMatcher, useClass: CustomErrorStateMatcher }
     ],
     bootstrap: [AppComponent]
