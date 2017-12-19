@@ -14,7 +14,7 @@
                     <ng-container [ngSwitch]="header.type">
                         <ng-container *ngSwitchCase="'frequency'">
                             <div class="select-placeholder">{{ row[header.key] || row[header.key] === 0 ? '' : (header.name | translate) }}</div>
-                            <mat-select name="{{header.key}}" name="header.key" [(ngModel)]="row[header.key]" [disabled]="!editable">
+                            <mat-select name="{{header.key}}" name="header.key" [(ngModel)]="row[header.key]" [disabled]="!editable" (change)="onChange(row)">
                                 <mat-option *ngFor="let option of frequencies" [value]="option.value">
                                     {{ option.name | translate }}
                                 </mat-option>

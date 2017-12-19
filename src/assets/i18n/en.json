@@ -42,5 +42,11 @@
     "Delete": "Delete",
     "Up": "Up",
     "Down": "Down",
-    "Budget": "Budget"
+    "Budget": "Budget",
+    "Income": "Income",
+    "SelectATheme": "Select a theme",
+    "Light": "Light",
+    "Dark": "Dark",
+    "Pin": "Pin to dashboard",
+    "Unpin": "Unpin from dashboard"
 }

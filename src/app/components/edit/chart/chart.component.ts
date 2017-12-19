@@ -159,7 +159,7 @@ export class EditChartComponent implements OnInit, OnDestroy {
     }
 
     private getValue(x: NamedValue | FrequencyValue | DatedValue) {
-        if (this.type == 'budget')
+        if (this.type == 'budgets')
             return x.value * (<FrequencyValue>x).frequency;
         return x.value;
     }
