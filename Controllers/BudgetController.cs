@@ -45,7 +45,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> GetBudget([FromRoute] string id, [FromRoute] SubType subType) {
             var nullValue = new [] { new Unit<FrequencyValue>() };
             var value = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId });
-            return this.Ok(((subType == SubType.Negativ) ? value?.Data?.Negativ : value?.Data?.Positiv) ?? nullValue);
+            return this.Ok(((subType == SubType.Negative) ? value?.Data?.Negative : value?.Data?.Positive) ?? nullValue);
         }
 
         [HttpPost("{id}/{subType}")]
@@ -55,10 +55,10 @@ namespace BudgetPlanner.Controllers {
             var entity = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
             entity.Data = entity.Data ?? new Group<FrequencyValue>();
 
-            if (subType == SubType.Negativ)
-                entity.Data.Negativ = data;
+            if (subType == SubType.Negative)
+                entity.Data.Negative = data;
             else
-                entity.Data.Positiv = data;
+                entity.Data.Positive = data;
 
             var result = await this.tableStore.AddOrUpdateAsync(entity);
             if (result.Success())

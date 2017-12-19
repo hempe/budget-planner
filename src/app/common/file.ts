@@ -1,7 +1,7 @@
 export interface OverviewValue extends NamedValue {
     id: string;
-    positiv: OverviewContainer[];
-    negativ: OverviewContainer[];
+    positive: OverviewContainer[];
+    negative: OverviewContainer[];
 }
 
 export interface OverviewContainer extends Unit<NamedValue> {
@@ -15,13 +15,13 @@ export interface Unit<T> {
 
 export interface Group<T> {
     name: string;
-    positiv: Unit<T>[];
-    negativ: Unit<T>[];
+    positive: Unit<T>[];
+    negative: Unit<T>[];
 }
 
 export const UnitKey = {
-    positiv: 'positiv',
-    negativ: 'negativ',
+    positive: 'positive',
+    negative: 'negative',
     total: 'total'
 };
 

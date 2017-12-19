@@ -25,15 +25,15 @@ namespace BudgetPlanner.Models {
     }
 
     public class Group<T> where T : new() {
-        public IEnumerable<Unit<T>> Positiv { get; set; } = new [] { new Unit<T>() };
-        public IEnumerable<Unit<T>> Negativ { get; set; } = new [] { new Unit<T>() };
+        public IEnumerable<Unit<T>> Positive { get; set; } = new [] { new Unit<T>() };
+        public IEnumerable<Unit<T>> Negative { get; set; } = new [] { new Unit<T>() };
 
     }
 
     public class OverviewValue : NamedValue {
         public string Id { get; set; }
-        public IEnumerable<OverviewContainer> Positiv { get; set; }
-        public IEnumerable<OverviewContainer> Negativ { get; set; }
+        public IEnumerable<OverviewContainer> Positive { get; set; }
+        public IEnumerable<OverviewContainer> Negative { get; set; }
     }
 
     public class OverviewContainer : Unit<NamedValue> {
@@ -45,11 +45,11 @@ namespace BudgetPlanner.Models {
             var overview = new OverviewValue {
                 Id = string.IsNullOrWhiteSpace(id) ? "0" : id,
                 Name = string.IsNullOrWhiteSpace(name) ? typeof(T).Name : name,
-                Negativ = value.Negativ.ToOverview(valueSelector),
-                Positiv = value.Positiv.ToOverview(valueSelector),
+                Negative = value.Negative.ToOverview(valueSelector),
+                Positive = value.Positive.ToOverview(valueSelector),
             };
 
-            overview.Value = overview.Positiv.Sum(x => x.Value) - overview.Negativ.Sum(x => x.Value);
+            overview.Value = overview.Positive.Sum(x => x.Value) - overview.Negative.Sum(x => x.Value);
             return overview;
         }
 

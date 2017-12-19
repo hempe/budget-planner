@@ -18,6 +18,12 @@ using Swashbuckle.AspNetCore.Swagger;
 namespace BudgetPlanner {
     public class Startup {
         public Startup(IHostingEnvironment env) {
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Converters = new List<JsonConverter> { new Middleware.FuzzyPropertyNameMatchingConverter() }
+            };
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional : false, reloadOnChange : true)
@@ -64,7 +70,10 @@ namespace BudgetPlanner {
 
             services
                 .AddMvc()
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+                .AddJsonOptions(options => {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.Converters.Add(new Middleware.FuzzyPropertyNameMatchingConverter());
+                });
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });

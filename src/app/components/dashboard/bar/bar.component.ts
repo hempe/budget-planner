@@ -121,11 +121,11 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
     public set units(value: OverviewValue) {
         if (!value) return;
-        value.negativ = array(value.negativ);
-        value.positiv = array(value.positiv);
+        value.negative = array(value.negative);
+        value.positive = array(value.positive);
 
-        value.negativ.forEach(val => (val.elements = array(val.elements)));
-        value.positiv.forEach(val => (val.elements = array(val.elements)));
+        value.negative.forEach(val => (val.elements = array(val.elements)));
+        value.positive.forEach(val => (val.elements = array(val.elements)));
         this._units = value;
     }
 
@@ -139,8 +139,8 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     public get isBase(): boolean {
         return (
             this.unit == this._totalUnits[UnitKey.total] ||
-            this.unit == this._totalUnits[UnitKey.positiv] ||
-            this.unit == this._totalUnits[UnitKey.negativ]
+            this.unit == this._totalUnits[UnitKey.positive] ||
+            this.unit == this._totalUnits[UnitKey.negative]
         );
     }
 
@@ -212,12 +212,12 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
                 this._colorPositiv = this.configService.getColor(
                     this.config.path,
-                    UnitKey.positiv
+                    UnitKey.positive
                 );
 
                 this._colorNegativ = this.configService.getColor(
                     this.config.path,
-                    UnitKey.negativ
+                    UnitKey.negative
                 );
 
                 this.updateGraphic();
@@ -237,11 +237,11 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         var arr: number[];
         if (this.config.theme == Themes.light) {
             arr =
-                x.key == UnitKey.positiv
+                x.key == UnitKey.positive
                     ? hexToRgb(this._colorPositiv)
                     : hexToRgb(this._colorNegativ);
         } else {
-            let v = x.key == UnitKey.positiv ? 255 : 0;
+            let v = x.key == UnitKey.positive ? 255 : 0;
             arr = [v, v, v];
         }
         return arr.join(',');
@@ -252,17 +252,17 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         this._total = ['Total', numberWithSeperator(this.units.value)];
         this.tooltip = this._total;
 
-        let all = this.units.positiv
+        let all = this.units.positive
             .map(
-                x => <any>{ name: x.name, value: x.value, key: UnitKey.positiv }
+                x => <any>{ name: x.name, value: x.value, key: UnitKey.positive }
             )
             .concat(
-                this.units.negativ.map(
+                this.units.negative.map(
                     x =>
                         <any>{
                             name: x.name,
                             value: -x.value,
-                            key: UnitKey.negativ
+                            key: UnitKey.negative
                         }
                 )
             );
@@ -293,34 +293,34 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                 <NamedValue>{
                     name: this.configService.getName(
                         this.config.path,
-                        UnitKey.positiv
+                        UnitKey.positive
                     ),
-                    value: this.units.positiv
+                    value: this.units.positive
                         .map(x => x.value)
                         .reduce(toSum, 0),
-                    key: UnitKey.positiv
+                    key: UnitKey.positive
                 },
                 <NamedValue>{
                     name: this.configService.getName(
                         this.config.path,
-                        UnitKey.negativ
+                        UnitKey.negative
                     ),
-                    value: this.units.negativ
+                    value: this.units.negative
                         .map(x => x.value)
                         .reduce(toSum, 0),
-                    key: UnitKey.negativ
+                    key: UnitKey.negative
                 }
             ],
             value: 0
         };
 
-        this._totalUnits[UnitKey.positiv] = {
-            name: this.configService.getName(this.config.path, UnitKey.positiv),
-            elements: this.units.positiv
+        this._totalUnits[UnitKey.positive] = {
+            name: this.configService.getName(this.config.path, UnitKey.positive),
+            elements: this.units.positive
         };
-        this._totalUnits[UnitKey.negativ] = {
-            name: this.configService.getName(this.config.path, UnitKey.negativ),
-            elements: this.units.negativ
+        this._totalUnits[UnitKey.negative] = {
+            name: this.configService.getName(this.config.path, UnitKey.negative),
+            elements: this.units.negative
         };
 
         this.unit = this._totalUnits[UnitKey.total];

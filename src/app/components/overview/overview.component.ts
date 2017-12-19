@@ -30,8 +30,8 @@ export class OverviewComponent implements OnInit {
     private type: string;
     private url: string;
     private name: string;
-    private positiv: string;
-    private negativ: string;
+    private positive: string;
+    private negative: string;
 
     constructor(
         private route: ActivatedRoute,
@@ -56,8 +56,8 @@ export class OverviewComponent implements OnInit {
             .subscribe(x => (this.theme = x.theme));
 
         this.name = this.config.getName(this.type);
-        this.positiv = this.config.getName(`${this.type}.positiv`);
-        this.negativ = this.config.getName(`${this.type}.negativ`);
+        this.positive = this.config.getName(`${this.type}.positive`);
+        this.negative = this.config.getName(`${this.type}.negative`);
         this.config.setColor(this.type);
         this.url = `/api/data/${this.type}`;
         this.getData().subscribe(x => (this.value = x));

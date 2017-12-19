@@ -25,14 +25,14 @@ export const AppRoutes: Routes = [
         data: { type: 'budgets' }
     },
     {
-        path: 'budgets/:id/positiv',
+        path: 'budgets/:id/positive',
         component: EditComponent,
-        data: { type: 'budgets', subType: 'positiv' }
+        data: { type: 'budgets', subType: 'positive' }
     },
     {
-        path: 'budgets/:id/negativ',
+        path: 'budgets/:id/negative',
         component: EditComponent,
-        data: { type: 'budgets', subType: 'negativ' }
+        data: { type: 'budgets', subType: 'negative' }
     },
     {
         path: 'assets',
@@ -40,14 +40,14 @@ export const AppRoutes: Routes = [
         data: { type: 'assets' }
     },
     {
-        path: 'assets/positiv',
+        path: 'assets/positive',
         component: EditComponent,
-        data: { type: 'assets', subType: 'positiv' }
+        data: { type: 'assets', subType: 'positive' }
     },
     {
-        path: 'assets/negativ',
+        path: 'assets/negative',
         component: EditComponent,
-        data: { type: 'assets', subType: 'negativ' }
+        data: { type: 'assets', subType: 'negative' }
     },
     {
         path: 'revenue',
@@ -55,14 +55,14 @@ export const AppRoutes: Routes = [
         data: { type: 'revenue' }
     },
     {
-        path: 'revenue/positiv',
+        path: 'revenue/positive',
         component: EditComponent,
-        data: { type: 'revenue', subType: 'positiv' }
+        data: { type: 'revenue', subType: 'positive' }
     },
     {
-        path: 'revenue/negativ',
+        path: 'revenue/negative',
         component: EditComponent,
-        data: { type: 'revenue', subType: 'negativ' }
+        data: { type: 'revenue', subType: 'negative' }
     },
     { path: '**', component: HomeComponent }
 ];

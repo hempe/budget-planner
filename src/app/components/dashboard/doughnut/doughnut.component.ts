@@ -103,7 +103,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
 
     @Input()
     public config: DashboardConfig = {
-        path: 'assets.positiv',
+        path: 'assets.positive',
         theme: Themes.light,
         type: 'doughnut'
     };

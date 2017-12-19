@@ -79,11 +79,11 @@ export class ConfigurationService {
         let type = this.flatten(path);
         switch (type) {
             case 'assets':
-            case 'assets.positiv':
-            case 'assets.negativ':
+            case 'assets.positive':
+            case 'assets.negative':
             case 'revenue':
-            case 'revenue.positiv':
-            case 'revenue.negativ':
+            case 'revenue.positive':
+            case 'revenue.negative':
                 return 'assessment';
             case 'budgets':
                 return 'trending_up';
@@ -96,20 +96,20 @@ export class ConfigurationService {
         let type = this.flatten(path);
         switch (type) {
             case 'assets':
-            case 'assets.positiv':
+            case 'assets.positive':
                 return 'Assets';
-            case 'assets.negativ':
+            case 'assets.negative':
                 return 'Debts';
             case 'revenue':
-            case 'revenue.positiv':
+            case 'revenue.positive':
                 return 'Revenue';
-            case 'revenue.negativ':
+            case 'revenue.negative':
                 return 'Expenses';
             case 'budgets':
                 return 'Budget';
-            case 'budgets.positiv':
+            case 'budgets.positive':
                 return 'Income';
-            case 'budgets.negativ':
+            case 'budgets.negative':
                 return 'Expenses';
 
             default:
@@ -121,19 +121,19 @@ export class ConfigurationService {
         let type = this.flatten(path);
         switch (type) {
             //case 'assets':
-            case 'assets.positiv':
+            case 'assets.positive':
                 return Colors.Green;
-            case 'assets.negativ':
+            case 'assets.negative':
                 return Colors.Red;
             //case 'revenue':
-            case 'revenue.positiv':
+            case 'revenue.positive':
                 return Colors.Teal;
-            case 'revenue.negativ':
+            case 'revenue.negative':
                 return Colors.Deep_Orange;
             //case 'budgets':
-            case 'budgets.positiv':
+            case 'budgets.positive':
                 return Colors.Blue; //Colors.Cyan;
-            case 'budgets.negativ':
+            case 'budgets.negative':
                 return Colors.Orange;
             default:
                 return this.fallback;

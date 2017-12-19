@@ -9,8 +9,8 @@ using Newtonsoft.Json;
 
 namespace BudgetPlanner.Models {
     public enum SubType {
-        Positiv,
-        Negativ,
+        Positive,
+        Negative,
     }
 
     public class DashboardConfiguration {

@@ -91,7 +91,8 @@ namespace BudgetPlanner.Attributes {
         private static object ToObject(Type type, string value) {
             try {
                 return string.IsNullOrEmpty(value) ? default(object) : JsonConvert.DeserializeObject(value, type);
-            } catch {
+            } catch (Exception e) {
+                Console.WriteLine(e);
                 return default(object);
             }
         }

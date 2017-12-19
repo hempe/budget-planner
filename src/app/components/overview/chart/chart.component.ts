@@ -181,7 +181,7 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
 
     private rgba(percent: number) {
         // prettier-ignore
-        //        return `${x.key == 'positiv' ? '255' : '0'},${x.key == 'positiv' ? '255' : '0'},${x.key == 'positiv' ? '255' : '0'}`;
+        //        return `${x.key == 'positive' ? '255' : '0'},${x.key == 'positive' ? '255' : '0'},${x.key == 'positive' ? '255' : '0'}`;
 
         let addon = 10;
         return `rgba(${hexToRgb(this.color)

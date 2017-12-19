@@ -38,13 +38,13 @@ export class AppComponent {
             fileService.current = {
                 assets: {
                     name: 'Assets',
-                    positiv: [
+                    positive: [
                         {
                             name: 'Example',
                             elements: [{ name: 'Example', value: 0 }]
                         }
                     ],
-                    negativ: [
+                    negative: [
                         {
                             name: 'Example',
                             elements: [{ name: 'Example', value: 0 }]
@@ -53,13 +53,13 @@ export class AppComponent {
                 },
                 revenue: {
                     name: 'Revenue',
-                    positiv: [
+                    positive: [
                         {
                             name: 'Example',
                             elements: [{ name: 'Example', value: 0 }]
                         }
                     ],
-                    negativ: [
+                    negative: [
                         {
                             name: 'Example',
                             elements: [{ name: 'Example', value: 0 }]
@@ -71,13 +71,13 @@ export class AppComponent {
                 budgets: [
                     {
                         name: 'Budget',
-                        positiv: [
+                        positive: [
                             {
                                 name: 'Example',
                                 elements: [{ name: 'Example', value: 0 }]
                             }
                         ],
-                        negativ: [
+                        negative: [
                             {
                                 name: 'Example',
                                 elements: [{ name: 'Example', value: 0 }]
