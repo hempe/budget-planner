@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import {
     FrequencyValue,
     Group,
@@ -27,6 +27,8 @@ export class BudgetComponent implements OnInit {
     public head: MenuEntry = {};
 
     public type: string = 'budgets';
+    public color: string;
+
     private value: OverviewValue;
     private id: string;
     private url: string;
@@ -46,6 +48,7 @@ export class BudgetComponent implements OnInit {
         };
 
         this.config.setColor('budgets');
+        this.color = this.config.getColor('budgets');
     }
     ngOnInit() {
         this.id = this.route.snapshot.params['id'];
@@ -88,9 +91,25 @@ export class BudgetComponent implements OnInit {
             });
     }
 
-    /*
-    public selected(row: OverviewValue) {
-        this.router.navigate(['budgets', row.id]);
+    public save(form: NgForm): void {
+        this.http
+            .post(`/api/data/budgets/${this.id}`, this.value)
+            .map(x => x.json())
+            .subscribe(
+                x => this.setValue(x, form),
+                err => this.resetForm(form)
+            );
     }
-    */
+
+    private setValue(x: any, form: NgForm) {
+        this.value = clone(x);
+        this.resetForm(form);
+    }
+
+    private resetForm(form: NgForm) {
+        if (form) {
+            form.control.markAsUntouched();
+            form.control.markAsPristine();
+        }
+    }
 }

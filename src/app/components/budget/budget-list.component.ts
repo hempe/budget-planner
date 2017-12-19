@@ -29,8 +29,10 @@ import { OverviewValue } from '../../common/file';
 })
 export class BudgetListComponent implements OnInit {
     public columns: DataSourceColumn[] = [
-        { key: 'name', name: 'Name', type: 'text' },
-        { key: 'value', name: 'Amount', type: 'number' }
+        { key: 'name', name: 'name', type: 'text' },
+        { key: 'value', name: 'amount', type: 'number' },
+        { key: 'startYear', name: 'startYear', type: 'number' },
+        { key: 'endYear', name: 'endYear', type: 'number' }
     ];
 
     public dataSource: DataSourceFactory<any, any>;

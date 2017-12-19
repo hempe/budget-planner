@@ -9,11 +9,11 @@
     <mat-table #table [dataSource]="dataSource" matSort [ngClass]="{'selectable':selectable}">
         <ng-container *ngFor="let header of headers">
             <ng-container matColumnDef="{{header.key}}">
-                <mat-header-cell *matHeaderCellDef translate mat-sort-header>{{ header.name }}</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef translate mat-sort-header>{{ header.name | translate }}</mat-header-cell>
                 <mat-cell *matCellDef="let row" style="position:relative;line-height:46px" (click)="onSelected(row)">
                     <ng-container [ngSwitch]="header.type">
                         <ng-container *ngSwitchCase="'frequency'">
-                            <div class="select-placeholder">{{ row[header.key] || row[header.key] === 0 ? '' : header.name }}</div>
+                            <div class="select-placeholder">{{ row[header.key] || row[header.key] === 0 ? '' : (header.name | translate) }}</div>
                             <mat-select name="{{header.key}}" name="header.key" [(ngModel)]="row[header.key]" [disabled]="!editable">
                                 <mat-option *ngFor="let option of frequencies" [value]="option.value">
                                     {{ option.name | translate }}

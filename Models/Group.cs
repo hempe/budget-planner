@@ -6,38 +6,9 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace BudgetPlanner.Models {
 
-    public class FrequencyValue : NamedValue {
-        public int Frequency { get; set; }
-    }
-
-    public class DatedValue : NamedValue {
-        public int Year { get; set; }
-    }
-
-    public class NamedValue {
-        public string Name { get; set; }
-        public decimal Value { get; set; }
-    }
-
-    public class Unit<T> where T : new() {
-        public string Name { get; set; }
-        public IEnumerable<T> Elements { get; set; } = new [] { new T() };
-    }
-
     public class Group<T> where T : new() {
         public IEnumerable<Unit<T>> Positive { get; set; } = new [] { new Unit<T>() };
         public IEnumerable<Unit<T>> Negative { get; set; } = new [] { new Unit<T>() };
-
-    }
-
-    public class OverviewValue : NamedValue {
-        public string Id { get; set; }
-        public IEnumerable<OverviewContainer> Positive { get; set; }
-        public IEnumerable<OverviewContainer> Negative { get; set; }
-    }
-
-    public class OverviewContainer : Unit<NamedValue> {
-        public decimal Value { get; set; }
     }
 
     public static class GroupExtensions {

@@ -7,7 +7,7 @@
             <menu-container>
                 <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
                     <mat-card-content *ngIf="value" flexContainer class="flex-container">
-                        <field icon="person" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
+                        <field icon="person" [(ngModel)]="value.name" name="name" type="text" flex=5></field>
                         <field [(ngModel)]="value.prename" name="prename" type="text" flex=5></field>
                         <field icon="domain" [(ngModel)]="value.company" name="company" type="text" flex=10></field>
 

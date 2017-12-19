@@ -109,6 +109,8 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
     @Output() public focus: EventEmitter<{}> = new EventEmitter();
     @Output() public change: EventEmitter<any> = new EventEmitter();
 
+    @Input() public min: string;
+    @Input() public max: string;
     @Input() public icon: string;
     @Input() public name: string;
     @Input() public type: string;

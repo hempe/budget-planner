@@ -35,35 +35,43 @@
             </menu-container>
         </menu-left>
 
-        <menu-right>
-            <menu-header>
-                <menu-title>{{ 'Edit' | translate }}</menu-title>
-                <button mat-icon-button [matMenuTriggerFor]="editMenu">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
-            </menu-header>
-            <menu-input *ngIf="value">
-                <field icon="folder" [(ngModel)]="value.name" name="name" type="text" half="true" flex=5></field>
-            </menu-input>
-            <menu-container noTop="true">
-                <menu-entry (click)="save()">
-                    <mat-icon>save</mat-icon>{{ 'Save' | translate }}
-                </menu-entry>
-                <menu-entry (click)="pin()">
-                    <mat-icon>{{theme ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (theme ? 'Unpin' : 'Pin') | translate }}
-                </menu-entry>
-            </menu-container>
+        <form #f="ngForm" (ngSubmit)="save(f)" novalidate>
+            <menu-right>
+                <menu-header>
+                    <menu-title>{{ 'Edit' | translate }}</menu-title>
+                    <button mat-icon-button [matMenuTriggerFor]="editMenu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                </menu-header>
+                <menu-input *ngIf="value">
+                    <field icon="folder" [(ngModel)]="value.name" name="name" type="text"></field>
+                    <span flexContainer>
+                        <field style="width:50%;" icon="date_range" [(ngModel)]="value.startYear" min="2017" max="2099" name="startYear" type="number"
+                            flex=1></field>
+                        <field style="width:50%;" [(ngModel)]="value.endYear" name="endYear" min="2017" max="2099" type="number" flex=1></field>
+                    </span>
+                </menu-input>
+                <menu-container noTop="true">
+                    <menu-entry (click)="save(f)" color="{{f.dirty ? color : 'rgba(0,0,0,0.54)' }}" title="">
+                        {{'Save' | translate}}
+                        <mat-icon>save</mat-icon>
+                    </menu-entry>
+                    <menu-entry (click)="pin()">
+                        <mat-icon>{{theme ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (theme ? 'Unpin' : 'Pin') | translate }}
+                    </menu-entry>
+                </menu-container>
 
-            <mat-menu #editMenu="matMenu">
-                <div class="mat-menu-items">
-                    <button mat-menu-item (click)="copy()">
-                        <mat-icon>content_copy</mat-icon> Copy this budget
-                    </button>
-                    <button mat-menu-item (click)="delete()">
-                        <mat-icon>delete_forever</mat-icon> Delete this budget
-                    </button>
-                </div>
-            </mat-menu>
-        </menu-right>
+                <mat-menu #editMenu="matMenu">
+                    <div class="mat-menu-items">
+                        <button mat-menu-item (click)="copy()">
+                            <mat-icon>content_copy</mat-icon> Copy this budget
+                        </button>
+                        <button mat-menu-item (click)="delete()">
+                            <mat-icon>delete_forever</mat-icon> Delete this budget
+                        </button>
+                    </div>
+                </mat-menu>
+            </menu-right>
+        </form>
     </div>
 </view-wrapper>

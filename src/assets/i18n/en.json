@@ -9,11 +9,15 @@
     "street": "Street, Nr.",
     "zipCode": "ZIP",
     "comment": "Comment",
+    "startYear": "From",
+    "endYear": "Until",
+    "amount": "Amount",
     "Auth": {
         "SignInWithGoogle": "Sign in with Google",
         "SignInWithMicrosoft": "Sign in with Microsoft"
     },
     "frequency": {
+        "frequency": "Frequency",
         "never": "Never",
         "daily": "Daily",
         "weekly": "Weekly",

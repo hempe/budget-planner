@@ -33,7 +33,7 @@
         <mat-icon *ngIf="icon">{{icon}}</mat-icon>
         <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
             <input matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
-                (focus)="onFocus()" [errorStateMatcher]="matcher">
+                (focus)="onFocus()" [errorStateMatcher]="matcher" [min]="min" [max]="max">
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>

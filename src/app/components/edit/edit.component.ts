@@ -140,8 +140,8 @@ export class EditComponent implements OnInit, OnDestroy {
         this.color = this.config.getColor(`${this.type}.${this.subType}`);
 
         this.columns = [
-            { key: 'name', name: 'Name', type: 'text' },
-            { key: 'value', name: 'Amount', type: 'number' }
+            { key: 'name', name: 'name', type: 'text' },
+            { key: 'value', name: 'amount', type: 'number' }
         ];
         if (this.type == 'revenue')
             this.columns.push({ key: 'year', name: 'Year', type: 'number' });
@@ -149,7 +149,7 @@ export class EditComponent implements OnInit, OnDestroy {
         if (this.type == 'budgets')
             this.columns.push({
                 key: 'frequency',
-                name: 'Frequency',
+                name: 'frequency.frequency',
                 type: 'frequency'
             });
 
