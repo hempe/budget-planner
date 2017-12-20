@@ -1,6 +1,7 @@
+import { hexToRgb, makeid } from '../common/helper';
+
 import { Injectable } from '@angular/core';
 import { Profile } from '../common/file';
-import { hexToRgb } from '../common/helper';
 import { retry } from 'rxjs/operator/retry';
 
 export const Colors = {
@@ -37,6 +38,20 @@ export class ConfigurationService {
 
     public loggedIn: boolean;
     public username: string;
+
+    private _avatar: string = '/assets/img/avatars/noavatar.png';
+    public set avatar(val: string) {
+        if (val) {
+            val = val.split('?id=')[0];
+            this._avatar = `${val}?q=${makeid()}`;
+        } else {
+            this._avatar = '/assets/img/avatars/noavatar.png';
+        }
+    }
+
+    public get avatar(): string {
+        return this._avatar;
+    }
     private _profile: Profile;
     public get profile(): Profile {
         return this._profile;
@@ -102,9 +117,9 @@ export class ConfigurationService {
                 return 'Debts';
             case 'revenue':
             case 'revenue.positive':
-                return 'Revenue';
+                return 'PlannedRevenue';
             case 'revenue.negative':
-                return 'Expenses';
+                return 'PlannedExpenses';
             case 'budgets':
                 return 'Budget';
             case 'budgets.positive':

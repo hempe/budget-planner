@@ -40,7 +40,11 @@ namespace BudgetPlanner {
             services.AddIdentity<User, IdentityRole>()
                 .AddDefaultTokenProviders();
 
-            services.AddCustomStores(Configuration.GetConnectionString("TableStore"), Configuration.GetValue<string>("TableStore:TablePrefix"));
+            services.AddCustomStores(
+                Configuration.GetConnectionString("Store"),
+                Configuration.GetValue<string>("Store:TablePrefix"),
+                Configuration.GetValue<string>("Store:ImageContainer")
+            );
 
             services.AddAuthentication()
                 .AddGoogle(option => {

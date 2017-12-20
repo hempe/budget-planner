@@ -69,7 +69,5 @@ export class ViewWrapperComponent implements OnInit {
         ];
     }
 
-    public noAction() {
-        alert('Not yet implemenet');
-    }
+    public noAction() {}
 }

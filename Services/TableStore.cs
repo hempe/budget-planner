@@ -11,8 +11,9 @@ using BudgetPlanner.Middleware;
 using Microsoft.Extensions.Options;
 
 namespace BudgetPlanner.Services {
-    public class TableStoreOption {
+    public class StoreOption {
         public string ConnectionString { get; set; }
+        public string ImageContainer { get; set; }
         public string Prefix { get; set; }
     }
 
@@ -27,9 +28,9 @@ namespace BudgetPlanner.Services {
         }
 
         private readonly CloudTableClient tableClient;
-        private readonly TableStoreOption options;
+        private readonly StoreOption options;
 
-        public TableStore(IOptions<TableStoreOption> options) {
+        public TableStore(IOptions<StoreOption> options) {
             this.options = options.Value;
             var cloudStorageAccount = CloudStorageAccount.Parse(this.options.ConnectionString);
             this.tableClient = cloudStorageAccount.CreateCloudTableClient();

@@ -21,7 +21,7 @@
   </mat-menu>
 
   <button mat-button [matMenuTriggerFor]="appMenu" [hidden]="!configuraton.loggedIn">
-    <img class="avatar" src="/assets/img/avatars/noavatar.png">
+    <img class="avatar" [src]="configuration.avatar">
     <span class="user-name">{{configuraton.username}}</span>
   </button>
 

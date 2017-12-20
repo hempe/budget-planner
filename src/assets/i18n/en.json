@@ -24,6 +24,7 @@
         "monthly": "Monthly",
         "yearly": "Yearly"
     },
+    "MatFile": { "DragFilesHereOrBrowse": "Drag files here or browse" },
     "Edit": "Edit",
     "Login": "Login",
     "Profile": "Profile",
@@ -33,6 +34,8 @@
     "Debts": "Debts",
     "Revenue": "Revenue",
     "Expenses": "Expenses",
+    "PlannedRevenue": "Planned revenue",
+    "PlannedExpenses": "Planned expenses",
     "Filter": "Filter",
     "Name": "Name",
     "Amount": "Amount",
@@ -48,5 +51,6 @@
     "Light": "Light",
     "Dark": "Dark",
     "Pin": "Pin to dashboard",
-    "Unpin": "Unpin from dashboard"
+    "Unpin": "Unpin from dashboard",
+    "Save": "Save"
 }

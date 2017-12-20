@@ -39,11 +39,13 @@ import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
 import { FieldComponent } from './components/field/field.component';
 import { FileService } from './services/file-service';
+import { FileUploadModule } from 'ng2-file-upload';
 import { FlatFieldComponent } from './components/flat-field/flat-field.component';
 import { FormsModule } from '@angular/forms';
 import { HomeComponent } from './components/home/home.component';
 import { KeyboardService } from './services/keyboard';
 import { LoginComponent } from './components/login/login.component';
+import { MatFileComponent } from './components/matfile/matfile.component';
 import { MaterialModule } from './app.material';
 import { MenuModule } from './components/menu/menu.module';
 import { MouseService } from './services/mouse';
@@ -83,9 +85,10 @@ import { httpFactory } from './services/http-interceptor';
         DashboardBarComponent,
         OverviewChartComponent,
         OverviewComponent,
-        ThemeSelectorDialog
+        ThemeSelectorDialog,
+        MatFileComponent
     ],
-    entryComponents: [ThemeSelectorDialog],
+    entryComponents: [ThemeSelectorDialog, MatFileComponent],
     imports: [
         BrowserModule,
         HttpModule,
@@ -93,6 +96,7 @@ import { httpFactory } from './services/http-interceptor';
         BrowserAnimationsModule,
         MaterialModule,
         MenuModule,
+        FileUploadModule,
         CdkTableModule,
         ChartsModule,
         RouterModule.forRoot(

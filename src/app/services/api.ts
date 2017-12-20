@@ -62,7 +62,18 @@ export class ApiService {
                             .subscribe(
                                 y => {
                                     this.configuration.profile = y;
-                                    resolve(true);
+                                    this.http
+                                        .get('/api/data/profile/image')
+                                        .map(x => x.json())
+                                        .subscribe(
+                                            uri => {
+                                                this.configuration.avatar = uri
+                                                    ? uri.uri
+                                                    : undefined;
+                                                resolve(true);
+                                            },
+                                            e => resolve(true)
+                                        );
                                 },
                                 ex => resolve(true)
                             );

@@ -18,6 +18,8 @@ import { clone } from '../../common/helper';
     styleUrls: ['profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+    public uploadUrl: string = 'api/data/profile/upload';
+    public avatar: string;
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -34,6 +36,9 @@ export class ProfileComponent implements OnInit {
     }
 
     public colors: { name: string; value: string }[];
+    public get color(): string {
+        return this.config.color;
+    }
 
     public setCustomColor() {
         this.config.setCustomColor(this.value.color);
@@ -47,6 +52,7 @@ export class ProfileComponent implements OnInit {
                 x => this.setValue(x, null),
                 err => this.resetForm(null)
             );
+        this.avatar = this.config.avatar;
     }
 
     public back(): void {
@@ -76,6 +82,17 @@ export class ProfileComponent implements OnInit {
         this.config.resetColor();
         this.value = clone(x);
         this.resetForm(form);
+    }
+
+    public reloadFiles() {
+        this.http
+            .get('/api/data/profile/image')
+            .map(x => x.json())
+            .subscribe(uri => {
+                this.config.avatar = uri ? uri.uri : undefined;
+
+                this.avatar = this.config.avatar;
+            });
     }
 
     private resetForm(form: NgForm) {

@@ -1,1 +1,32 @@
+.avatar {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    left: 50%;
+    max-width: 200px;
+    max-height: 200px;
+}
+.avatar-wrapper {
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin: auto;
+    position: relative;
+}
 
+mat-file {
+    position: absolute;
+    width: 210px;
+    height: 250px;
+    top: 25px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    padding: 0px 20px;
+    opacity: 0;
+}
+mat-file:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.9);
+}

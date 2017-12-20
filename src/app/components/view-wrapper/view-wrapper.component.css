@@ -68,7 +68,7 @@ header {
     max-height: 60px;
     margin-bottom: 1em;
     color: #fff;
-    font-size: 28px;
+    font-size: 24px;
     cursor: pointer;
 }
 
@@ -111,13 +111,14 @@ header {
 
     .title-wrapper {
         height: 160px;
+        padding: 3em 0em 0em 1.5em;
     }
 
     .menu {
         padding: 0 !important;
     }
 
-    .title-container {
+    .title-container > .title {
         display: none;
     }
 
