@@ -12,7 +12,6 @@ import { array, clone, toNumber } from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
 import { DashboardConfig } from '../dashboard/dashboard';
-import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';

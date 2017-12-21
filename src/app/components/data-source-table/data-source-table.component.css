@@ -37,3 +37,32 @@
     top: 14px;
     left: 24px;
 }
+
+.number {
+    max-width: 200px;
+    text-align: right;
+}
+
+mat-header-cell.number ::ng-deep .mat-sort-header-container {
+    align-items: flex-end;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+mat-cell.number ::ng-deep input {
+    text-align: right;
+}
+.icon {
+    max-width: 72px;
+    width: 72px;
+}
+
+mat-cell.icon {
+    height: 48px;
+    position: relative;
+}
+.icon > mat-icon {
+    position: absolute;
+    left: 0;
+    top: 12px;
+}

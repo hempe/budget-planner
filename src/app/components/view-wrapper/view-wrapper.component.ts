@@ -60,6 +60,11 @@ export class ViewWrapperComponent implements OnInit {
                         action: () => this.router.navigate(['revenue'])
                     },
                     {
+                        name: 'Development',
+                        icon: 'insert_chart',
+                        action: () => this.router.navigate(['development'])
+                    },
+                    {
                         name: 'Profile',
                         icon: 'person',
                         action: () => this.router.navigate(['profile'])

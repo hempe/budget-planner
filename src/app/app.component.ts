@@ -5,7 +5,6 @@ import { array, makeid } from './common/helper';
 
 import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
-import { FileService } from './services/file-service';
 import { Profile } from './common/file';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,7 +21,6 @@ export class AppComponent {
     constructor(
         private configuraton: ConfigurationService,
         private router: Router,
-        private fileService: FileService,
         private api: ApiService,
         public configuration: ConfigurationService
     ) {
@@ -32,69 +30,6 @@ export class AppComponent {
             this.refreshIFrame();
             this.loading = false;
         });
-
-        //fileService.loadMemory();
-        if (!fileService.current) {
-            fileService.current = {
-                assets: {
-                    name: 'Assets',
-                    positive: [
-                        {
-                            name: 'Example',
-                            elements: [{ name: 'Example', value: 0 }]
-                        }
-                    ],
-                    negative: [
-                        {
-                            name: 'Example',
-                            elements: [{ name: 'Example', value: 0 }]
-                        }
-                    ]
-                },
-                revenue: {
-                    name: 'Revenue',
-                    positive: [
-                        {
-                            name: 'Example',
-                            elements: [{ name: 'Example', value: 0 }]
-                        }
-                    ],
-                    negative: [
-                        {
-                            name: 'Example',
-                            elements: [{ name: 'Example', value: 0 }]
-                        }
-                    ]
-                },
-                client: <Profile>{},
-                name: 'Example',
-                budgets: [
-                    {
-                        name: 'Budget',
-                        positive: [
-                            {
-                                name: 'Example',
-                                elements: [{ name: 'Example', value: 0 }]
-                            }
-                        ],
-                        negative: [
-                            {
-                                name: 'Example',
-                                elements: [{ name: 'Example', value: 0 }]
-                            }
-                        ]
-                    }
-                ],
-                development: {
-                    elements: [],
-                    name: 'Development',
-                    from: 2017,
-                    to: 2018
-                }
-            };
-        }
-
-        fileService.current.budgets = array(fileService.current.budgets);
     }
 
     private refreshIFrame() {

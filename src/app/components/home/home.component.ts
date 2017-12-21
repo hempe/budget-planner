@@ -1,11 +1,10 @@
 import { Colors, ConfigurationService } from '../../services/configuration';
 import { Component, HostListener } from '@angular/core';
-import { Files, Group, IFile, OverviewValue } from '../../common/file';
+import { Group, OverviewValue } from '../../common/file';
 import { array, numberWithSeperator } from '../../common/helper';
 
 import { Color } from 'ng2-charts';
 import { DashboardConfig } from '../dashboard/dashboard';
-import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';

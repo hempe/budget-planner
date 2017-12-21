@@ -1,3 +1,12 @@
+export interface DevelopmentElement {
+    type: string;
+    group: string;
+    name: string;
+    start?: number;
+    end?: number;
+    value?: number;
+}
+
 export interface OverviewValue extends NamedValue {
     id: string;
     positive: OverviewContainer[];
@@ -25,16 +34,6 @@ export const UnitKey = {
     total: 'total'
 };
 
-export interface IFile {
-    budgets: Group<FrequencyValue>[];
-    assets: Group<NamedValue>;
-    revenue: Group<DatedValue>;
-    development: IDevelopmentGroup;
-    client: Profile;
-    name: string;
-    language?: string;
-}
-
 export interface FrequencyValue extends NamedValue {
     frequency?: number;
 }
@@ -49,18 +48,6 @@ export interface DatedValue extends NamedValue {
     year?: number;
 }
 
-export interface IDevelopment {
-    budget: number;
-    year: number;
-}
-
-export interface IDevelopmentGroup {
-    elements: IDevelopment[];
-    name: string;
-    from: number;
-    to: number;
-}
-
 export interface Profile {
     city?: String;
     comment?: string;
@@ -73,22 +60,4 @@ export interface Profile {
     telNumber?: string;
     zipCode?: string;
     color?: string;
-}
-
-export namespace Files {
-    export function CreateNew(): IFile {
-        return <IFile>{};
-    }
-
-    export function OpenFile(doc: { name: string; data: string }): IFile {
-        var file = JSON.parse(doc.data);
-        var name = doc.name;
-        var extensionPosition = name.lastIndexOf('.');
-        if (name == '') return file;
-
-        if (extensionPosition > 0)
-            file.name = name.substr(0, extensionPosition);
-        else file.name = name;
-        return file;
-    }
 }

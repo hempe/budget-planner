@@ -15,7 +15,7 @@ import {
     DataSourceValue,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { Files, Group, IFile, NamedValue, Unit } from '../../common/file';
+import { Group, NamedValue, Unit } from '../../common/file';
 import { MatPaginator, MatTabChangeEvent } from '@angular/material';
 import {
     array,
@@ -28,7 +28,6 @@ import {
 import { ConfigurationService } from '../../services/configuration';
 import { DashboardConfig } from '../dashboard/dashboard';
 import { DataSource } from '@angular/cdk/table';
-import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { KeyboardService } from '../../services/keyboard';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
@@ -85,7 +84,6 @@ export class EditComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private http: Http,
-        private fileService: FileService,
         private config: ConfigurationService,
         private keyboardService: KeyboardService,
         private themeSelector: ThemeSelector
@@ -139,19 +137,29 @@ export class EditComponent implements OnInit, OnDestroy {
         this.label = this.config.getName(`${this.type}.${this.subType}`);
         this.color = this.config.getColor(`${this.type}.${this.subType}`);
 
-        this.columns = [
-            { key: 'name', name: 'name', type: 'text' },
-            { key: 'value', name: 'amount', type: 'number' }
-        ];
+        if (this.type == 'assets')
+            this.columns = [
+                { key: 'name', name: 'name', type: 'text' },
+                { key: 'value', name: 'amount', type: 'number' }
+            ];
+
         if (this.type == 'revenue')
-            this.columns.push({ key: 'year', name: 'Year', type: 'number' });
+            this.columns = [
+                { key: 'name', name: 'name', type: 'text' },
+                { key: 'year', name: 'Year', type: 'number' },
+                { key: 'value', name: 'amount', type: 'number' }
+            ];
 
         if (this.type == 'budgets')
-            this.columns.push({
-                key: 'frequency',
-                name: 'frequency.frequency',
-                type: 'frequency'
-            });
+            this.columns = [
+                { key: 'name', name: 'name', type: 'text' },
+                {
+                    key: 'frequency',
+                    name: 'frequency.frequency',
+                    type: 'frequency'
+                },
+                { key: 'value', name: 'amount', type: 'number' }
+            ];
 
         let path = `${this.type}.${this.subType}`;
         this.config.setColor(path);

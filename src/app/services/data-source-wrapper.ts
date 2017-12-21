@@ -15,6 +15,7 @@ export interface DataSourceColumn {
     name: string;
     key: string;
     type?: string;
+    map?: any;
 }
 export interface DataSourceRefs {
     paginator: MatPaginator;
@@ -50,7 +51,9 @@ export class ListDataSource<TValue> extends DataSource<TValue>
                     this.filter = refs.filter.nativeElement.value;
                 });
         }
-        this.properties = this.refs.columns.map(x => x.key);
+        this.properties = this.refs.columns
+            .filter(x => x.type == 'text' || x.type == 'number')
+            .map(x => x.key);
     }
     URLSearchParams;
     filterChange = new BehaviorSubject('');

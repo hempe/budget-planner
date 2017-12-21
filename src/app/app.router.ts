@@ -1,6 +1,7 @@
 import { AppComponent } from './app.component';
 import { BudgetComponent } from './components/budget/budget.component';
 import { BudgetListComponent } from './components/budget/budget-list.component';
+import { DevelopmentComponent } from './components/development/development.component';
 import { EditComponent } from './components/edit/edit.component';
 import { HomeComponent } from './components/home/home.component';
 import { OverviewComponent } from './components/overview/overview.component';
@@ -11,8 +12,11 @@ export const AppRoutes: Routes = [
     { path: 'home', component: HomeComponent },
     {
         path: 'profile',
-        component: ProfileComponent,
-        data: { state: 'profile' }
+        component: ProfileComponent
+    },
+    {
+        path: 'development',
+        component: DevelopmentComponent
     },
     {
         path: 'budgets',

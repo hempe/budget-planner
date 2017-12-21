@@ -52,5 +52,6 @@
     "Dark": "Dark",
     "Pin": "Pin to dashboard",
     "Unpin": "Unpin from dashboard",
-    "Save": "Save"
+    "Save": "Save",
+    "type": "Type"
 }

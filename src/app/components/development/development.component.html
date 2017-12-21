@@ -1,0 +1,40 @@
+<view-wrapper [head]="head" [button]="button">
+    <div flexContainer>
+        <menu-left>
+            <menu-header>
+                <menu-title>
+                    {{ 'Overview' | translate }}
+                </menu-title>
+            </menu-header>
+            <menu-container>
+                <menu-container *ngIf="!value" flexContainer class="not-loaded">
+                    <div class="loading">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                </menu-container>
+                <div *ngIf="value" class="header">
+                    <mat-card *ngIf="tooltip" class="label" [style.top]="tooltip.top" [style.left]="tooltip.left">
+
+                        <mat-card-title>{{tooltip.year}}</mat-card-title>
+                        <mat-card-subtitle>{{tooltip.group}}: {{tooltip.value}}</mat-card-subtitle>
+
+                    </mat-card>
+                    <canvas baseChart height="250" width="250" [colors]="colors" [options]="options" [datasets]="datasets" chartType="bar" (chartClick)="chartClicked($event)"></canvas>
+                </div>
+            </menu-container>
+            <br/>
+            <data-source-table [columns]="columns" [dataSourceFactory]="dataSource" (selected)="selected($event)"></data-source-table>
+        </menu-left>
+
+        <menu-right>
+
+            <menu-header>
+                <menu-title>{{ 'Edit' | translate }}</menu-title>
+            </menu-header>
+            <menu-container>
+                Hier könnte ihre werbung stehen.
+            </menu-container>
+
+        </menu-right>
+    </div>
+</view-wrapper>

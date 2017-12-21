@@ -34,11 +34,11 @@ import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
 import { DashboardBarComponent } from './components/dashboard/bar/bar.component';
 import { DashboardDoughnutComponent } from './components/dashboard/doughnut/doughnut.component';
 import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
+import { DevelopmentComponent } from './components/development/development.component';
 import { EditChartComponent } from './components/edit/chart/chart.component';
 import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
 import { FieldComponent } from './components/field/field.component';
-import { FileService } from './services/file-service';
 import { FileUploadModule } from 'ng2-file-upload';
 import { FlatFieldComponent } from './components/flat-field/flat-field.component';
 import { FormsModule } from '@angular/forms';
@@ -74,6 +74,7 @@ import { httpFactory } from './services/http-interceptor';
         EditComponent,
         EditChartComponent,
         ProfileComponent,
+        DevelopmentComponent,
         ReloadOnResizeDirective,
         FlexContainerDirective,
         FlexDirective,
@@ -132,7 +133,6 @@ import { httpFactory } from './services/http-interceptor';
         ResizeService,
         KeyboardService,
         ApiService,
-        FileService,
         {
             provide: Http,
             useFactory: httpFactory,

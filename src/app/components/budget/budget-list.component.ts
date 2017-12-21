@@ -16,7 +16,6 @@ import { Observable, Subject } from 'rxjs';
 import { array, clone, toNumber } from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
-import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';

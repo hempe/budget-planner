@@ -4,7 +4,6 @@ import { Colors, ConfigurationService } from '../../services/configuration';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-import { FileService } from '../../services/file-service';
 import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';

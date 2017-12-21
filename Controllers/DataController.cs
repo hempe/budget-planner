@@ -27,6 +27,15 @@ using SixLabors.Primitives;
 
 namespace BudgetPlanner.Controllers {
 
+    public class DevelopmentElement {
+        public string Group { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public int? Start { get; set; }
+        public int? End { get; set; }
+        public decimal Value { get; set; }
+    }
+
     [Route("api/data")]
     [Authorize]
     public class DataController : Controller {
@@ -107,6 +116,97 @@ namespace BudgetPlanner.Controllers {
                 return this.BadRequest();
             }
 
+        }
+
+        [HttpGet("development")]
+        [ProducesResponseType(typeof(DevelopmentElement[]), 200)]
+        public async Task<IActionResult> GetDevelopment() {
+            var all = new List<DevelopmentElement>();
+            var budgets = await this.tableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
+            if (budgets != null) {
+                all.AddRange(budgets
+                    .Where(b => b.Data != null)
+                    .SelectMany(b => b.Data.Positive.Select(x => new DevelopmentElement {
+                        Group = b.Name,
+                            Name = x.Name,
+                            Value = x.Elements == null ? 0 : x.Elements.Sum(y => y.Value * y.Frequency),
+                            Start = b.Data.StartYear,
+                            End = b.Data.EndYear,
+                            Type = "budget"
+                    }))
+                    .ToList());
+
+                all.AddRange(budgets
+                    .Where(b => b.Data != null)
+                    .SelectMany(b => b.Data.Negative.Select(x => new DevelopmentElement {
+                        Group = b.Name,
+                            Name = x.Name,
+                            Value = -(x.Elements == null ? 0 : x.Elements.Sum(y => y.Value * y.Frequency)),
+                            Start = b.Data.StartYear,
+                            End = b.Data.EndYear,
+                            Type = "budget"
+                    }))
+                    .ToList());
+            }
+
+            var revenue = await this.tableStore.GetAsync(new Revenue { UserId = this.UserId });
+            if (revenue?.Data != null) {
+                all.AddRange(
+                    revenue.Data.Positive.SelectMany(x => x.Elements.Select(y => new {
+                        Name = x.Name,
+                            Value = y.Value,
+                            Year = y.Year,
+                    })).GroupBy(x =>(x.Name, x.Year))
+                    .Select(x => new DevelopmentElement {
+                        Group = nameof(Revenue),
+                            Name = x.Key.Name,
+                            Start = x.Key.Year,
+                            End = x.Key.Year,
+                            Value = x.Sum(y => y.Value),
+                            Type = "revenue"
+                    }));
+
+                all.AddRange(
+                    revenue.Data.Negative.SelectMany(x => x.Elements.Select(y => new {
+                        Name = x.Name,
+                            Value = -y.Value,
+                            Year = y.Year,
+                    })).GroupBy(x =>(x.Name, x.Year))
+                    .Select(x => new DevelopmentElement {
+                        Group = nameof(Revenue),
+                            Name = x.Key.Name,
+                            Start = x.Key.Year,
+                            End = x.Key.Year,
+                            Value = x.Sum(y => y.Value),
+                            Type = "revenue"
+                    }));
+            }
+
+            var assets = await this.tableStore.GetAsync(new Asset { UserId = this.UserId });
+            if (assets?.Data != null) {
+                all.AddRange(
+                    assets.Data.Positive.SelectMany(x => x.Elements.Select(y => new {
+                        Name = x.Name, Value = y.Value,
+                    })).GroupBy(x => x.Name)
+                    .Select(x => new DevelopmentElement {
+                        Group = nameof(Asset),
+                            Name = x.Key,
+                            Value = x.Sum(y => y.Value),
+                            Type = "asset"
+                    }));
+                all.AddRange(
+                    assets.Data.Negative.SelectMany(x => x.Elements.Select(y => new {
+                        Name = x.Name, Value = -y.Value,
+                    })).GroupBy(x => x.Name)
+                    .Select(x => new DevelopmentElement {
+                        Group = nameof(Asset),
+                            Name = x.Key,
+                            Value = x.Sum(y => y.Value),
+                            Type = "asset"
+                    }));
+            }
+
+            return this.Ok(all);
         }
 
         private string UserId { get => this.userManager.GetUserId(this.User); }
