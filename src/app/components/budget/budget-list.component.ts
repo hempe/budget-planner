@@ -19,7 +19,7 @@ import { ConfigurationService } from '../../services/configuration';
 import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { OverviewValue } from '../../common/file';
+import { OverviewValue } from '../../common/api';
 
 @Component({
     selector: 'budget-list',

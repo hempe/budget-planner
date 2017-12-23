@@ -1,6 +1,6 @@
 import { Colors, ConfigurationService } from '../../services/configuration';
 import { Component, HostListener } from '@angular/core';
-import { Group, OverviewValue } from '../../common/file';
+import { Group, OverviewValue } from '../../common/api';
 import { array, numberWithSeperator } from '../../common/helper';
 
 import { Color } from 'ng2-charts';

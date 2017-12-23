@@ -1,3 +1,10 @@
+export interface Complete {
+    budgets: BudgetData[];
+    assets: Group<NamedValue>;
+    revenue: Group<DatedValue>;
+    client: Profile;
+}
+
 export interface DevelopmentElement {
     type: string;
     group: string;
@@ -6,7 +13,10 @@ export interface DevelopmentElement {
     end?: number;
     value?: number;
 }
-
+export interface BudgetData extends Group<FrequencyValue> {
+    startYear?: number;
+    endYear?: number;
+}
 export interface OverviewValue extends NamedValue {
     id: string;
     positive: OverviewContainer[];

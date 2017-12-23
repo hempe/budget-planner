@@ -1,13 +1,10 @@
-using BudgetPlanner.Attributes;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace BudgetPlanner.Models {
-
-    [Table("Budgets")]
-    public class Budget : UserData<BudgetData> {
-        [IgnoreProperty]
-        [RowKey]
+    public class BudgetData : Group<FrequencyValue> {
         public string Id { get; set; }
         public string Name { get; set; }
+        public int? StartYear { get; set; }
+        public int? EndYear { get; set; }
     }
 }

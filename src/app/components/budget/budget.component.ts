@@ -6,7 +6,7 @@ import {
     Group,
     OverviewValue,
     Profile
-} from '../../common/file';
+} from '../../common/api';
 import { Observable, Subject } from 'rxjs';
 import { array, clone, toNumber } from '../../common/helper';
 

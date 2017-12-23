@@ -17,7 +17,7 @@ import {
     FrequencyValue,
     NamedValue,
     Unit
-} from '../../../common/file';
+} from '../../../common/api';
 import {
     array,
     hexToRgb,

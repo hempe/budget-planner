@@ -15,7 +15,7 @@ import {
     DataSourceValue,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { Group, NamedValue, Unit } from '../../common/file';
+import { Group, NamedValue, Unit } from '../../common/api';
 import { MatPaginator, MatTabChangeEvent } from '@angular/material';
 import {
     array,

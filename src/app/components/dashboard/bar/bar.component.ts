@@ -18,7 +18,7 @@ import {
     OverviewContainer,
     OverviewValue,
     UnitKey
-} from '../../../common/file';
+} from '../../../common/api';
 import {
     array,
     hexToRgb,

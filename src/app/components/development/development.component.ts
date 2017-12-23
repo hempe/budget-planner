@@ -13,7 +13,7 @@ import {
     DataSourceFactory,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { DevelopmentElement, OverviewValue } from '../../common/file';
+import { DevelopmentElement, OverviewValue } from '../../common/api';
 import { Observable, Subject } from 'rxjs';
 import {
     clone,

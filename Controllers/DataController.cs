@@ -38,20 +38,16 @@ namespace BudgetPlanner.Controllers {
 
     [Route("api/data")]
     [Authorize]
-    public class DataController : Controller {
-        private readonly UserManager<User> userManager;
-        private readonly TableStore tableStore;
+    public class DataController : BaseController {
         private readonly StoreOption storageOptions;
-        public DataController(UserManager<User> userManager, TableStore tableStore, IOptions<StoreOption> storageOptions) {
-            this.userManager = userManager;
-            this.tableStore = tableStore;
+        public DataController(UserManager<User> userManager, TableStore tableStore, IOptions<StoreOption> storageOptions) : base(userManager, tableStore) {
             this.storageOptions = storageOptions.Value;
         }
 
         [HttpGet("profile")]
         [ProducesResponseType(typeof(object), 200)]
         public async Task<IActionResult> GetProfile() {
-            var value = await this.tableStore.GetAsync(new Profile { UserId = this.UserId });
+            var value = await this.TableStore.GetAsync(new Profile { UserId = this.UserId });
             return this.Ok(value?.Data ?? new object());
         }
 
@@ -66,7 +62,7 @@ namespace BudgetPlanner.Controllers {
         [HttpPost("profile")]
         [ProducesResponseType(typeof(object), 200)]
         public async Task<IActionResult> SetProfile([FromBody] object data) {
-            await this.tableStore.AddOrUpdateAsync(new Profile { UserId = this.UserId, Data = data });
+            await this.TableStore.AddOrUpdateAsync(new Profile { UserId = this.UserId, Data = data });
             return this.Ok(data);
         }
 
@@ -122,7 +118,7 @@ namespace BudgetPlanner.Controllers {
         [ProducesResponseType(typeof(DevelopmentElement[]), 200)]
         public async Task<IActionResult> GetDevelopment() {
             var all = new List<DevelopmentElement>();
-            var budgets = await this.tableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
+            var budgets = await this.TableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
             if (budgets != null) {
                 all.AddRange(budgets
                     .Where(b => b.Data != null)
@@ -149,7 +145,7 @@ namespace BudgetPlanner.Controllers {
                     .ToList());
             }
 
-            var revenue = await this.tableStore.GetAsync(new Revenue { UserId = this.UserId });
+            var revenue = await this.TableStore.GetAsync(new Revenue { UserId = this.UserId });
             if (revenue?.Data != null) {
                 all.AddRange(
                     revenue.Data.Positive.SelectMany(x => x.Elements.Select(y => new {
@@ -182,7 +178,7 @@ namespace BudgetPlanner.Controllers {
                     }));
             }
 
-            var assets = await this.tableStore.GetAsync(new Asset { UserId = this.UserId });
+            var assets = await this.TableStore.GetAsync(new Asset { UserId = this.UserId });
             if (assets?.Data != null) {
                 all.AddRange(
                     assets.Data.Positive.SelectMany(x => x.Elements.Select(y => new {
@@ -208,8 +204,6 @@ namespace BudgetPlanner.Controllers {
 
             return this.Ok(all);
         }
-
-        private string UserId { get => this.userManager.GetUserId(this.User); }
 
         private CloudBlockBlob GetBlobReference(string fileName) {
             var storageAccount = CloudStorageAccount.Parse(this.storageOptions.ConnectionString);

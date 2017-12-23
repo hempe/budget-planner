@@ -14,18 +14,13 @@ namespace BudgetPlanner.Controllers {
 
     [Route("api/data/dashboard")]
     [Authorize]
-    public class DashboardController : Controller {
-        private readonly UserManager<User> userManager;
-        private readonly TableStore tableStore;
-        public DashboardController(UserManager<User> userManager, TableStore tableStore) {
-            this.userManager = userManager;
-            this.tableStore = tableStore;
-        }
+    public class DashboardController : BaseController {
+        public DashboardController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
 
         [HttpGet("")]
         [ProducesResponseType(typeof(DashboardConfiguration[]), 200)]
         public async Task<IActionResult> GetAll() {
-            var values = await this.tableStore.GetAllAsync<Dashboard>(new Args { { nameof(Dashboard.UserId), this.UserId } });
+            var values = await this.TableStore.GetAllAsync<Dashboard>(new Args { { nameof(Dashboard.UserId), this.UserId } });
             return this.Ok(values.Select(x =>(DashboardConfiguration) x));
         }
 
@@ -34,7 +29,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> GetTheme([FromRoute] string path) {
             Dashboard source = new DashboardConfiguration { Path = path };
             source.UserId = this.UserId;
-            var result = await this.tableStore.GetAsync(source);
+            var result = await this.TableStore.GetAsync(source);
             return this.Ok(new { Theme = result?.Theme });
         }
 
@@ -43,7 +38,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> GetTheme([FromRoute] string path, [FromRoute] int? id) {
             Dashboard source = new DashboardConfiguration { Path = path, Id = id };
             source.UserId = this.UserId;
-            var result = await this.tableStore.GetAsync(source);
+            var result = await this.TableStore.GetAsync(source);
             return this.Ok(new { Theme = result?.Theme });
         }
 
@@ -52,7 +47,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> Delete([FromRoute] string path) {
             Dashboard source = new DashboardConfiguration { Path = path };
             source.UserId = this.UserId;
-            await this.tableStore.DeleteAsync(source);
+            await this.TableStore.DeleteAsync(source);
             return this.Ok();
         }
 
@@ -61,7 +56,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> Delete([FromRoute] string path, [FromRoute] int? id) {
             Dashboard source = new DashboardConfiguration { Path = path, Id = id };
             source.UserId = this.UserId;
-            await this.tableStore.DeleteAsync(source);
+            await this.TableStore.DeleteAsync(source);
             return this.Ok();
         }
 
@@ -70,10 +65,8 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> Add([FromBody] DashboardConfiguration config) {
             Dashboard dashboard = config;
             dashboard.UserId = this.UserId;
-            await this.tableStore.AddOrUpdateAsync(dashboard);
+            await this.TableStore.AddOrUpdateAsync(dashboard);
             return this.Ok(config);
         }
-
-        private string UserId { get => this.userManager.GetUserId(this.User); }
     }
 }

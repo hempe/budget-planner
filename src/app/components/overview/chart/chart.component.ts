@@ -16,7 +16,7 @@ import {
     NamedValue,
     OverviewContainer,
     OverviewValue
-} from '../../../common/file';
+} from '../../../common/api';
 import {
     array,
     hexToRgb,

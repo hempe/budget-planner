@@ -5,23 +5,19 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BudgetPlanner.Models;
+using BudgetPlanner.Services;
 using Flurl;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-//https://github.com/aspnet/Identity/tree/dev/samples/IdentitySample.Mvc
 
 namespace BudgetPlanner.Controllers {
 
     [Route(".auth")]
-    public class AuthController : Controller {
-
+    public class AuthController : BaseController {
         private readonly SignInManager<User> signInManager;
-        private readonly UserManager<User> userManager;
-
-        public AuthController(SignInManager<User> signInManager, UserManager<User> userManager) {
+        public AuthController(UserManager<User> userManager, TableStore tableStore, SignInManager<User> signInManager) : base(userManager, tableStore) {
             this.signInManager = signInManager;
-            this.userManager = userManager;
         }
 
         [AllowAnonymous]
@@ -36,10 +32,6 @@ namespace BudgetPlanner.Controllers {
         [AllowAnonymous, Route("error/{code}"), HttpGet, HttpDelete, HttpPost, HttpPut, HttpPatch]
         public IActionResult accessdenied([FromRoute] int code) {
             return this.StatusCode(code);
-        }
-
-        public IActionResult unauthorized() {
-            return this.Unauthorized();
         }
 
         [AllowAnonymous]
@@ -105,9 +97,9 @@ namespace BudgetPlanner.Controllers {
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var user = new User { UserName = email, Email = email, EmailConfirmed = true, };
 
-                var created = await this.userManager.CreateAsync(user);
+                var created = await this.UserManager.CreateAsync(user);
                 if (created.Succeeded) {
-                    created = await this.userManager.AddLoginAsync(user, info);
+                    created = await this.UserManager.AddLoginAsync(user, info);
                     if (created.Succeeded) {
                         await this.signInManager.SignInAsync(user, isPersistent: false);
                         //_logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);

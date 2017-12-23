@@ -8,7 +8,7 @@ import { Http } from '@angular/http';
 import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
-import { Profile } from '../../common/file';
+import { Profile } from '../../common/api';
 import { clone } from '../../common/helper';
 
 @Component({

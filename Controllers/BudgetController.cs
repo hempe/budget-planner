@@ -14,18 +14,13 @@ namespace BudgetPlanner.Controllers {
 
     [Route("api/data/budgets")]
     [Authorize]
-    public class BudgetController : Controller {
-        private readonly UserManager<User> userManager;
-        private readonly TableStore tableStore;
-        public BudgetController(UserManager<User> userManager, TableStore tableStore) {
-            this.userManager = userManager;
-            this.tableStore = tableStore;
-        }
+    public class BudgetController : BaseController {
+        public BudgetController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
 
         [HttpGet("")]
         [ProducesResponseType(typeof(BudgetOverview[]), 200)]
         public async Task<IActionResult> GetAll() {
-            var values = await this.tableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
+            var values = await this.TableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
             if (values.Count == 0)
                 values.Add(new Budget { Data = new BudgetData { }, Name = "Budget", Id = "0" });
 
@@ -47,7 +42,7 @@ namespace BudgetPlanner.Controllers {
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(BudgetOverview), 200)]
         public async Task<IActionResult> GetOverview([FromRoute] string id) {
-            var value = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId });
+            var value = await this.TableStore.GetAsync(new Budget { Id = id, UserId = this.UserId });
             value = value ?? new Budget { Name = "Budget", Id = id };
             var overview = (value?.Data ?? new Group<FrequencyValue>()).ToOverview(x => x.Value * x.Frequency, value.Id, value.Name ?? nameof(Budget));
 
@@ -63,34 +58,34 @@ namespace BudgetPlanner.Controllers {
         }
 
         [HttpGet("{id}/{subType}")]
-        [ProducesResponseType(typeof(Unit<DatedValue>[]), 200)]
+        [ProducesResponseType(typeof(Unit<FrequencyValue>[]), 200)]
         public async Task<IActionResult> GetBudget([FromRoute] string id, [FromRoute] SubType subType) {
             var nullValue = new [] { new Unit<FrequencyValue>() };
-            var value = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId });
+            var value = await this.TableStore.GetAsync(new Budget { Id = id, UserId = this.UserId });
             return this.Ok(((subType == SubType.Negative) ? value?.Data?.Negative : value?.Data?.Positive) ?? nullValue);
         }
 
         [HttpPost("{id}")]
-        [ProducesResponseType(typeof(Unit<DatedValue>[]), 200)]
+        [ProducesResponseType(typeof(BudgetOverview), 200)]
         public async Task<IActionResult> SetBudgetHeader([FromRoute] string id, [FromBody] BudgetOverview data) {
 
-            var entity = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
+            var entity = await this.TableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
             entity.Data = entity.Data ?? new BudgetData();
             entity.Data.StartYear = data.StartYear;
             entity.Data.EndYear = data.EndYear;
             entity.Name = data.Name;
 
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
+            var result = await this.TableStore.AddOrUpdateAsync(entity);
             if (result.Success())
                 return this.Ok(data);
             return this.BadRequest("Failed to save data.");
         }
 
         [HttpPost("{id}/{subType}")]
-        [ProducesResponseType(typeof(Unit<DatedValue>[]), 200)]
+        [ProducesResponseType(typeof(Unit<FrequencyValue>[]), 200)]
         public async Task<IActionResult> SetBudget([FromRoute] string id, [FromRoute] SubType subType, [FromBody] Unit<FrequencyValue>[] data) {
 
-            var entity = await this.tableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
+            var entity = await this.TableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
             entity.Data = entity.Data ?? new BudgetData();
 
             if (subType == SubType.Negative)
@@ -98,13 +93,11 @@ namespace BudgetPlanner.Controllers {
             else
                 entity.Data.Positive = data;
 
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
+            var result = await this.TableStore.AddOrUpdateAsync(entity);
             if (result.Success())
                 return this.Ok(data);
             return this.BadRequest("Failed to save data.");
         }
-
-        private string UserId { get => this.userManager.GetUserId(this.User); }
 
     }
 }

@@ -14,19 +14,75 @@ using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
-namespace BudgetPlanner.Controllers {
+namespace BudgetPlanner.Services {
+    public class PdfHandler : IDisposable {
 
-    [Route("api/data/export/pdf")]
-    [Authorize]
-    public class PdfController : Controller {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly UserManager<User> userManager;
-        private readonly TableStore tableStore;
+        private readonly ExcelPackage package;
 
-        public PdfController(IHostingEnvironment hostingEnvironment, UserManager<User> userManager, TableStore tableStore) {
-            this._hostingEnvironment = hostingEnvironment;
-            this.userManager = userManager;
-            this.tableStore = tableStore;
+        public PdfHandler() {
+            this.package = new ExcelPackage();
+        }
+
+        public void Dispose() {
+            this.package.Dispose();
+        }
+
+        public Stream Create(List<Budget> budgets, Revenue revenue, Asset assets) {
+            foreach (var budget in budgets.Where(b => b.Data != null)) {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
+
+                var (rI, cI) = this.DoBudget(worksheet, 2, 2, "Income", budget.Data.Positive);
+                var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, "Expenses", budget.Data.Negative);
+
+                worksheet.Cells(1, 1, 0, cE)
+                    .Merge()
+                    .Value(budget.Name)
+                    .FontColor(Color.FromArgb(0, 140, 180))
+                    .FontSize(40)
+                    .Left(3)
+                    .Height(60);
+
+                worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
+                    .Style(x => x.Font.Name = "URW Gothic");
+            }
+
+            if (revenue?.Data != null) {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Revenue");
+
+                var (rI, cI) = this.DoRevenue(worksheet, 2, 2, "Planned income", revenue.Data.Positive);
+                var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, "Planned expenses", revenue.Data.Negative);
+
+                worksheet.Cells(1, 1, 0, cE)
+                    .Merge()
+                    .Value("Revenue")
+                    .FontColor(Color.FromArgb(0, 140, 180))
+                    .FontSize(40)
+                    .Left(3)
+                    .Height(60);
+
+                worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
+                    .Style(x => x.Font.Name = "URW Gothic");
+            }
+
+            if (assets?.Data != null) {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Assets");
+
+                var (rI, cI) = this.DoAssets(worksheet, 2, 2, "Assets", assets.Data.Positive);
+                var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, "Debts", assets.Data.Negative);
+
+                worksheet.Cells(1, 1, 0, cE)
+                    .Merge()
+                    .Value("Assets")
+                    .FontColor(Color.FromArgb(0, 140, 180))
+                    .FontSize(40)
+                    .Left(3)
+                    .Height(60);
+
+                worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
+                    .Style(x => x.Font.Name = "URW Gothic");
+            }
+
+            return new MemoryStream(package.GetAsByteArray());
         }
 
         private(int row, int col) DoBudget(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<FrequencyValue>> values) {
@@ -73,7 +129,7 @@ namespace BudgetPlanner.Controllers {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     x.Style.Indent = 1;
                 })
-                .Width(12);
+                .Width(15);
             worksheet.Column(col + 4).Hidden = true;
             row++;
 
@@ -189,7 +245,7 @@ namespace BudgetPlanner.Controllers {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     x.Style.Indent = 1;
                 })
-                .Width(12);
+                .Width(15);
             worksheet.Column(col + 4).Hidden = true;
             row++;
 
@@ -297,7 +353,7 @@ namespace BudgetPlanner.Controllers {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     x.Style.Indent = 1;
                 })
-                .Width(12);
+                .Width(15);
             worksheet.Column(col + 4).Hidden = true;
             row++;
 
@@ -367,85 +423,5 @@ namespace BudgetPlanner.Controllers {
 
             return (row, col + 4);
         }
-
-        [HttpGet]
-        [Route("")]
-        public async Task<string> Export() {
-
-            string sWebRootFolder = _hostingEnvironment.ContentRootPath;
-            string sFileName = @"demo.xlsx";
-            string URL = string.Format("{0}://{1}/{2}", Request.Scheme, Request.Host, sFileName);
-            FileInfo file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            if (file.Exists) {
-                file.Delete();
-                file = new FileInfo(Path.Combine(sWebRootFolder, sFileName));
-            }
-
-            using(ExcelPackage package = new ExcelPackage(file)) {
-
-                var budgets = await this.tableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
-                foreach (var budget in budgets.Where(b => b.Data != null)) {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
-
-                    var (rI, cI) = this.DoBudget(worksheet, 2, 2, "Income", budget.Data.Positive);
-                    var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, "Expenses", budget.Data.Negative);
-
-                    worksheet.Cells(1, 1, 0, cE)
-                        .Merge()
-                        .Value(budget.Name)
-                        .FontColor(Color.FromArgb(0, 140, 180))
-                        .FontSize(40)
-                        .Left(3)
-                        .Height(60);
-
-                    worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
-                        .Style(x => x.Font.Name = "URW Gothic");
-                }
-
-                var revenue = await this.tableStore.GetAsync(new Revenue { UserId = this.UserId });
-                if (revenue?.Data != null) {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Revenue");
-
-                    var (rI, cI) = this.DoRevenue(worksheet, 2, 2, "Planned income", revenue.Data.Positive);
-                    var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, "Planned expenses", revenue.Data.Negative);
-
-                    worksheet.Cells(1, 1, 0, cE)
-                        .Merge()
-                        .Value("Revenue")
-                        .FontColor(Color.FromArgb(0, 140, 180))
-                        .FontSize(40)
-                        .Left(3)
-                        .Height(60);
-
-                    worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
-                        .Style(x => x.Font.Name = "URW Gothic");
-                }
-
-                var assets = await this.tableStore.GetAsync(new Asset { UserId = this.UserId });
-                if (assets?.Data != null) {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Assets");
-
-                    var (rI, cI) = this.DoAssets(worksheet, 2, 2, "Assets", assets.Data.Positive);
-                    var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, "Debts", assets.Data.Negative);
-
-                    worksheet.Cells(1, 1, 0, cE)
-                        .Merge()
-                        .Value("Assets")
-                        .FontColor(Color.FromArgb(0, 140, 180))
-                        .FontSize(40)
-                        .Left(3)
-                        .Height(60);
-
-                    worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
-                        .Style(x => x.Font.Name = "URW Gothic");
-                }
-
-                package.Save(); //Save the workbook.
-            }
-            return URL;
-        }
-
-        private string UserId { get => this.userManager.GetUserId(this.User); }
-
     }
 }

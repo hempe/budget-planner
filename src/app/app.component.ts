@@ -5,7 +5,7 @@ import { array, makeid } from './common/helper';
 
 import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
-import { Profile } from './common/file';
+import { Profile } from './common/api';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 

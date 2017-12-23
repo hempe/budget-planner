@@ -1,7 +1,7 @@
 import { hexToRgb, makeid } from '../common/helper';
 
 import { Injectable } from '@angular/core';
-import { Profile } from '../common/file';
+import { Profile } from '../common/api';
 import { retry } from 'rxjs/operator/retry';
 
 export const Colors = {
