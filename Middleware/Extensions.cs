@@ -51,6 +51,11 @@ namespace BudgetPlanner.Middleware {
                 return @this;
             }
 
+            public static ExcelCell Column(this ExcelCell @this, Action<ExcelColumn> action) 
+            {
+                action(@this.Worksheet.Column(@this.Col));
+                return @this;
+            }
             public static ExcelCell Width(this ExcelCell @this, int value) 
             {
                 @this.Worksheet.Column(@this.Col).Width = value;
