@@ -1,6 +1,10 @@
 import {} from 'chartjs-plugin-deferred/sr';
+import 'rxjs/Rx';
+
+import * as FileSaver from 'file-saver';
 
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Http, RequestOptions, ResponseContentType } from '@angular/http';
 import { array, makeid } from './common/helper';
 
 import { ApiService } from './services/api';
@@ -20,6 +24,7 @@ export class AppComponent {
     @ViewChild('iframe') public iframe: ElementRef;
     constructor(
         private configuraton: ConfigurationService,
+        private http: Http,
         private router: Router,
         private api: ApiService,
         public configuration: ConfigurationService
@@ -30,6 +35,19 @@ export class AppComponent {
             this.refreshIFrame();
             this.loading = false;
         });
+    }
+
+    public download(type: string) {
+        let options = new RequestOptions({
+            responseType: ResponseContentType.Blob
+        });
+
+        this.http
+            .get(`/api/data/export/${type}`, options)
+            .map(x => x.blob())
+            .subscribe(blob => {
+                FileSaver.saveAs(blob, `export.${type}`);
+            });
     }
 
     private refreshIFrame() {

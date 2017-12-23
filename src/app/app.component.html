@@ -14,6 +14,13 @@
         <mat-icon>help</mat-icon> Help
       </button>
       <hr/>
+      <button mat-menu-item (click)="download('xlsx')">
+        <mat-icon>file_download</mat-icon> Xlsx
+      </button>
+      <button mat-menu-item (click)="download('json')">
+        <mat-icon>file_download</mat-icon> Json
+      </button>
+      <hr/>
       <button mat-menu-item (click)="signOut()">
         <mat-icon>exit_to_app</mat-icon> Logout
       </button>

@@ -23,7 +23,7 @@ namespace BudgetPlanner.Controllers {
         public ImportExportController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
 
         [HttpGet]
-        [Route("export/pdf")]
+        [Route("export/xlsx")]
         public async Task<IActionResult> ExportPdf() {
             using(var package = new PdfHandler()) {
 
