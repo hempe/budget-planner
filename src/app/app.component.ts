@@ -3,14 +3,14 @@ import 'rxjs/Rx';
 
 import * as FileSaver from 'file-saver';
 
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, Renderer, ViewChild } from '@angular/core';
 import { Http, RequestOptions, ResponseContentType } from '@angular/http';
 import { array, makeid } from './common/helper';
 
 import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
 import { Profile } from './common/api';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 declare var Chart: any;
@@ -26,7 +26,9 @@ export class AppComponent {
         private configuraton: ConfigurationService,
         private http: Http,
         private router: Router,
+        private route: ActivatedRoute,
         private api: ApiService,
+        private renderer: Renderer,
         public configuration: ConfigurationService
     ) {
         Chart.defaults.global.defaultFontFamily = 'roboto';
@@ -36,6 +38,8 @@ export class AppComponent {
             this.loading = false;
         });
     }
+
+    @ViewChild('importFileInput') importFileInput: ElementRef;
 
     public download(type: string) {
         let options = new RequestOptions({
@@ -48,6 +52,28 @@ export class AppComponent {
             .subscribe(blob => {
                 FileSaver.saveAs(blob, `export.${type}`);
             });
+    }
+
+    public upload() {
+        this.importFileInput.nativeElement.click();
+    }
+
+    public importFileInputChanged(fileInput: any) {
+        if (fileInput.target.files && fileInput.target.files[0]) {
+            var reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.http
+                    .post(`/api/data/import/json`, JSON.parse(e.target.result))
+                    .subscribe(r => {
+                        this.router.navigated = false;
+                        this.router.navigate(['./'], {
+                            relativeTo: this.route
+                        });
+                    });
+                this.importFileInput.nativeElement.value = null;
+            };
+            reader.readAsText(fileInput.target.files[0], 'utf-8');
+        }
     }
 
     private refreshIFrame() {

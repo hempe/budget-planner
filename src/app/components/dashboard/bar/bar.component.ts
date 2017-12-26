@@ -27,6 +27,7 @@ import {
     toSum
 } from '../../../common/helper';
 
+import { ActivatedRoute } from '@angular/router/src/router_state';
 import { ConfigurationService } from '../../../services/configuration';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
@@ -229,8 +230,13 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         let url = isNumber(this.config.id)
             ? `api/data/dashboard/${this.config.path}/${this.config.id}`
             : `api/data/dashboard/${this.config.path}`;
-        this.http.delete(url).subscribe();
+        this.http.delete(url).subscribe(x => this.reload());
         this.display = 'none';
+    }
+
+    private reload() {
+        this.router.navigated = false;
+        this.router.navigate(['./']);
     }
 
     private rgba(x: any) {
@@ -254,7 +260,8 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
         let all = this.units.positive
             .map(
-                x => <any>{ name: x.name, value: x.value, key: UnitKey.positive }
+                x =>
+                    <any>{ name: x.name, value: x.value, key: UnitKey.positive }
             )
             .concat(
                 this.units.negative.map(
@@ -315,11 +322,17 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         };
 
         this._totalUnits[UnitKey.positive] = {
-            name: this.configService.getName(this.config.path, UnitKey.positive),
+            name: this.configService.getName(
+                this.config.path,
+                UnitKey.positive
+            ),
             elements: this.units.positive
         };
         this._totalUnits[UnitKey.negative] = {
-            name: this.configService.getName(this.config.path, UnitKey.negative),
+            name: this.configService.getName(
+                this.config.path,
+                UnitKey.negative
+            ),
             elements: this.units.negative
         };
 

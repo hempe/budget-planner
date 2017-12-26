@@ -1,3 +1,4 @@
+import { ActivatedRoute, Router } from '@angular/router';
 import { Color, Colors } from 'ng2-charts';
 import {
     Component,
@@ -30,7 +31,6 @@ import { ConfigurationService } from '../../../services/configuration';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { ResizeService } from '../../../services/resize';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -187,7 +187,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         let url = isNumber(this.config.id)
             ? `api/data/dashboard/${this.config.path}/${this.config.id}`
             : `api/data/dashboard/${this.config.path}`;
-        this.http.delete(url).subscribe();
+        this.http.delete(url).subscribe(x => this.reload());
         this.display = 'none';
     }
 
@@ -212,6 +212,11 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
                 this.updateGraphic();
                 this.loaded = true;
             });
+    }
+
+    private reload() {
+        this.router.navigated = false;
+        this.router.navigate(['./']);
     }
 
     private rgba(x: any) {
