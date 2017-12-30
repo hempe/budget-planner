@@ -7,6 +7,8 @@ export interface Complete {
 
 export interface DevelopmentElement {
     type: string;
+    subType: string;
+    id?: string;
     group: string;
     name: string;
     start?: number;

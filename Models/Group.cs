@@ -16,16 +16,16 @@ namespace BudgetPlanner.Models {
             var overview = new OverviewValue {
                 Id = string.IsNullOrWhiteSpace(id) ? "0" : id,
                 Name = string.IsNullOrWhiteSpace(name) ? typeof(T).Name : name,
-                Negative = value.Negative.ToOverview(valueSelector),
-                Positive = value.Positive.ToOverview(valueSelector),
+                Negative = value?.Negative?.ToOverview(valueSelector) ?? new List<OverviewContainer>(),
+                Positive = value?.Positive?.ToOverview(valueSelector) ?? new List<OverviewContainer>(),
             };
 
             overview.Value = overview.Positive.Sum(x => x.Value) - overview.Negative.Sum(x => x.Value);
             return overview;
         }
 
-        private static IEnumerable<OverviewContainer> ToOverview<T>(this IEnumerable<Unit<T>> x, Func<T, decimal> valueSelector) where T : NamedValue, new() {
-            return x.Select(y => y.ToOverview(valueSelector));
+        private static List<OverviewContainer> ToOverview<T>(this IEnumerable<Unit<T>> x, Func<T, decimal> valueSelector) where T : NamedValue, new() {
+            return x?.Select(y => y.ToOverview(valueSelector)).ToList() ?? new List<OverviewContainer>();
         }
 
         private static OverviewContainer ToOverview<T>(this Unit<T> x, Func<T, decimal> valueSelector) where T : NamedValue, new() {

@@ -34,6 +34,8 @@ namespace BudgetPlanner.Controllers {
         public int? Start { get; set; }
         public int? End { get; set; }
         public decimal Value { get; set; }
+        public string SubType { get; set; }
+        public string Id { get; set; }
     }
 
     [Route("api/data")]
@@ -128,7 +130,9 @@ namespace BudgetPlanner.Controllers {
                             Value = x.Elements == null ? 0 : x.Elements.Sum(y => y.Value * y.Frequency),
                             Start = b.Data.StartYear,
                             End = b.Data.EndYear,
-                            Type = "budget"
+                            Type = "budgets",
+                            SubType = "positive",
+                            Id = b.Id
                     }))
                     .ToList());
 
@@ -140,7 +144,9 @@ namespace BudgetPlanner.Controllers {
                             Value = -(x.Elements == null ? 0 : x.Elements.Sum(y => y.Value * y.Frequency)),
                             Start = b.Data.StartYear,
                             End = b.Data.EndYear,
-                            Type = "budget"
+                            Type = "budgets",
+                            SubType = "negative",
+                            Id = b.Id
                     }))
                     .ToList());
             }
@@ -159,7 +165,8 @@ namespace BudgetPlanner.Controllers {
                             Start = x.Key.Year,
                             End = x.Key.Year,
                             Value = x.Sum(y => y.Value),
-                            Type = "revenue"
+                            Type = "revenue",
+                            SubType = "positive"
                     }));
 
                 all.AddRange(
@@ -174,7 +181,8 @@ namespace BudgetPlanner.Controllers {
                             Start = x.Key.Year,
                             End = x.Key.Year,
                             Value = x.Sum(y => y.Value),
-                            Type = "revenue"
+                            Type = "revenue",
+                            SubType = "negative"
                     }));
             }
 
@@ -188,7 +196,8 @@ namespace BudgetPlanner.Controllers {
                         Group = nameof(Asset),
                             Name = x.Key,
                             Value = x.Sum(y => y.Value),
-                            Type = "asset"
+                            Type = "assets",
+                            SubType = "positive"
                     }));
                 all.AddRange(
                     assets.Data.Negative.SelectMany(x => x.Elements.Select(y => new {
@@ -198,7 +207,8 @@ namespace BudgetPlanner.Controllers {
                         Group = nameof(Asset),
                             Name = x.Key,
                             Value = x.Sum(y => y.Value),
-                            Type = "asset"
+                            Type = "assets",
+                            SubType = "negativ"
                     }));
             }
 

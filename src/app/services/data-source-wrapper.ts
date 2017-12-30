@@ -22,6 +22,10 @@ export interface DataSourceRefs {
     filter: ElementRef;
     sort: MatSort;
     columns: DataSourceColumn[];
+    getCompare(
+        property: string,
+        direction: '' | 'asc' | 'desc'
+    ): (v1: any, v2: any) => number;
 }
 export interface DataSourceFactory<TApi, TValue> {
     (refs: DataSourceRefs): ExtendedDataSource<TValue>;
@@ -55,7 +59,6 @@ export class ListDataSource<TValue> extends DataSource<TValue>
             .filter(x => x.type == 'text' || x.type == 'number')
             .map(x => x.key);
     }
-    URLSearchParams;
     filterChange = new BehaviorSubject('');
     get filter(): string {
         return this.filterChange.value;
@@ -89,9 +92,17 @@ export class ListDataSource<TValue> extends DataSource<TValue>
                 );
             }
             if (this.refs.sort.active && this.refs.sort.direction) {
-                result = result.sort(
-                    getCompare(this.refs.sort.active, this.refs.sort.direction)
+                //*?*
+                let comparer = this.refs.getCompare(
+                    this.refs.sort.active,
+                    this.refs.sort.direction
                 );
+                if (!comparer)
+                    comparer = getCompare(
+                        this.refs.sort.active,
+                        this.refs.sort.direction
+                    );
+                result = result.sort(comparer);
             }
             let paged = result.slice(
                 this.refs.paginator.pageIndex * this.refs.paginator.pageSize,
@@ -129,7 +140,7 @@ export class ApiDataSource<TApi, TValue> extends DataSource<TValue> {
                 });
         }
     }
-    URLSearchParams;
+
     filterChange = new BehaviorSubject('');
     get filter(): string {
         return this.filterChange.value;

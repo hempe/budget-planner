@@ -18,12 +18,17 @@ import {
     ExtendedDataSource
 } from '../../services/data-source-wrapper';
 import { MatPaginator, MatSort } from '@angular/material';
+import {
+    getCompare,
+    getTransformCompare,
+    toNumber,
+    unique
+} from '../../common/helper';
 
 import { DataSource } from '@angular/cdk/table';
 import { FREQUENCIES } from '../../common/frequencies';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { Subscription } from 'rxjs/Subscription';
-import { unique } from '../../common/helper';
 
 @Component({
     selector: 'data-source-table',
@@ -82,7 +87,17 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
             paginator: this.paginator,
             filter: this.filter,
             sort: this.sort,
-            columns: this.columns
+            columns: this.columns,
+            getCompare: (property: string, direction: '' | 'asc' | 'desc') => {
+                let col = this.columns.find(x => x.key == property);
+                if (col.type == 'decimal' || col.type == 'number') {
+                    return getTransformCompare(property, direction, x =>
+                        toNumber(x)
+                    );
+                }
+
+                return getCompare(property, direction);
+            }
         });
         this.subscription = this.dataSource.changed.subscribe(x =>
             this.checkIndeterminate(x)

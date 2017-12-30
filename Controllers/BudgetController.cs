@@ -83,6 +83,8 @@ namespace BudgetPlanner.Controllers {
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(BudgetOverview), 200)]
         public async Task<IActionResult> SetBudgetHeader([FromRoute] string id, [FromBody] BudgetOverview data) {
+            if (data == null)
+                return this.BadRequest("Failed to save data.");
 
             var entity = await this.TableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
             entity.Data = entity.Data ?? new BudgetData();
@@ -99,7 +101,6 @@ namespace BudgetPlanner.Controllers {
         [HttpDelete("{id}")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> DeleteBudgetHeader([FromRoute] string id) {
-
             var result = await this.TableStore.DeleteAsync(new Budget { Id = id, UserId = this.UserId });
             if (result.Success())
                 return this.Ok();
@@ -109,6 +110,8 @@ namespace BudgetPlanner.Controllers {
         [HttpPost("{id}/{subType}")]
         [ProducesResponseType(typeof(Unit<FrequencyValue>[]), 200)]
         public async Task<IActionResult> SetBudget([FromRoute] string id, [FromRoute] SubType subType, [FromBody] Unit<FrequencyValue>[] data) {
+            if (data == null)
+                return this.BadRequest("Failed to save data.");
 
             var entity = await this.TableStore.GetAsync(new Budget { Id = id, UserId = this.UserId }) ?? new Budget { Id = id, UserId = this.UserId };
             entity.Data = entity.Data ?? new BudgetData();

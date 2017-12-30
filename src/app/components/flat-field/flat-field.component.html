@@ -9,6 +9,12 @@
             (blur)="onBlur()" [errorStateMatcher]="matcher"></textarea>
         <mat-error error [name]="name"></mat-error>
     </div>
+    <div *ngSwitchCase="'decimal'">
+        <input class="placeholder" matInput type="text" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value"
+            (blur)="onBlur()" [errorStateMatcher]="matcher">
+        <mat-error error [name]="name"></mat-error>
+    </div>
+
     <div *ngSwitchCase="isInputType(type)">
         <input class="placeholder" matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value"
             (blur)="onBlur()" [errorStateMatcher]="matcher">

@@ -35,6 +35,8 @@ namespace BudgetPlanner.Controllers {
         [HttpPost("{subType}")]
         [ProducesResponseType(typeof(Unit<NamedValue>[]), 200)]
         public async Task<IActionResult> SetAssets([FromRoute] SubType subType, [FromBody] Unit<NamedValue>[] data) {
+            if (data == null)
+                return this.BadRequest("Failed to save data.");
             var entity = await this.TableStore.GetAsync(new Asset { UserId = this.UserId }) ?? new Asset { UserId = this.UserId };
             entity.Data = entity.Data ?? new Group<NamedValue>();
 

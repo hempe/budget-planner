@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { numberWithSeperator, toNumber } from '../../common/helper';
 
 import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
 import { ErrorStateMatcher } from '@angular/material';
@@ -66,19 +67,32 @@ export class FlatFieldComponent implements ControlValueAccessor, OnInit {
     set value(v: any) {
         if (v !== this.innerValue) {
             this.innerValue = v;
+            if (this.type == 'decimal') {
+                v = toNumber(v);
+            }
             this.onChangeCallback(v);
         }
     }
 
     //Set touched on blur
     onBlur() {
+        if (this.type === 'decimal') {
+            this.innerValue = numberWithSeperator(this.innerValue);
+        }
         this.onTouchedCallback();
     }
 
     //From ControlValueAccessor interface
     writeValue(value: any) {
-        if (value !== this.innerValue) {
-            this.innerValue = value;
+        if (this.type === 'decimal') {
+            value = numberWithSeperator(value);
+            if (value !== this.innerValue) {
+                this.innerValue = value;
+            }
+        } else {
+            if (value !== this.innerValue) {
+                this.innerValue = value;
+            }
         }
     }
 

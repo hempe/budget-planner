@@ -134,14 +134,14 @@ export class EditComponent implements OnInit, OnDestroy {
         if (this.type == 'assets')
             this.columns = [
                 { key: 'name', name: 'name', type: 'text' },
-                { key: 'value', name: 'amount', type: 'number' }
+                { key: 'value', name: 'amount', type: 'decimal' }
             ];
 
         if (this.type == 'revenue')
             this.columns = [
                 { key: 'name', name: 'name', type: 'text' },
                 { key: 'year', name: 'Year', type: 'number' },
-                { key: 'value', name: 'amount', type: 'number' }
+                { key: 'value', name: 'amount', type: 'decimal' }
             ];
 
         if (this.type == 'budgets')
@@ -152,7 +152,7 @@ export class EditComponent implements OnInit, OnDestroy {
                     name: 'frequency.frequency',
                     type: 'frequency'
                 },
-                { key: 'value', name: 'amount', type: 'number' }
+                { key: 'value', name: 'amount', type: 'decimal' }
             ];
 
         let path = `${this.type}.${this.subType}`;

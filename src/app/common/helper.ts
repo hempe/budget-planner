@@ -19,6 +19,7 @@ export function array<T>(arr: T[]): T[] {
 }
 
 export function numberWithSeperator(x: any) {
+    x = toNumber(x);
     let seperator = "'";
     if (isNaN(x)) return x;
     return Number(x)
@@ -72,6 +73,9 @@ export function toSum(a: number, b: number) {
 }
 
 export function toNumber(value: any): number {
+    if (typeof value === 'string') {
+        value = value.replace(/[^\d.-]/g, '');
+    }
     if (isNaN(value)) return 0;
     return Number(value);
 }
@@ -95,7 +99,10 @@ export function flat<T>(arrays: T[][]): T[] {
     return [].concat.apply([], arrays);
 }
 
-export function getCompare(property: string, direction: '' | 'asc' | 'desc') {
+export function getCompare(
+    property: string,
+    direction: '' | 'asc' | 'desc'
+): (v1: any, v2: any) => number {
     return (v1, v2) => {
         function compare(a, b) {
             if (a == b) return 0;
@@ -103,6 +110,28 @@ export function getCompare(property: string, direction: '' | 'asc' | 'desc') {
             if (b == undefined) return 1;
             if (a[property] < b[property]) return -1;
             if (a[property] > b[property]) return 1;
+            return 0;
+        }
+
+        let val = compare(v1, v2);
+        return direction == 'desc' ? -val : val;
+    };
+}
+
+export function getTransformCompare(
+    property: string,
+    direction: '' | 'asc' | 'desc',
+    transform: (x: any) => any
+): (v1: any, v2: any) => number {
+    return (v1, v2) => {
+        function compare(a, b) {
+            if (a == b) return 0;
+            if (a == undefined) return -1;
+            if (b == undefined) return 1;
+            let a1 = transform(a[property]);
+            let b1 = transform(b[property]);
+            if (a1 < b1) return -1;
+            if (a1 > b1) return 1;
             return 0;
         }
 

@@ -38,17 +38,20 @@
     left: 24px;
 }
 
-.number {
+.number,
+.decimal {
     max-width: 200px;
     text-align: right;
 }
 
+mat-header-cell.decimal ::ng-deep .mat-sort-header-container,
 mat-header-cell.number ::ng-deep .mat-sort-header-container {
     align-items: flex-end;
     flex-direction: row;
     justify-content: flex-end;
 }
 
+mat-cell.decimal ::ng-deep input,
 mat-cell.number ::ng-deep input {
     text-align: right;
 }

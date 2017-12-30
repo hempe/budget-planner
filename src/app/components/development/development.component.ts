@@ -18,6 +18,7 @@ import { Observable, Subject } from 'rxjs';
 import {
     clone,
     hexToRgb,
+    isNullOrWhitespace,
     numberWithSeperator,
     toNumber,
     toSum
@@ -152,12 +153,12 @@ export class DevelopmentComponent implements OnInit {
             name: 'type',
             type: 'icon',
             map: {
-                budget: 'trending_up',
-                asset: 'attach_money',
+                budgets: 'trending_up',
+                assets: 'attach_money',
                 revenue: 'date_range'
             }
         },
-        //{ key: 'group', name: 'group', type: 'text' },
+        /*{ key: 'group', name: 'group', type: 'text' },*/
         { key: 'name', name: 'name', type: 'text' },
         { key: 'value', name: 'amount', type: 'number' },
         { key: 'start', name: 'startYear', type: 'number' },
@@ -295,7 +296,20 @@ export class DevelopmentComponent implements OnInit {
 
         console.info(this.datasets);
         this.labels = this.dev.map(x => x.year);
-        this.valueEmitter.emit(this.value);
+        this.valueEmitter.emit(this.toDataSource(this.value));
+    }
+
+    private toDataSource(values: any[]): any[] {
+        return values.map(x => {
+            let y = <any>clone(x);
+            y.tab = x.name;
+            y.value = numberWithSeperator(x.value);
+            if (x.type === 'budgets') {
+                y.name = x.group + ': ' + x.name;
+                return y;
+            }
+            return y;
+        });
     }
 
     private rgba(color: string) {
@@ -306,8 +320,16 @@ export class DevelopmentComponent implements OnInit {
         }
     }
 
-    public selected(row: OverviewValue) {
-        this.router.navigate(['budgets', row.id]);
+    public selected(row: DevelopmentElement) {
+        var route = [row.type];
+
+        if (!isNullOrWhitespace(row.id)) {
+            route.push(row.id);
+        }
+        route.push(row.subType);
+        route.push(<any>{ tab: (<any>row).tab });
+
+        this.router.navigate(route);
     }
 
     public chartClicked(e: any): void {
@@ -319,7 +341,7 @@ export class DevelopmentComponent implements OnInit {
         console.info(this.tooltip);
         let year = this.tooltip.year;
         let filted = this.value.filter(x => x.start <= year && x.end >= year);
-        this.valueEmitter.emit(filted);
+        this.valueEmitter.emit(this.toDataSource(filted));
     }
 
     public tooltip: {
