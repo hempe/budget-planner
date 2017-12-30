@@ -22,7 +22,7 @@ import {
 import {
     array,
     hexToRgb,
-    isNumber,
+    isNullOrWhitespace,
     numberWithSeperator,
     toSum
 } from '../../../common/helper';
@@ -147,7 +147,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
     public onEdit(tab: string) {
         let route = [].concat(this.config.path.split('.'));
-        if (isNumber(this.config.id)) {
+        if (!isNullOrWhitespace(this.config.id)) {
             route.push(this.config.id);
         }
         if (this._key != UnitKey.total) {
@@ -194,7 +194,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         if (!this.config) return;
-        let url = isNumber(this.config.id)
+        let url = !isNullOrWhitespace(this.config.id)
             ? `api/data/${this.config.path}/${this.config.id}`
             : `api/data/${this.config.path}`;
 
@@ -227,7 +227,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     }
 
     public unpin() {
-        let url = isNumber(this.config.id)
+        let url = !isNullOrWhitespace(this.config.id)
             ? `api/data/dashboard/${this.config.path}/${this.config.id}`
             : `api/data/dashboard/${this.config.path}`;
         this.http.delete(url).subscribe(x => this.reload());

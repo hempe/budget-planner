@@ -17,6 +17,10 @@ export interface BudgetData extends Group<FrequencyValue> {
     startYear?: number;
     endYear?: number;
 }
+export interface BudgetOverview extends OverviewValue {
+    startYear?: number;
+    endYear?: number;
+}
 export interface OverviewValue extends NamedValue {
     id: string;
     positive: OverviewContainer[];

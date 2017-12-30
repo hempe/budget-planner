@@ -34,6 +34,15 @@ export class KeyboardService {
         );
     }
 
+    public isInputActive(): boolean {
+        return (
+            document.activeElement &&
+            (document.activeElement.nodeName == 'INPUT' ||
+                document.activeElement.nodeName == 'TEXTAREA') &&
+            !document.activeElement.classList.contains('mat-checkbox-input')
+        );
+    }
+
     private onKeyEvent(e, emitter: EventEmitter<KeyboardEvent>) {
         emitter.emit(e);
     }

@@ -35,7 +35,7 @@ namespace BudgetPlanner.Controllers {
 
         [HttpGet("{path}/{id}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetTheme([FromRoute] string path, [FromRoute] int? id) {
+        public async Task<IActionResult> GetTheme([FromRoute] string path, [FromRoute] string id) {
             Dashboard source = new DashboardConfiguration { Path = path, Id = id };
             source.UserId = this.UserId;
             var result = await this.TableStore.GetAsync(source);
@@ -53,7 +53,7 @@ namespace BudgetPlanner.Controllers {
 
         [HttpDelete("{path}/{id}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Delete([FromRoute] string path, [FromRoute] int? id) {
+        public async Task<IActionResult> Delete([FromRoute] string path, [FromRoute] string id) {
             Dashboard source = new DashboardConfiguration { Path = path, Id = id };
             source.UserId = this.UserId;
             await this.TableStore.DeleteAsync(source);

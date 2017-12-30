@@ -2,7 +2,7 @@
     <div flexContainer>
         <menu-left>
             <menu-header>
-                <menu-title>{{ name | translate }}</menu-title>
+                <menu-title>{{ value ? value.name : ('Budget' | translate) }}</menu-title>
             </menu-header>
             <menu-container *ngIf="value" flexContainer>
 

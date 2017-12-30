@@ -20,7 +20,7 @@ import { MatPaginator, MatTabChangeEvent } from '@angular/material';
 import {
     array,
     clone,
-    isNumber,
+    isNullOrWhitespace,
     numberWithSeperator,
     toNumber
 } from '../../common/helper';
@@ -78,7 +78,7 @@ export class EditComponent implements OnInit, OnDestroy {
     private theme: string;
     private url: string;
     private dashboardUrl: string;
-    private id?: number;
+    private id: string;
 
     constructor(
         private route: ActivatedRoute,
@@ -89,13 +89,7 @@ export class EditComponent implements OnInit, OnDestroy {
         private themeSelector: ThemeSelector
     ) {
         this.keyDown = this.keyboardService.keyDown.subscribe(e => {
-            if (
-                document.activeElement &&
-                (document.activeElement.nodeName == 'INPUT' ||
-                    document.activeElement.nodeName == 'TEXTAREA') &&
-                !document.activeElement.classList.contains('mat-checkbox-input')
-            )
-                return;
+            if (this.keyboardService.isInputActive()) return;
 
             if (e.key == 'ArrowDown') this.down();
             if (e.key == 'ArrowUp') this.up();
@@ -114,7 +108,7 @@ export class EditComponent implements OnInit, OnDestroy {
         });
 
         let id = this.route.snapshot.params['id'];
-        if (isNumber(id)) this.id = Number(id);
+        if (isNullOrWhitespace(id)) this.id = id;
 
         this.type = this.route.snapshot.data.type;
         this.subType = this.route.snapshot.data.subType;

@@ -8,7 +8,10 @@
                 <menu-title>{{ 'Edit' | translate }}</menu-title>
             </menu-header>
             <menu-container>
-                <menu-entry>
+                <menu-entry (click)="add()" title="New element will be added. You can also use the insert key">
+                    <mat-icon>create_new_folder</mat-icon>{{ 'Insert' | translate }}
+                </menu-entry>
+                <menu-entry (click)="delete()" title="Selected elements will be deleted. You can also use the delete key">
                     <mat-icon>delete_forever</mat-icon>{{ 'Delete' | translate }}
                 </menu-entry>
             </menu-container>

@@ -5,7 +5,7 @@ export const Themes = {
 
 export interface DashboardConfig {
     path: string;
-    id?: number;
+    id?: string;
     theme: 'dark' | 'light' | string;
     type: 'bar' | 'doughnut' | string;
 }

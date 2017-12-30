@@ -65,6 +65,21 @@ namespace BudgetPlanner.Controllers {
             return this.Ok(((subType == SubType.Negative) ? value?.Data?.Negative : value?.Data?.Positive) ?? nullValue);
         }
 
+        [HttpPost("{from}/copy/{to}")]
+        [ProducesResponseType(typeof(BudgetOverview), 200)]
+        public async Task<IActionResult> CopyBudget([FromRoute] string from, [FromRoute] string to) {
+
+            var entity = await this.TableStore.GetAsync(new Budget { Id = from, UserId = this.UserId });
+            if (entity?.Data == null)
+                return this.BadRequest("Failed to copy data.");
+            entity.Id = to;
+            entity.Name = $"{entity.Name} Copy";
+            var result = await this.TableStore.AddOrUpdateAsync(entity);
+            if (result.Success())
+                return await this.GetOverview(to);
+            return this.BadRequest("Failed to copy data.");
+        }
+
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(BudgetOverview), 200)]
         public async Task<IActionResult> SetBudgetHeader([FromRoute] string id, [FromBody] BudgetOverview data) {
@@ -78,6 +93,16 @@ namespace BudgetPlanner.Controllers {
             var result = await this.TableStore.AddOrUpdateAsync(entity);
             if (result.Success())
                 return this.Ok(data);
+            return this.BadRequest("Failed to save data.");
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> DeleteBudgetHeader([FromRoute] string id) {
+
+            var result = await this.TableStore.DeleteAsync(new Budget { Id = id, UserId = this.UserId });
+            if (result.Success())
+                return this.Ok();
             return this.BadRequest("Failed to save data.");
         }
 

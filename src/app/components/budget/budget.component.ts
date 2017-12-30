@@ -1,14 +1,15 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import {
+    BudgetOverview,
     FrequencyValue,
     Group,
     OverviewValue,
     Profile
 } from '../../common/api';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { array, clone, toNumber } from '../../common/helper';
+import { array, clone, guid, toNumber } from '../../common/helper';
 
 import { ConfigurationService } from '../../services/configuration';
 import { DashboardConfig } from '../dashboard/dashboard';
@@ -32,6 +33,7 @@ export class BudgetComponent implements OnInit {
     private id: string;
     private url: string;
     private theme: string;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -49,6 +51,7 @@ export class BudgetComponent implements OnInit {
         this.config.setColor('budgets');
         this.color = this.config.getColor('budgets');
     }
+
     ngOnInit() {
         this.id = this.route.snapshot.params['id'];
         this.url = `/api/data/${this.type}/${this.id}`;
@@ -71,6 +74,19 @@ export class BudgetComponent implements OnInit {
             .map((x: OverviewValue) => x);
     }
 
+    public delete(): void {
+        this.http.delete(`/api/data/budgets/${this.id}`).subscribe(x => {
+            this.router.navigate(['../'], { relativeTo: this.route });
+        });
+    }
+
+    public copy(): void {
+        this.http
+            .post(`/api/data/budgets/${this.id}/copy/${guid()}`, null)
+            .map(x => x.json())
+            .subscribe();
+    }
+
     public pin() {
         if (this.theme)
             this.http
@@ -81,7 +97,7 @@ export class BudgetComponent implements OnInit {
                 this.http
                     .post('/api/data/dashboard', <DashboardConfig>{
                         path: this.type,
-                        id: Number(this.id),
+                        id: this.id,
                         theme: theme,
                         type: 'bar'
                     })

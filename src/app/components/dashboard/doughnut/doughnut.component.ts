@@ -22,7 +22,7 @@ import {
 import {
     array,
     hexToRgb,
-    isNumber,
+    isNullOrWhitespace,
     numberWithSeperator,
     toSum
 } from '../../../common/helper';
@@ -129,7 +129,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         var type = this.config.path.split('.');
         var route = [type[0]];
 
-        if (isNumber(this.config.id)) {
+        if (!isNullOrWhitespace(this.config.id)) {
             route.push(<any>this.config.id);
         }
 
@@ -184,7 +184,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
 
     public ngOnDestroy(): void {}
     public unpin() {
-        let url = isNumber(this.config.id)
+        let url = !isNullOrWhitespace(this.config.id)
             ? `api/data/dashboard/${this.config.path}/${this.config.id}`
             : `api/data/dashboard/${this.config.path}`;
         this.http.delete(url).subscribe(x => this.reload());
@@ -194,7 +194,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     public ngOnInit(): void {
         if (!this.config) return;
         let type = this.config.path.split('.');
-        let url = isNumber(this.config.id)
+        let url = !isNullOrWhitespace(this.config.id)
             ? `api/data/${type[0]}/${this.config.id}`
             : `api/data/${type[0]}`;
 

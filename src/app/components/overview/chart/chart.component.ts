@@ -85,7 +85,8 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
                         fontSize: 12,
                         fontFamily: 'roboto',
                         padding: 24,
-                        maxTicksLimit: 6
+                        maxTicksLimit: 6,
+                        beginAtZero: true
                     }
                 }
             ]
