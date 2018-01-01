@@ -12,6 +12,7 @@ import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
 import { Profile } from './common/api';
 import { TranslateService } from '@ngx-translate/core';
+import { PdfRenderService } from './services/pdf-render';
 
 declare var Chart: any;
 @Component({
@@ -29,6 +30,7 @@ export class AppComponent {
         private route: ActivatedRoute,
         private api: ApiService,
         private renderer: Renderer,
+        private pdfRender: PdfRenderService,
         public configuration: ConfigurationService
     ) {
         Chart.defaults.global.defaultFontFamily = 'roboto';
@@ -46,12 +48,16 @@ export class AppComponent {
             responseType: ResponseContentType.Blob
         });
 
-        this.http
-            .get(`/api/data/export?format=${type}`, options)
-            .map(x => x.blob())
-            .subscribe(blob => {
-                FileSaver.saveAs(blob, `export.${type}`);
-            });
+        if (type == 'pdf') {
+            this.pdfRender.render('/api/data/export?format=html');
+        } else {
+            this.http
+                .get(`/api/data/export?format=${type}`, options)
+                .map(x => x.blob())
+                .subscribe(blob => {
+                    FileSaver.saveAs(blob, `export.${type}`);
+                });
+        }
     }
 
     public upload() {

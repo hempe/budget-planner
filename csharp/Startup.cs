@@ -49,7 +49,6 @@ namespace BudgetPlanner {
             );
 
             services.AddTransient<Services.Export.BaseHandler>()
-                .AddTransient<Services.Export.PdfHandler>()
                 .AddTransient<Services.Export.HtmlHandler>()
                 .AddTransient<Services.Export.XlsHandler>();
 

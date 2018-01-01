@@ -27,21 +27,23 @@ namespace BudgetPlanner.Controllers {
         [HttpGet]
         [Route("export")]
         public async Task<IActionResult> Export(
-            [FromServices] BaseHandler json, [FromServices] XlsHandler xls, [FromServices] PdfHandler pdf, [FromServices] HtmlHandler html, [FromQuery] string format
+            [FromServices] BaseHandler json, [FromServices] XlsHandler xls, [FromServices] HtmlHandler html, [FromQuery] string format
         ) {
             try {
+                IActionResult file = null;
                 switch (format.ToLower()) {
                     case "xlsx":
                     case "xls":
-                        return File(await xls.GetExportAsync(this.UserId), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                    case "pdf":
-                        return File(await pdf.GetExportAsync(this.UserId), "application/pdf");
+                        file = this.File(await xls.GetExportAsync(this.UserId), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        break;
                     case "html":
-                        return File(await html.GetExportAsync(this.UserId), "text/html");
+                        file = this.File(await html.GetExportAsync(this.UserId), "text/html");
+                        break;
                     default:
-                        return this.File(await json.GetExportAsync(this.UserId), "application/json");
-
+                        file = this.File(await json.GetExportAsync(this.UserId), "application/json");
+                        break;
                 }
+                return file;
             } catch (Exception e) {
                 return this.Ok(e);
             }

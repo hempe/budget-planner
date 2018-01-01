@@ -5,7 +5,7 @@
     },
     "apps": [
         {
-            "root": "src",
+            "root": "angular",
             "outDir": "wwwroot",
             "assets": ["assets", "favicon.ico"],
             "index": "index.html",
@@ -31,23 +31,15 @@
     },
     "lint": [
         {
-            "project": "src/tsconfig.app.json",
+            "project": "angular/tsconfig.app.json",
             "exclude": "**/node_modules/**"
         },
         {
-            "project": "src/tsconfig.spec.json",
-            "exclude": "**/node_modules/**"
-        },
-        {
-            "project": "e2e/tsconfig.e2e.json",
+            "project": "angular/tsconfig.spec.json",
             "exclude": "**/node_modules/**"
         }
     ],
-    "test": {
-        "karma": {
-            "config": "./karma.conf.js"
-        }
-    },
+    "test": {},
     "defaults": {
         "styleExt": "css",
         "class": {

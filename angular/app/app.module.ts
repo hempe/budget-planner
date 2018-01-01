@@ -61,6 +61,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
 import { WarnMissingTranslationHandler } from './services/warn-missing-translation-handler';
 import { httpFactory } from './services/http-interceptor';
+import { PdfRenderService } from './services/pdf-render';
 
 @NgModule({
     declarations: [
@@ -132,6 +133,7 @@ import { httpFactory } from './services/http-interceptor';
     providers: [
         ConfigurationService,
         MouseService,
+        PdfRenderService,
         ResizeService,
         KeyboardService,
         ApiService,

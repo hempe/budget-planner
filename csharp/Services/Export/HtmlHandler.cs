@@ -35,15 +35,15 @@ namespace BudgetPlanner.Services.Export {
         public async Task<Stream> GetExportAsync(string userId) {
             this.data = await this.baseHandler.GetJsonAsync(userId);
             var content = string.Empty;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "Export.html");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "csharp", "Templates", "Export.html");
             content = File.ReadAllText(path);
-            /*
-                var stream = this.GetType().Assembly.GetManifestResourceStream("BudgetPlanner.Templates.Export.html");
-            
-                using(var reader = new StreamReader(stream, Encoding.UTF8)) {
-                    content = await reader.ReadToEndAsync();
-                }
-                */
+
+            /* var stream = this.GetType().Assembly.GetManifestResourceStream("BudgetPlanner.csharp.Templates.Export.html");
+
+            using(var reader = new StreamReader(stream, Encoding.UTF8)) {
+                content = await reader.ReadToEndAsync();
+            }
+            */
 
             var template = Template.Parse(content);
             var context = new TemplateContext() {
@@ -55,10 +55,6 @@ namespace BudgetPlanner.Services.Export {
 
             var result = template.Render(context);
             return new MemoryStream(Encoding.UTF8.GetBytes(result));
-
-            //throw new NotImplementedException("Not yet done");
-
-            //            return new MemoryStream(package.GetAsByteArray());
         }
 
         private bool TryGetMember(TemplateContext context, SourceSpan span, object target, string member, out object value) {
