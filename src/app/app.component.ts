@@ -47,7 +47,7 @@ export class AppComponent {
         });
 
         this.http
-            .get(`/api/data/export/${type}`, options)
+            .get(`/api/data/export?format=${type}`, options)
             .map(x => x.blob())
             .subscribe(blob => {
                 FileSaver.saveAs(blob, `export.${type}`);
@@ -63,7 +63,7 @@ export class AppComponent {
             var reader = new FileReader();
             reader.onload = (e: any) => {
                 this.http
-                    .post(`/api/data/import/json`, JSON.parse(e.target.result))
+                    .post(`/api/data/import`, JSON.parse(e.target.result))
                     .subscribe(r => {
                         this.router.navigated = false;
                         this.router.navigate(['./'], {

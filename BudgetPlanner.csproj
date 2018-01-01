@@ -26,29 +26,78 @@
   <ItemGroup>
       <None Include="Templates\Export.html" CopyToPublishDirectory="PreserveNewest" />
       <None Include="Templates\Pdf.js" CopyToPublishDirectory="PreserveNewest" />
-      
+
+      <None Include="node_modules\ajv\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\any-promise\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\app-root-path\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\asn1\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\async\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\asynckit\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\aws4\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\binary-search-tree\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\bluebird\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\caseless\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\co\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\combined-stream\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\core-util-is\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\cycle\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\debug\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\delayed-stream\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\extend\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\extsprintf\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\fast-deep-equal\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\fast-json-stable-stringify\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\forever-agent\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\ini\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\in-publish\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\is\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\is-number-like\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\isstream\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\is-typedarray\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\json-schema\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\json-schema-traverse\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\json-stable-stringify\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\json-stringify-safe\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\jsprim\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\jsrender\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\jsreport-core\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\jsreport-jsrender\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\jsreport-phantom-pdf\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\listener-collection\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\lodash\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\lodash.isfinite\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\lru-cache\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\mime-db\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\mime-types\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\mkdirp\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\ms\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\nconf\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\nedb\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\net-cluster\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\node.extend\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\oauth-sign\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\object-assign\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\phantom-html-to-pdf\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\phantomjs\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\phantom-workers\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\portscanner\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\pseudomap\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\reap\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\safe-buffer\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\script-manager\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\sshpk\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\stack-trace\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\streamifier\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\stream-to-array\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\string\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\stringstream\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\tough-cookie\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\tunnel-agent\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\underscore\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\uuid\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\verror\**" CopyToPublishDirectory="PreserveNewest" />
       <None Include="node_modules\winston\**" CopyToPublishDirectory="PreserveNewest" />
-      
+      <None Include="node_modules\yallist\**" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
@@ -58,7 +107,7 @@
     <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
   </PropertyGroup>
   -->
-  <Target Name="BuildManagementConsole" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release2' ">
+  <Target Name="BuildManagementConsole" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release' ">
     <Exec Command="npm run build" />
   </Target>
 </Project>
