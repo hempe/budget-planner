@@ -14,12 +14,15 @@ using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
-namespace BudgetPlanner.Services {
-    public class PdfHandler : IDisposable {
+namespace BudgetPlanner.Services.Export {
+    public class XlsHandler : IDisposable {
 
         private readonly ExcelPackage package;
+        private readonly BaseHandler baseHandler;
 
-        public PdfHandler() {
+        public XlsHandler(BaseHandler baseHandler) {
+            this.baseHandler = baseHandler;
+
             this.package = new ExcelPackage();
         }
 
@@ -27,12 +30,14 @@ namespace BudgetPlanner.Services {
             this.package.Dispose();
         }
 
-        public Stream Create(List<Budget> budgets, Revenue revenue, Asset assets) {
-            foreach (var budget in budgets.Where(b => b.Data != null)) {
+        public async Task<Stream> GetExportAsync(string userId) {
+            var export = await this.baseHandler.GetJsonAsync(userId);
+
+            foreach (var budget in export.Budgets) {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
 
-                var (rI, cI) = this.DoBudget(worksheet, 2, 2, "Income", budget.Data.Positive);
-                var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, "Expenses", budget.Data.Negative);
+                var (rI, cI) = this.DoBudget(worksheet, 2, 2, "Income", budget.Positive);
+                var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, "Expenses", budget.Negative);
 
                 worksheet.Cells(1, 1, 0, cE)
                     .Merge()
@@ -46,11 +51,11 @@ namespace BudgetPlanner.Services {
                     .Style(x => x.Font.Name = "URW Gothic");
             }
 
-            if (revenue?.Data != null) {
+            if (export.Revenue != null) {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Revenue");
 
-                var (rI, cI) = this.DoRevenue(worksheet, 2, 2, "Planned income", revenue.Data.Positive);
-                var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, "Planned expenses", revenue.Data.Negative);
+                var (rI, cI) = this.DoRevenue(worksheet, 2, 2, "Planned income", export.Revenue.Positive);
+                var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, "Planned expenses", export.Revenue.Negative);
 
                 worksheet.Cells(1, 1, 0, cE)
                     .Merge()
@@ -64,11 +69,11 @@ namespace BudgetPlanner.Services {
                     .Style(x => x.Font.Name = "URW Gothic");
             }
 
-            if (assets?.Data != null) {
+            if (export.Assets != null) {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Assets");
 
-                var (rI, cI) = this.DoAssets(worksheet, 2, 2, "Assets", assets.Data.Positive);
-                var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, "Debts", assets.Data.Negative);
+                var (rI, cI) = this.DoAssets(worksheet, 2, 2, "Assets", export.Assets.Positive);
+                var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, "Debts", export.Assets.Negative);
 
                 worksheet.Cells(1, 1, 0, cE)
                     .Merge()

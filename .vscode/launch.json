@@ -27,7 +27,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program":
-                "${workspaceFolder}/bin/Debug/netcoreapp2.0/budget-planner.dll",
+                "${workspaceFolder}/bin/Debug/netcoreapp2.0/BudgetPlanner.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

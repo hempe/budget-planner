@@ -17,6 +17,12 @@
       <button mat-menu-item (click)="download('xlsx')">
         <mat-icon>file_download</mat-icon> {{ 'ExportAsXlsx' | translate }}
       </button>
+      <button mat-menu-item (click)="download('pdf')">
+        <mat-icon>file_download</mat-icon> {{ 'ExportAsPdf' | translate }}
+      </button>
+      <button mat-menu-item (click)="download('html')">
+          <mat-icon>file_download</mat-icon> {{ 'ExportAsHtml' | translate }}
+        </button>
       <button mat-menu-item (click)="download('json')">
         <mat-icon>file_download</mat-icon> {{ 'ExportAsJson' | translate }}
       </button>

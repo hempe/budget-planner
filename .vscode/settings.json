@@ -6,6 +6,7 @@
         "**/obj": true,
         "**/bin": true,
         "wwwroot": true,
+        ".publish": true,
         ".prettierc": true
     },
     "csharpfixformat.style.spaces.beforeParenthesis": false

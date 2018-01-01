@@ -25,7 +25,7 @@ namespace BudgetPlanner.Controllers {
                 values.Add(new Budget { Data = new BudgetData { }, Name = "Budget", Id = "0" });
 
             var result = values
-                .Select(b => new { o = b.Data.ToOverview(x => x.Value * x.Frequency, b.Id, b.Name ?? nameof(Budget)), d = b.Data })
+                .Select(b => new { o = ((Group<FrequencyValue>) b.Data).ToOverview(x => x.Value * x.Frequency, b.Id, b.Name ?? nameof(Budget)), d = b.Data })
                 .Select(x => new BudgetOverview {
                     EndYear = x.d?.EndYear,
                         StartYear = x.d?.StartYear,

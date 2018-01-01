@@ -77,3 +77,4 @@ msbuild.wrn
 wwwroot/*
 appsettings.*.json
 set_watcher_size.sh
+.publish

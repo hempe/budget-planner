@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+    <RootNamespace>BudgetPlanner</RootNamespace>
+    <AssemblyName>BudgetPlanner</AssemblyName>
+    <PackageId>BudgetPlanner</PackageId>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+    <PackageReference Include="Flurl" Version="2.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="8.6.0" />
+    <PackageReference Include="MimeMapping" Version="1.0.1.10" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0002" />
+    <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="2.0.1"/>
+    <PackageReference Include="Scriban" Version="1.0.0" />
+    <!--Am besten einfach gleich html templating machen, dann habe ich html und pdf exprot.-->
+    <!--https://pdfgenerator.codeplex.com/-->
+  </ItemGroup>
+  <ItemGroup>
+      <EmbeddedResource Include="Templates\Export.html" />
+  </ItemGroup>
+  <ItemGroup>
+      <None Include="Templates\Export.html" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="Templates\Pdf.js" CopyToPublishDirectory="PreserveNewest" />
+      
+      <None Include="node_modules\async\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\bluebird\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\cycle\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\debug\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\ini\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\is\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\jsreport-core\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\jsreport-jsrender\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\jsreport-phantom-pdf\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\listener-collection\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\mkdirp\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\ms\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\nconf\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\node.extend\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\reap\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\script-manager\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\stack-trace\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\string\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\underscore\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\uuid\**" CopyToPublishDirectory="PreserveNewest" />
+      <None Include="node_modules\winston\**" CopyToPublishDirectory="PreserveNewest" />
+      
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+  <!--
+  <PropertyGroup>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+  </PropertyGroup>
+  -->
+  <Target Name="BuildManagementConsole" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release2' ">
+    <Exec Command="npm run build" />
+  </Target>
+</Project>

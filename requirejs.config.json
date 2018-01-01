@@ -1,0 +1,9 @@
+{
+    "baseUrl": "Templates",
+    "appDir": "..",
+    "dir": "dist",
+    "modules": [{ "name": "app" }],
+    "paths": {
+        "app": ".."
+    }
+}
