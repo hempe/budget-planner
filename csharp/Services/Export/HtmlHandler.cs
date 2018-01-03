@@ -82,6 +82,11 @@ namespace BudgetPlanner.Services.Export {
                     return true;
                 }
 
+                if (variable.Name == "translate") {
+                    value = new Translate(this.baseHandler.I18n, this.data?.Client?.Language);
+                    return true;
+                }
+
                 if (variable.Name == "numberWithSeperator") {
                     value = new NumberWithSeperator();
                     return true;
@@ -112,6 +117,21 @@ namespace BudgetPlanner.Services.Export {
         private class Total : IScriptCustomFunction {
             object IScriptCustomFunction.Invoke(TemplateContext context, ScriptNode callerContext, ScriptArray arguments, ScriptBlockStatement blockStatement) {
                 return "Totals";
+            }
+        }
+
+        private class Translate : IScriptCustomFunction {
+            private readonly I18n.TranslationService i18n;
+            private readonly string lang;
+
+            public Translate(I18n.TranslationService i18n, string lang) {
+                this.i18n = i18n;
+                this.lang = lang;
+            }
+
+            object IScriptCustomFunction.Invoke(TemplateContext context, ScriptNode callerContext, ScriptArray arguments, ScriptBlockStatement blockStatement) {
+                var key = arguments[0].ToString();
+                return this.i18n.TranslateAsync(this.lang, key).GetAwaiter().GetResult();
             }
         }
 

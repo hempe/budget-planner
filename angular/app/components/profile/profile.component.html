@@ -17,6 +17,7 @@
                         <field [(ngModel)]="value.zipCode" name="zipCode" type="number" flex=2></field>
                         <field [(ngModel)]="value.comment" name="comment" type="textarea" flex=10></field>
                         <field [(ngModel)]="value.color" [options]="colors" (change)="setCustomColor($event)" name="color" type="select" flex=10></field>
+                        <field [(ngModel)]="value.language" [options]="languages" name="language" type="select" flex=10></field>
                     </mat-card-content>
 
                 </menu-container>
@@ -24,20 +25,7 @@
             <menu-right>
                 <menu-header>
                     <menu-title>{{ 'Edit' | translate }}</menu-title>
-                    <button mat-icon-button [matMenuTriggerFor]="editMenu">
-                        <mat-icon>more_vert</mat-icon>
-                    </button>
                 </menu-header>
-                <mat-menu #editMenu="matMenu">
-                    <div class="mat-menu-items">
-                        <button mat-menu-item (click)="addFolder()">
-                            <mat-icon>create_new_folder</mat-icon> Add new folder
-                        </button>
-                        <button mat-menu-item (click)="deleteFolder()">
-                            <mat-icon>delete_forever</mat-icon> Delete this folder
-                        </button>
-                    </div>
-                </mat-menu>
                 <menu-container style="position:relative;">
                     <div class="avatar-wrapper">
                         <img [src]="avatar" class="avatar" />

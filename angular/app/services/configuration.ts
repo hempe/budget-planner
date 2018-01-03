@@ -32,7 +32,9 @@ export class ConfigurationService {
         this.resetColor();
     }
     public get language(): string {
-        let userLang = navigator.language || (<any>navigator).userLanguage;
+        let userLang = this.profile ? this.profile.language : undefined;
+        userLang =
+            userLang || navigator.language || (<any>navigator).userLanguage;
         return userLang.split('-')[0];
     }
 

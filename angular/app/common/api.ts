@@ -76,4 +76,5 @@ export interface Profile {
     telNumber?: string;
     zipCode?: string;
     color?: string;
+    language?: string;
 }

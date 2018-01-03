@@ -21,6 +21,8 @@
     <!--https://pdfgenerator.codeplex.com/-->
   </ItemGroup>
   <ItemGroup>
+        <EmbeddedResource Include="csharp\Services\I18n\de.json" />
+        <EmbeddedResource Include="csharp\Services\I18n\en.json" />
         <EmbeddedResource Include="csharp\Templates\Export.html" />
         <None Include="csharp\Templates\Export.html" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>

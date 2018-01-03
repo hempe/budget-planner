@@ -52,6 +52,8 @@ namespace BudgetPlanner {
                 .AddTransient<Services.Export.HtmlHandler>()
                 .AddTransient<Services.Export.XlsHandler>();
 
+            services.AddTransient<Services.I18n.TranslationService>();
+
             services.AddAuthentication()
                 .AddGoogle(option => {
                     option.ClientId = Configuration["Authentication:Google:ClientId"];

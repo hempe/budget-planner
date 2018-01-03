@@ -64,10 +64,10 @@
                 <mat-menu #editMenu="matMenu">
                     <div class="mat-menu-items">
                         <button mat-menu-item (click)="copy()">
-                            <mat-icon>content_copy</mat-icon> Copy this budget
+                            <mat-icon>content_copy</mat-icon> {{ 'CopyThisBudget' | translate }}
                         </button>
                         <button mat-menu-item (click)="delete()">
-                            <mat-icon>delete_forever</mat-icon> Delete this budget
+                            <mat-icon>delete_forever</mat-icon> {{'DeleteThisBudget' | translate }}
                         </button>
                     </div>
                 </mat-menu>

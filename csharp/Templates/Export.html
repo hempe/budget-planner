@@ -117,9 +117,9 @@
             <thead>
                 <tr>
                     <th class="group"></th>
-                    <th class="name">Name</th>
-                    <th class="addon">Frequency</th>
-                    <th class="amount">Amount</th>
+                    <th class="name">{{ 'Name' | translate }}</th>
+                    <th class="addon">{{ 'frequency.frequency' | translate }}</th>
+                    <th class="amount">{{ 'Amount'| translate }}</th>
                 </tr>
             </thead>
 
@@ -137,14 +137,14 @@
                     </tr>
                     {{ end }}
                     <tr class="sub-total">
-                        <td colspan="3">Sub Total</td>
+                        <td colspan="3">{{ 'Subtotal' | translate }}</td>
                         <td class="amount">
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
                 {{ end }}
                 <tr class="total">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{ 'Total' | translate }}</td>
                     <td class="amount">
                         {{
                             func sum
@@ -162,15 +162,15 @@
         </table>
         <div class="page-break"></div>
         <div class="title">{{ b.name }}</div>
-        <div class="time">{{ b.startYear }} - {{ b.endYear }} (Total: {{ numberWithSeperator(b.sum) }} )</div>
+        <div class="time">{{ b.startYear }} - {{ b.endYear }} ({{ 'Total' | translate }}: {{ numberWithSeperator(b.sum) }} )</div>
         <div class="sub-title">Expenses</div>
         <table>
             <thead>
                 <tr>
                     <th class="group"></th>
-                    <th class="name">Name</th>
-                    <th class="addon">Frequency</th>
-                    <th class="amount">Amount</th>
+                    <th class="name">{{ 'Name' | translate }}</th>
+                    <th class="addon">{{ 'frequency.frequency' | translate }}</th>
+                    <th class="amount">{{ 'Amount' | translate }}</th>
                 </tr>
             </thead>
 
@@ -188,14 +188,14 @@
                     </tr>
                     {{ end }}
                     <tr class="sub-total">
-                        <td colspan="3">Sub Total</td>
+                        <td colspan="3">{{ 'Subtotal' | translate }}</td>
                         <td class="amount">
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
                 {{ end }}
                 <tr class="total">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{ 'Total' | translate }}</td>
                     <td class="amount">
                         {{
                             func sum
@@ -215,16 +215,16 @@
         {{ end }}
 
         <!-- ---------------------- Assets --------------------- -->
-        <div class="title">Assets</div>
-        <div class="time">Total: {{ numberWithSeperator(assets.sum) }}</div>
-        <div class="sub-title">Assets</div>
+        <div class="title">{{ 'Assets' | translate }}</div>
+        <div class="time">{{ 'Total' | translate }}: {{ numberWithSeperator(assets.sum) }}</div>
+        <div class="sub-title">{{ 'Assets' | translate }}</div>
         <table>
             <thead>
                 <tr>
                     <th class="group"></th>
-                    <th class="name">Name</th>
+                    <th class="name">{{ 'Name' | translate }}</th>
                     <th class="addon"></th>
-                    <th class="amount">Amount</th>
+                    <th class="amount">{{ 'Amount' | translate }}</th>
                 </tr>
             </thead>
 
@@ -242,14 +242,14 @@
                     </tr>
                     {{ end }}
                     <tr class="sub-total">
-                        <td colspan="3">Sub Total</td>
+                        <td colspan="3">{{ 'Subtotal' | translate }}</td>
                         <td class="amount">
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
                 {{ end }}
                 <tr class="total">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{ 'Total' | translate }}</td>
                     <td class="amount">
                         {{
                             func sum
@@ -267,16 +267,16 @@
         </table>
         <div class="page-break"></div>
         
-        <div class="title">Assets</div>
-        <div class="time">Total: {{ numberWithSeperator(assets.sum) }}</div>
-        <div class="sub-title">Debts</div>
+        <div class="title">{{ 'Assets' | translate }}</div>
+        <div class="time">{{ 'Total' | translate }}: {{ numberWithSeperator(assets.sum) }}</div>
+        <div class="sub-title">{{ 'Debts' | translate }}</div>
         <table>
             <thead>
                 <tr>
                     <th class="group"></th>
-                    <th class="name">Name</th>
+                    <th class="name">{{ 'Name' | translate }}</th>
                     <th class="addon"></th>
-                    <th class="amount">Amount</th>
+                    <th class="amount">{{ 'Amount' | translate }}</th>
                 </tr>
             </thead>
 
@@ -294,14 +294,14 @@
                     </tr>
                     {{ end }}
                     <tr class="sub-total">
-                        <td colspan="3">Sub Total</td>
+                        <td colspan="3">{{ 'Subtotal' | translate }}</td>
                         <td class="amount">
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
                 {{ end }}
                 <tr class="total">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{ 'Total' | translate }}</td>
                     <td class="amount">
                         {{
                             func sum
@@ -321,16 +321,16 @@
 
         <!-- ---------------------- Revenue --------------------- -->
 
-        <div class="title">Revenue</div>
-        <div class="time">Total: {{ numberWithSeperator(revenue.sum) }}</div>
-        <div class="sub-title">Planned income</div>
+        <div class="title">{{ 'Revenue' | translate }}</div>
+        <div class="time">{{ 'Total' | translate }}: {{ numberWithSeperator(revenue.sum) }}</div>
+        <div class="sub-title">{{ 'PlannedRevenue' | translate }}</div>
         <table>
             <thead>
                 <tr>
                     <th class="group"></th>
-                    <th class="name">Name</th>
-                    <th class="addon">Year</th>
-                    <th class="amount">Amount</th>
+                    <th class="name">{{ 'Name' | translate }}</th>
+                    <th class="addon">{{ 'Year' | translate }}</th>
+                    <th class="amount">{{ 'Amount' | translate }}</th>
                 </tr>
             </thead>
 
@@ -348,14 +348,14 @@
                     </tr>
                     {{ end }}
                     <tr class="sub-total">
-                        <td colspan="3">Sub Total</td>
+                        <td colspan="3">{{ 'Subtotal' | translate }}</td>
                         <td class="amount">
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
                 {{ end }}
                 <tr class="total">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{ 'Total' | translate }}</td>
                     <td class="amount">
                         {{
                             func sum
@@ -373,16 +373,16 @@
         </table>
         <div class="page-break"></div>
         
-        <div class="title">Revenue</div>
-        <div class="time">Total: {{ numberWithSeperator(revenue.sum) }}</div>
-        <div class="sub-title">Planned expenses</div>
+        <div class="title">{{ 'Revenue' | translate }}</div>
+        <div class="time">{{ 'Total' | translate }}: {{ numberWithSeperator(revenue.sum) }}</div>
+        <div class="sub-title">{{ 'PlannedExpenses' | translate }}</div>
         <table>
             <thead>
                 <tr>
                     <th class="group"></th>
-                    <th class="name">Name</th>
-                    <th class="addon">Year</th>
-                    <th class="amount">Amount</th>
+                    <th class="name">{{ 'Name' | translate }}</th>
+                    <th class="addon">{{ 'Year' | translate }}</th>
+                    <th class="amount">{{ 'Amount' | translate }}</th>
                 </tr>
             </thead>
 
@@ -400,14 +400,14 @@
                     </tr>
                     {{ end }}
                     <tr class="sub-total">
-                        <td colspan="3">Sub Total</td>
+                        <td colspan="3">{{ 'Subtotal' | translate }}</td>
                         <td class="amount">
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
                 {{ end }}
                 <tr class="total">
-                    <td colspan="3">Total</td>
+                    <td colspan="3">{{ 'Total' | translate }}</td>
                     <td class="amount">
                         {{
                             func sum

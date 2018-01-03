@@ -32,7 +32,11 @@
                 <menu-title>{{ 'Edit' | translate }}</menu-title>
             </menu-header>
             <menu-container>
-                Hier könnte ihre werbung stehen.
+                <menu-container noTop="true">
+                    <menu-entry (click)="pin()">
+                        <mat-icon>{{theme ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (theme ? 'Unpin' : 'Pin') | translate }}
+                    </menu-entry>
+                </menu-container>
             </menu-container>
 
         </menu-right>

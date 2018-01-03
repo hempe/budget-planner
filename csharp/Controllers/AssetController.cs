@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BudgetPlanner.Middleware;
 using BudgetPlanner.Models;
 using BudgetPlanner.Services;
+using BudgetPlanner.Services.I18n;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +16,16 @@ namespace BudgetPlanner.Controllers {
     [Route("api/data/assets")]
     [Authorize]
     public class AssetController : BaseController {
+
         public AssetController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
 
         [HttpGet("")]
         [ProducesResponseType(typeof(OverviewValue), 200)]
-        public async Task<IActionResult> GetOverview() {
+        public async Task<IActionResult> GetOverview([FromServices] TranslationService i18n) {
             var value = await this.TableStore.GetAsync(new Asset { UserId = this.UserId });
-            return this.Ok((value?.Data ?? new Group<NamedValue>()).ToOverview(x => x.Value, "", nameof(Asset)));
+            var profile = await this.TableStore.GetAsync(new Profile { UserId = this.UserId });
+
+            return this.Ok((value?.Data ?? new Group<NamedValue>()).ToOverview(x => x.Value, "", await i18n.TranslateAsync(profile?.Data?.Language, "Assets")));
         }
 
         [HttpGet("{subType}")]

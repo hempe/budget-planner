@@ -45,14 +45,10 @@
                 <menu-title>{{ 'Edit' | translate }}</menu-title>
             </menu-header>
             <menu-container noTop="true">
-                <menu-entry (click)="save()">
-                    <mat-icon>save</mat-icon>{{ 'Save' | translate }}
-                </menu-entry>
                 <menu-entry (click)="pin()">
                     <mat-icon>{{theme ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (theme ? 'Unpin' : 'Pin') | translate }}
                 </menu-entry>
             </menu-container>
-            Dont know what will come here
         </menu-right>
     </div>
 </view-wrapper>

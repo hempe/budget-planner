@@ -3,6 +3,6 @@ namespace BudgetPlanner.Models {
         public BudgetData[] Budgets { get; set; }
         public Group<NamedValue> Assets { get; set; }
         public Group<DatedValue> Revenue { get; set; }
-        public object Client { get; set; }
+        public ProfileData Client { get; set; }
     }
 }

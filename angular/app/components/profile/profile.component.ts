@@ -19,6 +19,11 @@ import { clone } from '../../common/helper';
 export class ProfileComponent implements OnInit {
     public uploadUrl: string = 'api/data/profile/upload';
     public avatar: string;
+    public languages: { name: string; value: string }[] = [
+        { name: 'English', value: 'en' },
+        { name: 'Deutsch', value: 'de' }
+    ];
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,

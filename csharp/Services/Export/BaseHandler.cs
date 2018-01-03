@@ -8,9 +8,12 @@ using Newtonsoft.Json;
 
 namespace BudgetPlanner.Services.Export {
     public class BaseHandler {
-        protected TableStore TableStore { get; private set; }
-        public BaseHandler(TableStore TableStore) {
+        internal TableStore TableStore { get; private set; }
+        internal I18n.TranslationService I18n { get; private set; }
+
+        public BaseHandler(TableStore TableStore, I18n.TranslationService i18n) {
             this.TableStore = TableStore;
+            this.I18n = i18n;
         }
 
         public async Task ImportAsync(string userId, Complete value) {
@@ -29,7 +32,6 @@ namespace BudgetPlanner.Services.Export {
                 await this.TableStore.AddOrUpdateAsync(new Budget { UserId = userId, Name = b.Name, Id = b.Id, Data = b });
             }
         }
-
         public async Task<Stream> GetExportAsync(string userId) {
             var data = await this.GetJsonAsync(userId);
             return new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));

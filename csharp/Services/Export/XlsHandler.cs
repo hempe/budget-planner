@@ -19,7 +19,7 @@ namespace BudgetPlanner.Services.Export {
 
         private readonly ExcelPackage package;
         private readonly BaseHandler baseHandler;
-
+        private string lang;
         public XlsHandler(BaseHandler baseHandler) {
             this.baseHandler = baseHandler;
 
@@ -30,14 +30,19 @@ namespace BudgetPlanner.Services.Export {
             this.package.Dispose();
         }
 
+        private string Trx(string key) {
+            return this.baseHandler.I18n.TranslateAsync(this.lang, key).GetAwaiter().GetResult();
+        }
+
         public async Task<Stream> GetExportAsync(string userId) {
             var export = await this.baseHandler.GetJsonAsync(userId);
+            this.lang = export?.Client?.Language;
 
             foreach (var budget in export.Budgets) {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
 
-                var (rI, cI) = this.DoBudget(worksheet, 2, 2, "Income", budget.Positive);
-                var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, "Expenses", budget.Negative);
+                var (rI, cI) = this.DoBudget(worksheet, 2, 2, Trx("Income"), budget.Positive);
+                var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, Trx("Expenses"), budget.Negative);
 
                 worksheet.Cells(1, 1, 0, cE)
                     .Merge()
@@ -52,14 +57,14 @@ namespace BudgetPlanner.Services.Export {
             }
 
             if (export.Revenue != null) {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Revenue");
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Trx("Revenue"));
 
-                var (rI, cI) = this.DoRevenue(worksheet, 2, 2, "Planned income", export.Revenue.Positive);
-                var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, "Planned expenses", export.Revenue.Negative);
+                var (rI, cI) = this.DoRevenue(worksheet, 2, 2, Trx("PlannedRevenue"), export.Revenue.Positive);
+                var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, Trx("PlannedExpenses"), export.Revenue.Negative);
 
                 worksheet.Cells(1, 1, 0, cE)
                     .Merge()
-                    .Value("Revenue")
+                    .Value(Trx("Revenue"))
                     .FontColor(Color.FromArgb(0, 140, 180))
                     .FontSize(40)
                     .Left(3)
@@ -70,14 +75,14 @@ namespace BudgetPlanner.Services.Export {
             }
 
             if (export.Assets != null) {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Assets");
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Trx("Assets"));
 
-                var (rI, cI) = this.DoAssets(worksheet, 2, 2, "Assets", export.Assets.Positive);
-                var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, "Debts", export.Assets.Negative);
+                var (rI, cI) = this.DoAssets(worksheet, 2, 2, Trx("Assets"), export.Assets.Positive);
+                var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, Trx("Debts"), export.Assets.Negative);
 
                 worksheet.Cells(1, 1, 0, cE)
                     .Merge()
-                    .Value("Assets")
+                    .Value(Trx("Assets"))
                     .FontColor(Color.FromArgb(0, 140, 180))
                     .FontSize(40)
                     .Left(3)
@@ -111,7 +116,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(20);
 
             worksheet.Cells(row, col + 1)
-                .Value("Name")
+                .Value(Trx("Name"))
                 .Column(x => {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
@@ -119,7 +124,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(30);
 
             worksheet.Cells(row, col + 2)
-                .Value("Frequency")
+                .Value(Trx("frequency.frequency"))
                 .Column(x => {
                     x.Style.Numberformat.Format = "0";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
@@ -128,7 +133,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(15);
 
             worksheet.Cells(row, col + 3)
-                .Value("Amount")
+                .Value(Trx("Amount"))
                 .Column(x => {
                     x.Style.Numberformat.Format = "#,###.00";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
@@ -174,7 +179,7 @@ namespace BudgetPlanner.Services.Export {
 
                 worksheet.Cells(row, col, 0, 2)
                     .Merge()
-                    .Value("Sub Total")
+                    .Value(Trx("Subtotal"))
                     .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
                     .FontColor(Color.FromArgb(0, 140, 180))
                     .Height(30);
@@ -190,7 +195,7 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col, 0, 2)
                 .Merge()
-                .Value("Total")
+                .Value(Trx("Total"))
                 .Bold().FontColor(Color.FromArgb(0, 140, 180))
                 .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
                 .Height(30);
@@ -227,7 +232,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(20);
 
             worksheet.Cells(row, col + 1)
-                .Value("Name")
+                .Value(Trx("Name"))
                 .Column(x => {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
@@ -235,7 +240,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(30);
 
             worksheet.Cells(row, col + 2)
-                .Value("Year")
+                .Value(Trx("Year"))
                 .Column(x => {
                     x.Style.Numberformat.Format = "0";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
@@ -244,7 +249,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(15);
 
             worksheet.Cells(row, col + 3)
-                .Value("Amount")
+                .Value(Trx("Amount"))
                 .Column(x => {
                     x.Style.Numberformat.Format = "#,###.00";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
@@ -290,7 +295,7 @@ namespace BudgetPlanner.Services.Export {
 
                 worksheet.Cells(row, col, 0, 2)
                     .Merge()
-                    .Value("Sub Total")
+                    .Value(Trx("Subtotal"))
                     .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
                     .FontColor(Color.FromArgb(0, 140, 180))
                     .Height(30);
@@ -306,7 +311,7 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col, 0, 2)
                 .Merge()
-                .Value("Total")
+                .Value(Trx("Total"))
                 .Bold().FontColor(Color.FromArgb(0, 140, 180))
                 .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
                 .Height(30);
@@ -343,7 +348,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(20);
 
             worksheet.Cells(row, col + 1, 0, 1)
-                .Value("Name")
+                .Value(Trx("Name"))
                 .Column(x => {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
@@ -352,7 +357,7 @@ namespace BudgetPlanner.Services.Export {
                 .Width(30);
 
             worksheet.Cells(row, col + 3)
-                .Value("Amount")
+                .Value(Trx("Amount"))
                 .Column(x => {
                     x.Style.Numberformat.Format = "#,###.00";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
@@ -397,7 +402,7 @@ namespace BudgetPlanner.Services.Export {
 
                 worksheet.Cells(row, col, 0, 2)
                     .Merge()
-                    .Value("Sub Total")
+                    .Value(Trx("Subtotal"))
                     .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
                     .FontColor(Color.FromArgb(0, 140, 180))
                     .Height(30);
@@ -413,7 +418,7 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col, 0, 2)
                 .Merge()
-                .Value("Total")
+                .Value(Trx("Total"))
                 .Bold().FontColor(Color.FromArgb(0, 140, 180))
                 .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
                 .Height(30);

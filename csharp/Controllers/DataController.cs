@@ -47,10 +47,10 @@ namespace BudgetPlanner.Controllers {
         }
 
         [HttpGet("profile")]
-        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(ProfileData), 200)]
         public async Task<IActionResult> GetProfile() {
             var value = await this.TableStore.GetAsync(new Profile { UserId = this.UserId });
-            return this.Ok(value?.Data ?? new object());
+            return this.Ok(value?.Data ?? new ProfileData());
         }
 
         [HttpGet("profile/image")]
@@ -62,8 +62,8 @@ namespace BudgetPlanner.Controllers {
         }
 
         [HttpPost("profile")]
-        [ProducesResponseType(typeof(object), 200)]
-        public async Task<IActionResult> SetProfile([FromBody] object data) {
+        [ProducesResponseType(typeof(ProfileData), 200)]
+        public async Task<IActionResult> SetProfile([FromBody] ProfileData data) {
             await this.TableStore.AddOrUpdateAsync(new Profile { UserId = this.UserId, Data = data });
             return this.Ok(data);
         }

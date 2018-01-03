@@ -2,12 +2,12 @@
     <div class="element-container">
         <mat-card class="element">
             <div class="company-wrapper">
-                <span class="company">Sign in</span>
+                <span class="company">{{ 'SignIn' | translate }}</span>
             </div>
             <div class="content-wrapper">
                 <div class="content">
                     <div class="welcome-message-wrapper">
-                        <p class="welcome-message">Hello there! Sign in and start managing your budget.</p>
+                        <p class="welcome-message">{{ 'WelcomeMessage' | translate }}</p>
                     </div>
                     <div class="signIn-buttons" *ngIf="providers">
                         <button *ngFor="let provider of providers" mat-raised-button (click)="signInWith(provider.name)" class="signIn">
