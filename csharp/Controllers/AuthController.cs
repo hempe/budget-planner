@@ -13,6 +13,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetPlanner.Controllers {
 
+    public class RegisterDto {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class LoginDto {
+        public string Email { get; set; }
+        public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
+    }
+
     [Route(".auth")]
     public class AuthController : BaseController {
         private readonly SignInManager<User> signInManager;
@@ -21,12 +33,51 @@ namespace BudgetPlanner.Controllers {
         }
 
         [AllowAnonymous]
-
         [HttpGet]
         public async Task<IActionResult> Index() {
             var schemes = await this.signInManager.GetExternalAuthenticationSchemesAsync();
             var loginProviders = schemes.Select(x => new { x.Name, x.DisplayName }).ToList();
             return this.Ok(loginProviders);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto model) {
+            if (this.User.Identity.IsAuthenticated)
+                return this.BadRequest("Already signed in");
+
+            var user = new User() { Email = model.Email, UserName = model.Email };
+            var created = await this.UserManager.CreateAsync(user, model.Password);
+            if (created.Succeeded) {
+                await this.signInManager.SignInAsync(user, isPersistent: false);
+                return this.Ok();
+            }
+
+            return this.BadRequest(new {
+                Email = created.Errors.Where(e => e.Code.ToLower().Contains("email")).Select(x => x.Code).ToList(),
+                    Password = created.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto model) {
+            if (this.User.Identity.IsAuthenticated)
+                return this.BadRequest("Already signed in");
+
+            // lockoutOnFailure: true
+            var result = await this.signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            if (result.Succeeded) {
+                return this.Ok();
+            }
+            if (result.RequiresTwoFactor) {
+                return this.BadRequest("Two factor not supported");
+            }
+            if (result.IsLockedOut) {
+                return this.BadRequest("Lockout");
+            } else {
+                return this.BadRequest("Invalid login attempt.");
+            }
         }
 
         [AllowAnonymous, Route("error/{code}"), HttpGet, HttpDelete, HttpPost, HttpPut, HttpPatch]
@@ -35,7 +86,6 @@ namespace BudgetPlanner.Controllers {
         }
 
         [AllowAnonymous]
-
         [HttpGet("self")]
         public IActionResult UserInfo() {
             if (!this.User.Identity.IsAuthenticated)
@@ -55,11 +105,11 @@ namespace BudgetPlanner.Controllers {
             return this.RedirectToLocal(returnUrl);
         }
 
-        [HttpGet("iframe")]
-
         [Authorize]
+        [HttpGet("iframe")]
         public IActionResult IFrame() => this.View("~/Views/iframe.html");
 
+        [AllowAnonymous]
         [HttpGet("signin/{provider}")]
         public async Task<IActionResult> ExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl = null) {
             var schemes = await this.signInManager.GetExternalAuthenticationSchemesAsync();
@@ -69,6 +119,7 @@ namespace BudgetPlanner.Controllers {
             return Challenge(properties, schema.Name);
         }
 
+        [AllowAnonymous]
         [HttpGet("signin/callback")]
         public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl = null, [FromQuery] string remoteError = null) {
             if (remoteError != null) {

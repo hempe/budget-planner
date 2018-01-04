@@ -12,7 +12,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace BudgetPlanner.Services {
 
-    internal class UserStore : IUserStore<User>, IUserLoginStore<User>, IUserAuthenticationTokenStore<User> {
+    internal partial class UserStore : IUserStore<User> {
         private static List<Type> Types;
         private readonly TableStore tableStore;
 
@@ -23,17 +23,6 @@ namespace BudgetPlanner.Services {
         public UserStore(TableStore tableStore) {
             this.tableStore = tableStore;
 
-        }
-
-        public async Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken) {
-
-            LoginInfo entity = login;
-            entity.UserId = user.Id;
-
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                return;
-            throw new Exception("Update failed");
         }
 
         public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken) {
@@ -77,28 +66,11 @@ namespace BudgetPlanner.Services {
             return entity;
         }
 
-        public async Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetAsync<LoginInfo>(new LoginInfo { LoginProvider = loginProvider, ProviderKey = providerKey });
-
-            if (entity == null)
-                return null;
-
-            return await this.FindByIdAsync(entity.UserId, cancellationToken);
-        }
-
         public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken) {
             var entity = await this.tableStore.GetAsync<UserEntity>(
                 new Args { { nameof(UserEntity.NormalizedUserName), normalizedUserName }
                 });
             return entity;
-        }
-
-        public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken) {
-            var entities = await this.tableStore.GetAllAsync<LoginInfo>(
-                new Args { { nameof(LoginInfo.UserId), user.Id } }
-            );
-
-            return entities.Cast<UserLoginInfo>().ToList();
         }
 
         public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken) {
@@ -113,50 +85,9 @@ namespace BudgetPlanner.Services {
             return Task.FromResult(user.UserName);
         }
 
-        public async Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            var result = await this.tableStore.DeleteAsync<UserEntity>(user);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                throw new Exception("Update failed");
-        }
-
         public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken) {
             user.NormalizedUserName = user.UserName.ToUpper();
             return Task.CompletedTask;
-        }
-
-        public async Task RemoveTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) {
-            var result = await this.tableStore.DeleteAsync(new Token {
-                LoginProvider = loginProvider,
-                    UserId = user.Id,
-                    Name = name
-            });
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                throw new Exception("Update failed");
-        }
-
-        public async Task SetTokenAsync(User user, string loginProvider, string name, string value, CancellationToken cancellationToken) {
-            var entity = new Token {
-                LoginProvider = loginProvider,
-                UserId = user.Id,
-                Name = name,
-                Value = value
-            };
-
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                return;
-
-            throw new Exception("Update failed");
-        }
-
-        public async Task<string> GetTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetAsync(new Token {
-                LoginProvider = loginProvider,
-                    UserId = user.Id,
-                    Name = name
-            });
-
-            return entity?.Value;
         }
 
         public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken) {

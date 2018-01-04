@@ -24,6 +24,15 @@
     "Edit": "Edit",
     "eMail": "Email",
     "endYear": "Until",
+    "Errors": {
+        "PasswordRequiresNonAlphanumeric":
+            "Passwords must have at least one non alphanumeric character.",
+        "PasswordRequiresDigit":
+            "Passwords must have at least one digit ('0'-'9').",
+        "PasswordRequiresUpper":
+            "Passwords must have at least one uppercase ('A'-'Z').",
+        "DuplicateEmail": "Email is already taken"
+    },
     "Expenses": "Expenses",
     "ExportAsXlsx": "Export as .Xlsx",
     "ExportAsPdf": "Export as .Pdf",

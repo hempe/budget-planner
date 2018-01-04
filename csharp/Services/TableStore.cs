@@ -116,6 +116,10 @@ namespace BudgetPlanner.Services {
             do {
                 TableQuerySegment<T> segment = await table.ExecuteQuerySegmentedAsync(query, continuationToken);
                 re = segment.Results.FirstOrDefault();
+                if (re != null) {
+                    attribute.AfterLoad(re);
+                    return re;
+                }
                 continuationToken = segment.ContinuationToken;
             } while (continuationToken != null);
             attribute.AfterLoad(re);
