@@ -60,7 +60,7 @@ namespace BudgetPlanner.Controllers {
         }
 
         [AllowAnonymous]
-        [HttpPost("login")]
+        [HttpPost("signin")]
         public async Task<IActionResult> Login([FromBody] LoginDto model) {
             if (this.User.Identity.IsAuthenticated)
                 return this.BadRequest("Already signed in");
@@ -71,12 +71,18 @@ namespace BudgetPlanner.Controllers {
                 return this.Ok();
             }
             if (result.RequiresTwoFactor) {
-                return this.BadRequest("Two factor not supported");
+                return this.BadRequest(new {
+                    Email = new [] { "TwoFactorNotSupported" }
+                });
             }
             if (result.IsLockedOut) {
-                return this.BadRequest("Lockout");
+                return this.BadRequest(new {
+                    Email = new [] { "Lockout" }
+                });
             } else {
-                return this.BadRequest("Invalid login attempt.");
+                return this.BadRequest(new {
+                    Email = new [] { "InvalidLoginAttempt" }
+                });
             }
         }
 

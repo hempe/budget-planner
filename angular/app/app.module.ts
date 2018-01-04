@@ -150,7 +150,7 @@ import { PdfRenderService } from './services/pdf-render';
             ]
         },
         ThemeSelector
-        //{ provide: ErrorStateMatcher, useClass: CustomErrorStateMatcher }
+        { provide: ErrorStateMatcher, useClass: CustomErrorStateMatcher }
     ],
     bootstrap: [AppComponent]
 })

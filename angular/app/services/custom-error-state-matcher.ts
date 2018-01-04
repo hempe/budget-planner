@@ -13,7 +13,6 @@ import { ErrorStateMatcher } from '@angular/material';
 @Injectable()
 export class CustomErrorStateMatcher implements ErrorStateMatcher {
     public name: string;
-
     static getErrors(name: string): any[] {
         if (CustomErrorStateMatcher.errors)
             return CustomErrorStateMatcher.errors[name];
@@ -25,15 +24,19 @@ export class CustomErrorStateMatcher implements ErrorStateMatcher {
         form: FormGroupDirective | NgForm | null
     ): boolean {
         let hasError = control.invalid && (control.dirty || control.touched);
+        /*
         if (hasError) {
             let errors = [];
             Object.keys(control.errors).forEach(error => {
                 if (control.errors[error]) errors.push(error);
             });
-            CustomErrorStateMatcher.errors[this.name] = errors;
-        } else {
-            delete CustomErrorStateMatcher.errors[this.name];
+            console.info('errors', errors);
         }
-        return hasError;
+        */
+        return hasError
+            ? true
+            : CustomErrorStateMatcher.errors &&
+                  CustomErrorStateMatcher.errors[this.name] &&
+                  CustomErrorStateMatcher.errors[this.name].length > 0;
     }
 }

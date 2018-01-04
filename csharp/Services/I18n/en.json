@@ -23,15 +23,22 @@
     "Down": "Down",
     "Edit": "Edit",
     "eMail": "Email",
+    "email": "Email",
     "endYear": "Until",
     "Errors": {
         "PasswordRequiresNonAlphanumeric":
             "Passwords must have at least one non alphanumeric character.",
         "PasswordRequiresDigit":
             "Passwords must have at least one digit ('0'-'9').",
+        "DuplicateEmail": "Email is already taken",
+        "InvalidLoginAttempt": "Invalid login",
+        "PasswordTooShort": "Password too short",
+        "PasswordRequiresLower":
+            "Passwords must have at least one lowercase ('a'-'z').",
         "PasswordRequiresUpper":
             "Passwords must have at least one uppercase ('A'-'Z').",
-        "DuplicateEmail": "Email is already taken"
+        "PasswordRequiresUniqueChars":
+            "Passwords must use at least 2 different characters."
     },
     "Expenses": "Expenses",
     "ExportAsXlsx": "Export as .Xlsx",
@@ -64,8 +71,10 @@
     "Pin": "Pin to dashboard",
     "PlannedExpenses": "Planned income",
     "PlannedRevenue": "Planned expenses",
+    "password": "Password",
     "prename": "Surname",
     "Profile": "Profile",
+    "Register": "Register",
     "Revenue": "Revenue",
     "Save": "Save",
     "SelectATheme": "Select a theme",

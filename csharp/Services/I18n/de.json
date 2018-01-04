@@ -23,7 +23,23 @@
     "Down": "Runter",
     "Edit": "Bearbeiten",
     "eMail": "E-Mail",
+    "email": "E-Mail",
     "endYear": "Bis",
+    "Errors": {
+        "PasswordRequiresNonAlphanumeric":
+            "Passwörter müssen mindestens ein nicht alphanumerisches Zeichen enthalten.",
+        "PasswordRequiresDigit":
+            "Passwörter müssen mindestens eine Ziffer haben ('0' - '9').",
+        "DuplicateEmail": "E-Mail ist bereits vergeben",
+        "InvalidLoginAttempt": "Ungültiges Login",
+        "PasswordTooShort": "Passwort zu kurz.",
+        "PasswordRequiresLower":
+            "Passwörter müssen mindestens einen Kleinbuchstaben enthalten ('a' - 'z').",
+        "PasswordRequiresUpper":
+            "Passwörter müssen mindestens einen Großbuchstaben haben ('A' - 'Z').",
+        "PasswordRequiresUniqueChars":
+            "Passwörter müssen mindestens 2 verschiedene Zeichen enthalten."
+    },
     "Expenses": "Ausgaben",
     "ExportAsXlsx": "Speichern als .Xlsx",
     "ExportAsPdf": "Speichern als .Pdf",
@@ -56,8 +72,10 @@
     "Pin": "An das Dashboard anheften",
     "PlannedExpenses": "Geplannte Ausgaben",
     "PlannedRevenue": "Geplannte Einnahmen",
+    "password": "Passwort",
     "prename": "Vorname",
     "Profile": "Profil",
+    "Register": "Registrieren",
     "Revenue": "Einnahmen",
     "Save": "Speichern",
     "SelectATheme": "Theme auswählen",

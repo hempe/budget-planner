@@ -17,6 +17,25 @@ export class ApiService {
         private configuration: ConfigurationService
     ) {}
 
+    public signIn(email: string, password: string, rememberMe?: boolean) {
+        this.http
+            .post('/.auth/signin', {
+                email: email,
+                password: password,
+                rememberMe: rememberMe || false
+            })
+            .subscribe(x => this.init());
+    }
+
+    public register(email: string, password: string) {
+        this.http
+            .post('/.auth/register', {
+                email: email,
+                password: password
+            })
+            .subscribe(x => this.init());
+    }
+
     public signInWith(provider: string): void {
         window.location.href = `.auth/signin/${provider}?returnUrl=${
             window.location.pathname

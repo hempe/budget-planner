@@ -1,6 +1,6 @@
 <mat-toolbar class="user-bar">
   <a class="company" (click)="goHome()">
-    <img src="/assets/img/logo/logo-128.png" />
+    <img src="/assets/img/logo/logo.svg" />
   </a>
   <a class="company" (click)="goHome()">Budget Planner 2.0</a>
   <span class="fill-remaining-space"></span>
@@ -19,8 +19,8 @@
           <mat-icon>file_download</mat-icon> {{ 'ExportAsPdf' | translate }}
         </button>
         <button mat-menu-item (click)="download('html')">
-            <mat-icon>file_download</mat-icon> {{ 'ExportAsHtml' | translate }}
-          </button>
+          <mat-icon>file_download</mat-icon> {{ 'ExportAsHtml' | translate }}
+        </button>
         <button mat-menu-item (click)="download('json')">
           <mat-icon>file_download</mat-icon> {{ 'ExportAsJson' | translate }}
         </button>
@@ -38,10 +38,8 @@
 
     <button mat-button [matMenuTriggerFor]="appMenu" [hidden]="!configuraton.loggedIn">
       <img class="avatar" [src]="configuration.avatar">
-      <span class="user-name">{{ 
-          configuraton.profile &&
-          configuraton.profile.name && 
-          configuraton.profile.prename ? configuraton.profile.prename+" "+configuraton.profile.name : configuraton.username }}</span>
+      <span class="user-name">{{ configuraton.profile && configuraton.profile.name && configuraton.profile.prename ? configuraton.profile.prename+"
+        "+configuraton.profile.name : configuraton.username }}</span>
     </button>
   </div>
 

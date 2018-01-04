@@ -40,7 +40,11 @@ namespace BudgetPlanner.Services {
             if (Attributes.TryGetValue(type, out var t) && t != null)
                 return t;
             var attribute = type.Table();
-            Attributes[type] = attribute;
+            try {
+                Attributes[type] = attribute;
+            } catch {
+                Attributes[type] = attribute;
+            }
             return attribute;
         }
 

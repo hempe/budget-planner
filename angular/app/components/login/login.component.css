@@ -30,12 +30,14 @@
     padding: 0px;
     width: 100%;
     text-align: center;
-    min-height: calc(100vh - 300px);
 }
 
 .company-wrapper {
-    background: #baec8e url(/assets/img/backgrounds/header_1.png) no-repeat;
+    background: url(/assets/img/backgrounds/header.png) no-repeat 50% fixed;
+    background-color: #baec8e;
+    background-blend-mode: color-burn;
     background-size: cover;
+    transition: color 3000ms;
 }
 .company {
     padding: 0.4em;
@@ -44,7 +46,8 @@
     line-height: 3em;
 }
 .welcome-message {
-    color: rgba(0, 0, 0, 0.54);
+    /*color: rgba(0, 0, 0, 0.54);*/
+    color: white;
 }
 
 .content-wrapper {
@@ -54,7 +57,7 @@
     justify-content: center;
 }
 .content {
-    padding: 50px 0;
+    padding: 48px 0 24px 0;
 }
 .welcome-message-wrapper {
     margin: auto;

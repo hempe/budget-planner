@@ -36,7 +36,7 @@
     table {
         border-collapse: collapse;
         width: 100%;
-        font-size:.8em;
+        font-size: .8em;
     }
 
     thead {
@@ -89,15 +89,18 @@
     .amount {
         text-align: right;
     }
+
     .sub-total {
         border-top: 1px solid #008cb4;
         color: #008cb4;
     }
+
     .total {
         border-top: 2px solid #008cb4;
         color: #008cb4;
         font-weight: bold;
     }
+
     .page-break {
         page-break-after: always;
     }
@@ -111,7 +114,7 @@
         {{ for b in budgets }}
         <div class="title">{{ b.name }}</div>
         <div class="time">{{ b.startYear }} - {{ b.endYear }} (Total: {{ numberWithSeperator(b.sum) }} )</div>
-        
+
         <div class="sub-title">Income</div>
         <table>
             <thead>
@@ -124,9 +127,9 @@
             </thead>
 
             <tbody>
-                {{ for e in b.positive}}
-                    {{ for x in e.elements}}
-                    {{if for.odd}}<tr class="elements">{{else}}<tr class="elements odd">{{end}}
+                {{ for e in b.positive}} {{ for x in e.elements}} {{if for.odd}}
+                <tr class="elements">{{else}}
+                    <tr class="elements odd">{{end}}
                         <td class="group">
                             {{ if for.first }} {{ e.name}} {{end}}
                         </td>
@@ -142,22 +145,13 @@
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
-                {{ end }}
-                <tr class="total">
-                    <td colspan="3">{{ 'Total' | translate }}</td>
-                    <td class="amount">
-                        {{
-                            func sum
-                                s = default['decimal']
-                                for x in b.positive
-                                    s = s + x.sum
-                                end
-                                ret s
-                            end
-                        }}
-                        {{numberWithSeperator(sum)}}
-                    </td>
-                </tr>
+                    {{ end }}
+                    <tr class="total">
+                        <td colspan="3">{{ 'Total' | translate }}</td>
+                        <td class="amount">
+                            {{ func sum s = default['decimal'] for x in b.positive s = s + x.sum end ret s end }} {{numberWithSeperator(sum)}}
+                        </td>
+                    </tr>
             </tbody>
         </table>
         <div class="page-break"></div>
@@ -175,9 +169,9 @@
             </thead>
 
             <tbody>
-                {{ for e in b.negative}}
-                    {{ for x in e.elements}}
-                    {{if for.odd}}<tr class="elements">{{else}}<tr class="elements odd">{{end}}
+                {{ for e in b.negative}} {{ for x in e.elements}} {{if for.odd}}
+                <tr class="elements">{{else}}
+                    <tr class="elements odd">{{end}}
                         <td class="group">
                             {{ if for.first }} {{ e.name}} {{end}}
                         </td>
@@ -193,22 +187,13 @@
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
-                {{ end }}
-                <tr class="total">
-                    <td colspan="3">{{ 'Total' | translate }}</td>
-                    <td class="amount">
-                        {{
-                            func sum
-                                s = default['decimal']
-                                for x in b.negative
-                                    s = s + x.sum
-                                end
-                                ret s
-                            end
-                        }}
-                        {{numberWithSeperator(sum)}}
-                    </td>
-                </tr>
+                    {{ end }}
+                    <tr class="total">
+                        <td colspan="3">{{ 'Total' | translate }}</td>
+                        <td class="amount">
+                            {{ func sum s = default['decimal'] for x in b.negative s = s + x.sum end ret s end }} {{numberWithSeperator(sum)}}
+                        </td>
+                    </tr>
             </tbody>
         </table>
         <div class="page-break"></div>
@@ -229,9 +214,9 @@
             </thead>
 
             <tbody>
-                {{ for e in assets.positive}}
-                    {{ for x in e.elements}}
-                    {{if for.odd}}<tr class="elements">{{else}}<tr class="elements odd">{{end}}
+                {{ for e in assets.positive}} {{ for x in e.elements}} {{if for.odd}}
+                <tr class="elements">{{else}}
+                    <tr class="elements odd">{{end}}
                         <td class="group">
                             {{ if for.first }} {{ e.name}} {{end}}
                         </td>
@@ -247,26 +232,17 @@
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
-                {{ end }}
-                <tr class="total">
-                    <td colspan="3">{{ 'Total' | translate }}</td>
-                    <td class="amount">
-                        {{
-                            func sum
-                                s = default['decimal']
-                                for x in assets.positive
-                                    s = s + x.sum
-                                end
-                                ret s
-                            end
-                        }}
-                        {{numberWithSeperator(sum)}}
-                    </td>
-                </tr>
+                    {{ end }}
+                    <tr class="total">
+                        <td colspan="3">{{ 'Total' | translate }}</td>
+                        <td class="amount">
+                            {{ func sum s = default['decimal'] for x in assets.positive s = s + x.sum end ret s end }} {{numberWithSeperator(sum)}}
+                        </td>
+                    </tr>
             </tbody>
         </table>
         <div class="page-break"></div>
-        
+
         <div class="title">{{ 'Assets' | translate }}</div>
         <div class="time">{{ 'Total' | translate }}: {{ numberWithSeperator(assets.sum) }}</div>
         <div class="sub-title">{{ 'Debts' | translate }}</div>
@@ -281,9 +257,9 @@
             </thead>
 
             <tbody>
-                {{ for e in assets.negative}}
-                    {{ for x in e.elements}}
-                    {{if for.odd}}<tr class="elements">{{else}}<tr class="elements odd">{{end}}
+                {{ for e in assets.negative}} {{ for x in e.elements}} {{if for.odd}}
+                <tr class="elements">{{else}}
+                    <tr class="elements odd">{{end}}
                         <td class="group">
                             {{ if for.first }} {{ e.name}} {{end}}
                         </td>
@@ -299,22 +275,13 @@
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
-                {{ end }}
-                <tr class="total">
-                    <td colspan="3">{{ 'Total' | translate }}</td>
-                    <td class="amount">
-                        {{
-                            func sum
-                                s = default['decimal']
-                                for x in assets.negative
-                                    s = s + x.sum
-                                end
-                                ret s
-                            end
-                        }}
-                        {{numberWithSeperator(sum)}}
-                    </td>
-                </tr>
+                    {{ end }}
+                    <tr class="total">
+                        <td colspan="3">{{ 'Total' | translate }}</td>
+                        <td class="amount">
+                            {{ func sum s = default['decimal'] for x in assets.negative s = s + x.sum end ret s end }} {{numberWithSeperator(sum)}}
+                        </td>
+                    </tr>
             </tbody>
         </table>
         <div class="page-break"></div>
@@ -335,9 +302,9 @@
             </thead>
 
             <tbody>
-                {{ for e in revenue.positive}}
-                    {{ for x in e.elements}}
-                    {{if for.odd}}<tr class="elements">{{else}}<tr class="elements odd">{{end}}
+                {{ for e in revenue.positive}} {{ for x in e.elements}} {{if for.odd}}
+                <tr class="elements">{{else}}
+                    <tr class="elements odd">{{end}}
                         <td class="group">
                             {{ if for.first }} {{ e.name}} {{end}}
                         </td>
@@ -353,26 +320,17 @@
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
-                {{ end }}
-                <tr class="total">
-                    <td colspan="3">{{ 'Total' | translate }}</td>
-                    <td class="amount">
-                        {{
-                            func sum
-                                s = default['decimal']
-                                for x in revenue.positive
-                                    s = s + x.sum
-                                end
-                                ret s
-                            end
-                        }}
-                        {{numberWithSeperator(sum)}}
-                    </td>
-                </tr>
+                    {{ end }}
+                    <tr class="total">
+                        <td colspan="3">{{ 'Total' | translate }}</td>
+                        <td class="amount">
+                            {{ func sum s = default['decimal'] for x in revenue.positive s = s + x.sum end ret s end }} {{numberWithSeperator(sum)}}
+                        </td>
+                    </tr>
             </tbody>
         </table>
         <div class="page-break"></div>
-        
+
         <div class="title">{{ 'Revenue' | translate }}</div>
         <div class="time">{{ 'Total' | translate }}: {{ numberWithSeperator(revenue.sum) }}</div>
         <div class="sub-title">{{ 'PlannedExpenses' | translate }}</div>
@@ -387,9 +345,9 @@
             </thead>
 
             <tbody>
-                {{ for e in revenue.negative}}
-                    {{ for x in e.elements}}
-                    {{if for.odd}}<tr class="elements">{{else}}<tr class="elements odd">{{end}}
+                {{ for e in revenue.negative}} {{ for x in e.elements}} {{if for.odd}}
+                <tr class="elements">{{else}}
+                    <tr class="elements odd">{{end}}
                         <td class="group">
                             {{ if for.first }} {{ e.name}} {{end}}
                         </td>
@@ -405,22 +363,13 @@
                             {{numberWithSeperator(e.sum)}}
                         </td>
                     </tr>
-                {{ end }}
-                <tr class="total">
-                    <td colspan="3">{{ 'Total' | translate }}</td>
-                    <td class="amount">
-                        {{
-                            func sum
-                                s = default['decimal']
-                                for x in revenue.negative
-                                    s = s + x.sum
-                                end
-                                ret s
-                            end
-                        }}
-                        {{numberWithSeperator(sum)}}
-                    </td>
-                </tr>
+                    {{ end }}
+                    <tr class="total">
+                        <td colspan="3">{{ 'Total' | translate }}</td>
+                        <td class="amount">
+                            {{ func sum s = default['decimal'] for x in revenue.negative s = s + x.sum end ret s end }} {{numberWithSeperator(sum)}}
+                        </td>
+                    </tr>
             </tbody>
         </table>
         <!-- <div class="page-break"></div> -->
