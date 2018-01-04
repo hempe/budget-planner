@@ -107,7 +107,6 @@ export class EditComponent implements OnInit, OnDestroy {
             if (e.key == 'Insert') this.add();
         });
 
-        debugger;
         let id = this.route.snapshot.params['id'];
         if (!isNullOrWhitespace(id)) this.id = id;
 
@@ -325,8 +324,6 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     public pin() {
-        debugger;
-
         if (this.theme)
             this.http
                 .delete(this.dashboardUrl)
