@@ -3,6 +3,7 @@ import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { TranslateService } from '@ngx-translate/core';
+import { MatSnackBar } from '@angular/material';
 
 export interface Provider {
     name: string;
@@ -14,7 +15,9 @@ export class ApiService {
     constructor(
         private translate: TranslateService,
         private http: Http,
-        private configuration: ConfigurationService
+        private configuration: ConfigurationService,
+        private snackBar: MatSnackBar,
+        private translateService: TranslateService
     ) {}
 
     public signIn(email: string, password: string, rememberMe?: boolean) {
@@ -35,7 +38,38 @@ export class ApiService {
             })
             .subscribe(x => this.init());
     }
+    public reset(email: string, password: string, code: string) {
+        this.http
+            .post('/.auth/reset', {
+                email: email,
+                password: password,
+                code: code
+            })
+            .subscribe(x => {
+                window.location.href = `/`;
+            });
+    }
 
+    public forgot(email: string) {
+        this.http
+            .post('/.auth/forgot', {
+                email: email,
+                language: this.configuration.language
+            })
+            .subscribe(
+                x => {},
+                x => {},
+                () => {
+                    let trx = this.translateService
+                        .get('RegisterEmailSend')
+                        .subscribe(x => {
+                            this.snackBar.open(x, undefined, {
+                                duration: 3000
+                            });
+                        });
+                }
+            );
+    }
     public signInWith(provider: string): void {
         window.location.href = `.auth/signin/${provider}?returnUrl=${
             window.location.pathname

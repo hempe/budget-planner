@@ -149,7 +149,7 @@ import { PdfRenderService } from './services/pdf-render';
                 TranslateService
             ]
         },
-        ThemeSelector
+        ThemeSelector,
         { provide: ErrorStateMatcher, useClass: CustomErrorStateMatcher }
     ],
     bootstrap: [AppComponent]

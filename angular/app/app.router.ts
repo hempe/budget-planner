@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { Routes } from '@angular/router';
+import { LoginComponent } from './components/login/login.component';
 
 export const AppRoutes: Routes = [
     { path: 'home', component: HomeComponent },

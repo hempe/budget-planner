@@ -75,6 +75,24 @@
     "prename": "Surname",
     "Profile": "Profile",
     "Register": "Register",
+    "ResetPasswordTemplate": {
+        "Title": "Reset Password",
+        "Hello": "Hi, ",
+        "MessageBold": "There was a request to change your password",
+        "Message":
+            "If you did not make this request, just ignore this email, Otherwise, please click the link below to change your password:",
+        "Link": "Change Password"
+    },
+    "RegisterEmailSend": "Reset email was send",
+    "RegisterTemplate": {
+        "Title": "EMail Confirmation",
+        "Hello": "Hi, ",
+        "MessageBold": "There was a registration with this email",
+        "Message":
+            "If you did not try to register, just ignore this email, Otherwise, please click the link below to confirm your email:",
+        "Link": "Confirm email"
+    },
+
     "Revenue": "Revenue",
     "Save": "Save",
     "SelectATheme": "Select a theme",

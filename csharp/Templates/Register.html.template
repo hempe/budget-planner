@@ -1,0 +1,8 @@
+<div style="padding: 24px;font-family: "URW Gothic";">
+    <div style="color: #008cb4;font-size: 2em;width: 100%;>{{ 'RegisterTemplate.Hello' | translate }} {{name}} </div>
+    <div style="font-weight: bold">{{ 'RegisterTemplate.MessageBold' | translate }}</div>
+    <div class="message">{{ 'RegisterTemplate.Message' | translate }}</div>
+    <div class="link">
+        <a href="{{callbackUrl}}">{{ 'RegisterTemplate.Link' | translate }}</a>
+    </div>
+</div>

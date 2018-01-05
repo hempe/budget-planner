@@ -18,6 +18,13 @@ namespace BudgetPlanner.Services.I18n {
         }
 
         public async Task<string> TranslateAsync(string lang, string key) {
+            var t = await this.InternalTranslateAsync(lang, key);
+            if (string.IsNullOrWhiteSpace(t))
+                return $"###{key}###";
+            return t;
+        }
+
+        private async Task<string> InternalTranslateAsync(string lang, string key) {
             if (string.IsNullOrWhiteSpace(lang))
                 lang = "en";
             var trans = await this.LoadAsync(lang) ?? await this.LoadAsync("en");
@@ -25,7 +32,7 @@ namespace BudgetPlanner.Services.I18n {
                 return t1;
             if (TryGetValue(await this.LoadAsync("en"), key.Split('.'), out var t2))
                 return t2;
-            return $"###{key}###";
+            return null;
         }
 
         private bool TryGetValue(object trx, string[] key, out string value) {

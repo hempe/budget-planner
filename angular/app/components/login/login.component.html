@@ -1,6 +1,6 @@
 <div class="wrapper">
     <div class="element-container">
-        <mat-card class="element">
+        <mat-card class="element" *ngIf="!hasForgot">
             <div class="company-wrapper">
                 <span class="company">{{ 'SignIn' | translate }}</span>
 
@@ -10,7 +10,7 @@
 
                 <div style="width:100%;height:220px;padding-bottom:0px;">
                     <mat-card style="max-width:400px;display:inline-block">
-                        <form *ngIf="login" flexContainer class="flex-container" novalidate>
+                        <form *ngIf="login" flexContainer class="flex-container" novalidate #f="ngForm">
                             <field icon="email" [(ngModel)]="login.email" name="email" type="email" flex=10></field>
                             <field icon="lock" [(ngModel)]="login.password" name="password" type="password" flex=10></field>
                             <button mat-raised-button type="button" class="signIn" (click)="signIn()" flex=1>
@@ -18,6 +18,9 @@
                             </button>
                             <button color="accent" type="button" mat-button class="signIn" (click)="register()" flex=1>
                                 {{ 'Register' | translate }}
+                            </button>
+                            <button color="accent" type="button" mat-button class="signIn" (click)="forgot(f)" flex=1>
+                                {{ 'Forgot' | translate }}
                             </button>
                         </form>
                     </mat-card>
@@ -30,6 +33,23 @@
                             <img class="logo" src="{{ 'assets/img/auth/'+provider.key+'.svg'}}" /> {{ 'Auth.SignInWith' + provider.displayName | translate }}
                         </button>
                     </div>
+                </div>
+            </div>
+        </mat-card>
+        <mat-card class="element" *ngIf="hasForgot">
+            <div class="company-wrapper">
+                <span class="company">{{ 'ResetPassword' | translate }}</span>
+
+                <div style="width:100%;height:220px;padding-bottom:0px;">
+                    <mat-card style="max-width:400px;display:inline-block">
+                        <form *ngIf="login" flexContainer class="flex-container" novalidate #f="ngForm">
+                            <field icon="email" [(ngModel)]="login.email" name="email" type="email" flex=10></field>
+                            <field icon="lock" [(ngModel)]="login.password" name="password" type="password" flex=10></field>
+                            <button mat-raised-button type="button" class="signIn" (click)="reset()" flex=1>
+                                <img class="logo" src="assets/img/auth/default.svg" /> {{ 'ResetPassword' | translate }}
+                            </button>
+                        </form>
+                    </mat-card>
                 </div>
             </div>
         </mat-card>

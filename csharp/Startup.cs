@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
@@ -62,6 +63,11 @@ namespace BudgetPlanner {
                 Configuration.GetValue<string>("Store:TablePrefix"),
                 Configuration.GetValue<string>("Store:ImageContainer")
             );
+
+            services.AddTransient<Services.TemplateService>();
+
+            services.AddTransient<Services.MailService>()
+                .Configure<Services.MailServiceOptions>(Configuration.GetSection("MailService"));
 
             services.AddTransient<Services.Export.BaseHandler>()
                 .AddTransient<Services.Export.HtmlHandler>()

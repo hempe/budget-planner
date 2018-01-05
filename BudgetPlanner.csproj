@@ -9,7 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
-    <PackageReference Include="Flurl" Version="2.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.6.0" />
@@ -17,14 +16,18 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0002" />
     <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="2.0.1"/>
     <PackageReference Include="Scriban" Version="1.0.0" />
+    <PackageReference Include="Sendgrid" Version="9.9.0" />
+    <PackageReference Include="Flurl" Version="2.6.0" />
     <!--Am besten einfach gleich html templating machen, dann habe ich html und pdf exprot.-->
     <!--https://pdfgenerator.codeplex.com/-->
   </ItemGroup>
   <ItemGroup>
         <EmbeddedResource Include="csharp\Services\I18n\de.json" />
         <EmbeddedResource Include="csharp\Services\I18n\en.json" />
-        <EmbeddedResource Include="csharp\Templates\Export.html" />
-        <None Include="csharp\Templates\Export.html" CopyToPublishDirectory="PreserveNewest" />
+        <EmbeddedResource Include="csharp\Templates\Export.html.template" />
+        <EmbeddedResource Include="csharp\Templates\Register.html.template" />
+        <EmbeddedResource Include="csharp\Templates\ResetPassword.html.template" />
+        <None Include="csharp\Templates\Export.html.template" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
