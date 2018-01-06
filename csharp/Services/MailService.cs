@@ -36,5 +36,11 @@ namespace BudgetPlanner.Services {
             email.AddTo(receiverEmail);
             var response = await this.client.SendEmailAsync(email);
         }
+
+        public async Task<string> ParseSendEmailAsync(string receiverEmail, string subject, string templatePath, object data, string language = null) {
+
+            var template = await this.templateService.LoadTemplateAsync(templatePath);
+            return this.templateService.Render(template, data, language);
+        }
     }
 }

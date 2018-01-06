@@ -62,6 +62,13 @@ namespace BudgetPlanner.Controllers {
             if (this.User.Identity.IsAuthenticated)
                 return this.BadRequest("Already signed in");
 
+            if (string.IsNullOrWhiteSpace(model.Email)) {
+                return this.BadRequest(new { Email = new [] { "Required" } });
+            }
+            if (string.IsNullOrWhiteSpace(model.Password)) {
+                return this.BadRequest(new { Password = new [] { "Required" } });
+            }
+
             var user = new User() { Email = model.Email, UserName = model.Email };
             var created = await this.UserManager.CreateAsync(user, model.Password);
             if (created.Succeeded) {
@@ -74,25 +81,6 @@ namespace BudgetPlanner.Controllers {
                 Email = created.Errors.Where(e => e.Code.ToLower().Contains("email")).Select(x => x.Code).ToList(),
                     Password = created.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
             });
-        }
-
-        private async Task RequestEmailConfirmationAsync(MailService mailService, TranslationService translationService, Models.User user, string language) {
-            try {
-                string code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = this.Request.GetDisplayUrl().ResetToRoot().AppendPathSegments(".auth", "confirm").SetQueryParams(new {
-                    code = code,
-                        userId = user.Id
-                }).ToString();
-
-                await mailService.SendEmailAsync(
-                    user.Email,
-                    await translationService.TranslateAsync(language, "RegisterTemplate.Title"),
-                    "csharp/Templates/Register.html.template",
-                    new {
-                        Name = user.UserName,
-                            CallbackUrl = callbackUrl
-                    }, language);
-            } catch { }
         }
 
         [AllowAnonymous]
@@ -227,6 +215,7 @@ namespace BudgetPlanner.Controllers {
             if (user == null) {
                 return this.Ok();
             }
+
             if (!await UserManager.IsEmailConfirmedAsync(user)) {
                 await this.RequestEmailConfirmationAsync(mailService, translationService, user, string.Empty);
                 return this.Ok();
@@ -238,13 +227,16 @@ namespace BudgetPlanner.Controllers {
                     email = user.Email
             }).ToString();
 
+            var profile = await this.TableStore.GetAsync(new Profile { UserId = user.Id });
+
             await mailService.SendEmailAsync(
                 model.Email,
                 await translationService.TranslateAsync(model.Language, "ResetPasswordTemplate.Title"),
                 "csharp/Templates/ResetPassword.html.template",
                 new {
-                    Name = user.UserName,
-                        CallbackUrl = callbackUrl
+                    Name = $"{profile?.Data?.Prename} {profile?.Data?.Name}",
+                        CallbackUrl = callbackUrl,
+                        Url = this.Request.GetDisplayUrl().ResetToRoot()
                 }, model.Language);
 
             return this.Ok();
@@ -266,6 +258,28 @@ namespace BudgetPlanner.Controllers {
                 Email = result.Errors.Where(e => e.Code.ToLower().Contains("email")).Select(x => x.Code).ToList(),
                     Password = result.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
             });
+        }
+
+        private async Task RequestEmailConfirmationAsync(MailService mailService, TranslationService translationService, Models.User user, string language) {
+            try {
+                string code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = this.Request.GetDisplayUrl().ResetToRoot().AppendPathSegments(".auth", "confirm").SetQueryParams(new {
+                    code = code,
+                        userId = user.Id
+                }).ToString();
+
+                var profile = await this.TableStore.GetAsync(new Profile { UserId = user.Id });
+
+                await mailService.SendEmailAsync(
+                    user.Email,
+                    await translationService.TranslateAsync(language, "RegisterTemplate.Title"),
+                    "csharp/Templates/Register.html.template",
+                    new {
+                        Name = $"{profile?.Data?.Prename} {profile?.Data?.Name}",
+                            CallbackUrl = callbackUrl,
+                            Url = this.Request.GetDisplayUrl().ResetToRoot()
+                    }, language);
+            } catch { }
         }
 
         private IActionResult RedirectToLocal(string returnUrl) {

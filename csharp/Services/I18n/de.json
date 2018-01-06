@@ -38,7 +38,8 @@
         "PasswordRequiresUpper":
             "Passwörter müssen mindestens einen Großbuchstaben haben ('A' - 'Z').",
         "PasswordRequiresUniqueChars":
-            "Passwörter müssen mindestens 2 verschiedene Zeichen enthalten."
+            "Passwörter müssen mindestens 2 verschiedene Zeichen enthalten.",
+        "Required": "Erforderlich"
     },
     "Expenses": "Ausgaben",
     "ExportAsXlsx": "Speichern als .Xlsx",
@@ -76,6 +77,23 @@
     "prename": "Vorname",
     "Profile": "Profil",
     "Register": "Registrieren",
+    "ResetPasswordTemplate": {
+        "Title": "Password zurücksetzen",
+        "Hello": "Hallo, ",
+        "MessageBold": "Es gab eine Aufforderung, Ihr Passwort zu ändern.",
+        "Message":
+            "Wenn Sie diese Anfrage nicht gemacht haben, ignorieren Sie einfach diese E-Mail. Andernfalls klicken Sie bitte auf den folgenden Link, um Ihr Passwort zu ändern:",
+        "Link": "Password ändern"
+    },
+    "RegisterEmailSend": "Reset-E-Mail wurde gesendet",
+    "RegisterTemplate": {
+        "Title": "E-Mail Bestätigung",
+        "Hello": "Hallo, ",
+        "MessageBold": "Es gab eine Registrierung mit dieser E-Mail.",
+        "Message":
+            "Wenn Sie nicht versuchen, sich zu registrieren, ignorieren Sie einfach diese E-Mail, andernfalls klicken Sie bitte unten auf den Link, um Ihre E-Mail zu bestätigen:",
+        "Link": "E-Mail bestätigen"
+    },
     "Revenue": "Einnahmen",
     "Save": "Speichern",
     "SelectATheme": "Theme auswählen",

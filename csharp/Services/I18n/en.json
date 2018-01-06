@@ -38,7 +38,8 @@
         "PasswordRequiresUpper":
             "Passwords must have at least one uppercase ('A'-'Z').",
         "PasswordRequiresUniqueChars":
-            "Passwords must use at least 2 different characters."
+            "Passwords must use at least 2 different characters.",
+        "Required": "Required"
     },
     "Expenses": "Expenses",
     "ExportAsXlsx": "Export as .Xlsx",
@@ -62,7 +63,7 @@
     "Light": "Light",
     "Login": "Login",
     "MatFile": {
-        "DragFilesHereOrBrowse": "Drag files here or browse"
+        "DragFilesHereOrBrowse": "Drag files here or browse on your computer"
     },
     "mobilNumber": "Mobile",
     "Name": "Name",
@@ -78,21 +79,20 @@
     "ResetPasswordTemplate": {
         "Title": "Reset Password",
         "Hello": "Hi, ",
-        "MessageBold": "There was a request to change your password",
+        "MessageBold": "There was a request to change your password.",
         "Message":
-            "If you did not make this request, just ignore this email, Otherwise, please click the link below to change your password:",
+            "If you did not make this request, just ignore this email, otherwise, please click the link below to change your password:",
         "Link": "Change Password"
     },
     "RegisterEmailSend": "Reset email was send",
     "RegisterTemplate": {
-        "Title": "EMail Confirmation",
+        "Title": "Email Confirmation",
         "Hello": "Hi, ",
-        "MessageBold": "There was a registration with this email",
+        "MessageBold": "There was a registration with this email.",
         "Message":
-            "If you did not try to register, just ignore this email, Otherwise, please click the link below to confirm your email:",
+            "If you did not try to register, just ignore this email, otherwise, please click the link below to confirm your email:",
         "Link": "Confirm email"
     },
-
     "Revenue": "Revenue",
     "Save": "Save",
     "SelectATheme": "Select a theme",
