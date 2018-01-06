@@ -11,12 +11,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace BudgetPlanner {
-    public class AValue {
-        public int V { get; set; }
-    }
-    public class Value {
-        public AValue[] X { get; set; }
-    }
     public class Program {
         public static void Main(string[] args) {
 
