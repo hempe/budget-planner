@@ -22,7 +22,7 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> GetAll() {
             var values = await this.TableStore.GetAllAsync<Budget>(new Args { { nameof(Budget.UserId), this.UserId } });
             if (values.Count == 0)
-                values.Add(new Budget { Data = new BudgetData { }, Name = "Budget", Id = "0" });
+                values.Add(new Budget { Data = new BudgetData { }, Name = "Budget", Id = Guid.NewGuid().ToString() });
 
             var result = values
                 .Select(b => new { o = ((Group<FrequencyValue>) b.Data).ToOverview(x => x.Value * x.Frequency, b.Id, b.Name ?? nameof(Budget)), d = b.Data })

@@ -46,6 +46,7 @@ namespace BudgetPlanner.Middleware {
             app.MapWhen(context =>
                 !context.Request.Path.StartsWithSegments("/api") &&
                 !context.Request.Path.StartsWithSegments("/.auth") &&
+                !context.Request.Path.StartsWithSegments("/swagger") &&
                 !Path.HasExtension(context.Request.Path), innerApp => {
                     innerApp.Use((ctx, next) => {
                         ctx.Request.Path = "/index.html";

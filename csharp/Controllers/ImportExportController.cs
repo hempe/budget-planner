@@ -52,6 +52,8 @@ namespace BudgetPlanner.Controllers {
         [HttpPost]
         [Route("import")]
         public async Task<IActionResult> ImportJson([FromServices] BaseHandler handler, [FromBody] Complete value) {
+            if (value == null)
+                return this.BadRequest("CouldNotParseJson");
             await handler.ImportAsync(this.UserId, value);
             return this.Ok();
         }

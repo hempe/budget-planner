@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace BudgetPlanner.Models {
     public class Complete {
         public BudgetData[] Budgets { get; set; }

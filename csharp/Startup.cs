@@ -109,18 +109,12 @@ namespace BudgetPlanner {
                 });
 
             services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Budget Planner", Version = "v1" });
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            } else {
-                app.UseExceptionHandler("/Error");
-            }
-
             if (Configuration.GetValue<bool>("StaticFileHost:Enabled")) {
                 var rootDirectory = Path.Combine(env.ContentRootPath, Configuration.GetValue<string>("StaticFileHost:RootDirectory"));
                 app.UseCustomStaticFiles(rootDirectory);
@@ -129,20 +123,17 @@ namespace BudgetPlanner {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-            } else {
-                app.UseExceptionHandler("/error");
             }
 
-            app.UseCors("AllowAll");
-
-            //            app.UseResponseCompression().UseDefaultFiles();
+            //app.UseCors("AllowAll");
+            //app.UseResponseCompression().UseDefaultFiles();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Budget Planner");
             });
 
             app.UseAuthentication()

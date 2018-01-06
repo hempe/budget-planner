@@ -27,7 +27,7 @@ namespace BudgetPlanner.Services.Export {
             await this.TableStore.AddOrUpdateAsync(new Profile { UserId = userId, Data = value.Client });
 
             foreach (var b in value.Budgets) {
-                if (string.IsNullOrWhiteSpace(b.Id))
+                if (string.IsNullOrWhiteSpace(b.Id) || !Guid.TryParse(b.Id, out var _))
                     b.Id = Guid.NewGuid().ToString();
                 await this.TableStore.AddOrUpdateAsync(new Budget { UserId = userId, Name = b.Name, Id = b.Id, Data = b });
             }
