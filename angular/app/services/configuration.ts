@@ -3,6 +3,7 @@ import { hexToRgb, makeid } from '../common/helper';
 import { Injectable } from '@angular/core';
 import { Profile } from '../common/api';
 import { retry } from 'rxjs/operator/retry';
+import { TranslateService } from '@ngx-translate/core';
 
 export const Colors = {
     Amber: '#FFCA28',
@@ -28,7 +29,7 @@ export const Colors = {
 
 @Injectable()
 export class ConfigurationService {
-    constructor() {
+    constructor(private translateService: TranslateService) {
         this.resetColor();
     }
     public get language(): string {
@@ -107,6 +108,10 @@ export class ConfigurationService {
             default:
                 return 'home';
         }
+    }
+
+    public getTranslatedName(...path: string[]): string {
+        return this.translateService.instant(this.getName.apply(this, path));
     }
 
     public getName(...path: string[]) {

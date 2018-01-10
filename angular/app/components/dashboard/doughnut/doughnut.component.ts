@@ -203,7 +203,9 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
             .map(x => x.json())
             .subscribe((x: OverviewValue) => {
                 this.units = x[type[1]];
-                this.label = this.configService.getName(this.config.path);
+                this.label = this.configService.getTranslatedName(
+                    this.config.path
+                );
                 this.color =
                     this.config.theme == Themes.light
                         ? '#fff'

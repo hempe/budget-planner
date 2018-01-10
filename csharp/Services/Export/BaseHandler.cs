@@ -29,6 +29,13 @@ namespace BudgetPlanner.Services.Export {
             foreach (var b in value.Budgets) {
                 if (string.IsNullOrWhiteSpace(b.Id) || !Guid.TryParse(b.Id, out var _))
                     b.Id = Guid.NewGuid().ToString();
+                if (b.StartYear.GetValueOrDefault() == 0 && b.EndYear.GetValueOrDefault() == 0) {
+                    try {
+                        var fromName = b.Name.Split("-").Select(x => int.Parse(x)).ToList();
+                        b.StartYear = fromName[0];
+                        b.EndYear = fromName[1];
+                    } catch { }
+                }
                 await this.TableStore.AddOrUpdateAsync(new Budget { UserId = userId, Name = b.Name, Id = b.Id, Data = b });
             }
         }

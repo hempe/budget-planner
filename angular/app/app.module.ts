@@ -33,6 +33,7 @@ import { ConfigurationService } from './services/configuration';
 import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
 import { DashboardBarComponent } from './components/dashboard/bar/bar.component';
 import { DashboardDoughnutComponent } from './components/dashboard/doughnut/doughnut.component';
+import { DashboardIcon } from './components/dashboard/icon/icon.component';
 import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
 import { DecimalFormatDirective } from './directives/decimal-format/decimal-format.directive';
 import { DevelopmentComponent } from './components/development/development.component';
@@ -87,6 +88,7 @@ import { PdfRenderService } from './services/pdf-render';
         DataSourceTableComponent,
         DashboardDoughnutComponent,
         DashboardBarComponent,
+        DashboardIcon,
         OverviewChartComponent,
         OverviewComponent,
         ThemeSelectorDialog,

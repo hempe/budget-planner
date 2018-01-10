@@ -1,0 +1,53 @@
+.icon {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    left: 50%;
+}
+
+.title {
+    position: absolute;
+    font-size: 1.5em;
+    bottom: 24px;
+    left: 24px;
+    cursor: pointer;
+}
+.center-icon {
+    cursor: pointer;
+}
+
+.dark {
+    color: white;
+}
+.light {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+mat-card {
+    height: 302px;
+    position: relative;
+    flex-grow: 1;
+    width: 100%;
+    padding: 0px;
+    display: inline-block;
+}
+
+.center-icon {
+    font-size: 124px;
+    height: 124px;
+    width: 124px;
+}
+
+.edit-button-top {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.unpin-button {
+    position: absolute;
+    top: 48px;
+    opacity: 0.8;
+    right: 12px;
+}

@@ -1,0 +1,14 @@
+<mat-card [style.background-color]="color">
+
+    <div class="title" [ngClass]="theme">{{ label | translate }}</div>
+    <button mat-icon-button class="edit-button-top" [ngClass]="theme" (click)="onEdit()">
+        <mat-icon>create</mat-icon>
+    </button>
+    <button mat-icon-button class="unpin-button" [ngClass]="theme" (click)="unpin()">
+        <mat-icon>clear</mat-icon>
+    </button>
+
+    <div class="icon">
+        <mat-icon class="center-icon" [ngClass]="theme" (click)="onEdit()">{{ icon }}</mat-icon>
+    </div>
+</mat-card>

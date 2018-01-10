@@ -128,7 +128,9 @@ export class EditComponent implements OnInit, OnDestroy {
         this.units = array(this.units);
         this.units.forEach(u => (u.elements = array(u.elements)));
 
-        this.label = this.config.getName(`${this.type}.${this.subType}`);
+        this.label = this.config.getTranslatedName(
+            `${this.type}.${this.subType}`
+        );
         this.color = this.config.getColor(`${this.type}.${this.subType}`);
 
         if (this.type == 'assets')

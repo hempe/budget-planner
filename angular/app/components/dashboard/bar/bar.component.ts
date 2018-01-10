@@ -294,11 +294,14 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         this.labels = all.map(x => x.name);
 
         this._totalUnits = <any>{};
+        let pos = {};
+        let neg = {};
+
         this._totalUnits[UnitKey.total] = {
             name: 'Total',
             elements: [
                 <NamedValue>{
-                    name: this.configService.getName(
+                    name: this.configService.getTranslatedName(
                         this.config.path,
                         UnitKey.positive
                     ),
@@ -308,7 +311,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                     key: UnitKey.positive
                 },
                 <NamedValue>{
-                    name: this.configService.getName(
+                    name: this.configService.getTranslatedName(
                         this.config.path,
                         UnitKey.negative
                     ),
@@ -322,14 +325,14 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         };
 
         this._totalUnits[UnitKey.positive] = {
-            name: this.configService.getName(
+            name: this.configService.getTranslatedName(
                 this.config.path,
                 UnitKey.positive
             ),
             elements: this.units.positive
         };
         this._totalUnits[UnitKey.negative] = {
-            name: this.configService.getName(
+            name: this.configService.getTranslatedName(
                 this.config.path,
                 UnitKey.negative
             ),

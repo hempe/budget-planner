@@ -2,7 +2,7 @@
     <div flexContainer>
         <menu-left>
             <menu-header>
-                <menu-title>{{ name | translate }}</menu-title>
+                <menu-title>{{ name }}</menu-title>
             </menu-header>
             <menu-container *ngIf="!value" flexContainer class="not-loaded">
                 <div class="loading">
@@ -13,7 +13,7 @@
 
                 <div flex=1>
                     <div flexContainer>
-                        <span flex=10>{{positive | translate}}</span>
+                        <span flex=10>{{positive }}</span>
                         <div style='flex: 5; border: 1px solid transparent; min-width:0'>
                             <overview-chart [units]="value.positive" path="{{type + '.positive'}}" (edit)="goto('positive', $event)"></overview-chart>
                         </div>
@@ -26,7 +26,7 @@
                 </div>
                 <div flex=1>
                     <div flexContainer>
-                        <span flex=10>{{negative | translate}}</span>
+                        <span flex=10>{{negative}}</span>
                         <div style='flex: 5; border: 1px solid transparent; min-width:0'>
                             <overview-chart [units]="value.negative" path="{{type + '.negative'}}" (edit)="goto('negative',$event)"></overview-chart>
                         </div>

@@ -30,6 +30,8 @@ import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { MouseService } from '../../services/mouse';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
+import { DashboardConfig } from '../dashboard/dashboard';
+import { ThemeSelector } from '../theme-selector/theme-selector.component';
 
 @Component({
     selector: 'development',
@@ -37,6 +39,8 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
     styleUrls: ['development.component.css']
 })
 export class DevelopmentComponent implements OnInit {
+    private theme: string;
+
     public options: any = {
         scales: {
             xAxes: [
@@ -144,7 +148,8 @@ export class DevelopmentComponent implements OnInit {
         private route: ActivatedRoute,
         private http: Http,
         private config: ConfigurationService,
-        private mouse: MouseService
+        private mouse: MouseService,
+        private themeSelector: ThemeSelector
     ) {}
 
     public columns: DataSourceColumn[] = [
@@ -176,6 +181,30 @@ export class DevelopmentComponent implements OnInit {
             .get('/api/data/development')
             .map(x => x.json())
             .subscribe(x => this.setValue(x));
+
+        this.http
+            .get('/api/data/dashboard/development')
+            .map(x => x.json())
+            .subscribe(x => (this.theme = x.theme));
+    }
+
+    public pin() {
+        if (this.theme)
+            this.http
+                .delete('/api/data/dashboard/development')
+                .subscribe(x => (this.theme = undefined));
+        else
+            this.themeSelector.selectTheme().subscribe(theme => {
+                this.http
+                    .post('/api/data/dashboard', <DashboardConfig>{
+                        path: `development`,
+                        theme: theme,
+                        type: 'icon',
+                        icon: 'insert_chart'
+                    })
+                    .map(x => x.json())
+                    .subscribe(x => (this.theme = x.theme));
+            });
     }
 
     public setValue(value: DevelopmentElement[]) {

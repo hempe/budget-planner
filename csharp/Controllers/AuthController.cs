@@ -137,7 +137,7 @@ namespace BudgetPlanner.Controllers {
 
         [Authorize]
         [HttpGet("iframe")]
-        public IActionResult IFrame() => this.View("~/Views/iframe.html");
+        public IActionResult IFrame() => this.View("~/csharp/Views/iframe.html");
 
         [AllowAnonymous]
         [HttpGet("signin/{provider}")]

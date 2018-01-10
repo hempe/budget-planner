@@ -6,6 +6,7 @@
                     <ng-container *ngIf="i<20">
                         <dashboard-bar *ngIf="item.type == 'bar'" [config]="item"></dashboard-bar>
                         <dashboard-doughnut *ngIf="item.type == 'doughnut'" [config]="item"></dashboard-doughnut>
+                        <dashboard-icon *ngIf="item.type == 'icon'" [config]="item"></dashboard-icon>
                     </ng-container>
                 </div>
             </span>

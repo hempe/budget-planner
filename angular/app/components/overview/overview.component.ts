@@ -54,9 +54,9 @@ export class OverviewComponent implements OnInit {
             .map(x => x.json())
             .subscribe(x => (this.theme = x.theme));
 
-        this.name = this.config.getName(this.type);
-        this.positive = this.config.getName(`${this.type}.positive`);
-        this.negative = this.config.getName(`${this.type}.negative`);
+        this.name = this.config.getTranslatedName(this.type);
+        this.positive = this.config.getTranslatedName(`${this.type}.positive`);
+        this.negative = this.config.getTranslatedName(`${this.type}.negative`);
         this.config.setColor(this.type);
         this.url = `/api/data/${this.type}`;
         this.getData().subscribe(x => (this.value = x));

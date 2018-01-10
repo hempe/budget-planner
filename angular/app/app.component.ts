@@ -94,7 +94,7 @@ export class AppComponent {
                 }?q=${makeid()}`;
                 console.debug('Refresh iframe', this.iframe.nativeElement.src);
             }
-        }, 4 * 60 * 1000);
+        }, 60 * 1000);
     }
 
     public loading: boolean = true;
