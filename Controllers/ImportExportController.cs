@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetPlanner.Controllers {
 
-    [Route("api/data")]
+    [Route("api")]
     [Authorize]
     public class ImportExportController : BaseController {
         public ImportExportController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
