@@ -20,10 +20,12 @@
     <PackageReference Include="Flurl" Version="2.6.0" />
   </ItemGroup>
   <ItemGroup>
-        <EmbeddedResource Include="csharp\Services\I18n\*.json" />
-        <EmbeddedResource Include="csharp\Templates\*" />
+        <EmbeddedResource Include="Services\I18n\*.json" />
+        <EmbeddedResource Include="Templates\*" />
+        <Content Update="ClientApp\**" CopyToPublishDirectory="Never" />
+        <Content Update="Services\I18n\*.json" CopyToPublishDirectory="Never" />
+        <Content Update="Templates\*" CopyToPublishDirectory="Never" />
   </ItemGroup>
-  
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
@@ -33,6 +35,6 @@
   </PropertyGroup>
   -->
   <Target Name="BuildManagementConsole" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release' ">
-    <Exec Command="npm run build" />
+    <Exec Command="npm run build" WorkingDirectory="ClientApp" />
   </Target>
 </Project>

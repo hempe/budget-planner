@@ -1,13 +1,14 @@
 {
     "files.exclude": {
-        "node_modules/": true,
-        "e2e/": true,
         ".vscode/chrome": true,
+        "**/node_modules/": true,
+        "**/e2e/": true,
         "**/obj": true,
         "**/bin": true,
         "wwwroot": true,
         ".publish": true,
-        ".prettierc": true
+        ".prettierrc": true,
+        "**/.gitignore": true
     },
     "csharpfixformat.style.spaces.beforeParenthesis": false
 }
