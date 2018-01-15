@@ -1,50 +1,71 @@
 using System.Threading;
 using System.Threading.Tasks;
-using BudgetPlanner.Models;
+using BudgetPlanner.Tables;
 using Microsoft.AspNetCore.Identity;
 
 namespace BudgetPlanner.Services {
     internal class RoleStore : IRoleStore<IdentityRole> {
-        public Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+
+        private readonly TableStore tableStore;
+        public RoleStore(TableStore tableStore) {
+            this.tableStore = tableStore;
         }
 
-        public Task<IdentityResult> DeleteAsync(IdentityRole role, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+        public async Task<IdentityResult> CreateAsync(IdentityRole role, CancellationToken cancellationToken) {
+            var result = await this.tableStore.AddOrUpdateAsync<RoleEntity>(role);
+            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
+                return IdentityResult.Success;
+            return IdentityResult.Failed();
+        }
+
+        public async Task<IdentityResult> DeleteAsync(IdentityRole role, CancellationToken cancellationToken) {
+            var result = await this.tableStore.DeleteAsync<RoleEntity>(role);
+            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
+                return IdentityResult.Success;
+            return IdentityResult.Failed();
         }
 
         public void Dispose() { }
 
-        public Task<IdentityRole> FindByIdAsync(string roleId, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+        public async Task<IdentityRole> FindByIdAsync(string roleId, CancellationToken cancellationToken) {
+            var entity = await this.tableStore.GetAsync(new RoleEntity { Id = roleId });
+            return entity;
         }
 
-        public Task<IdentityRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+        public async Task<IdentityRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken) {
+            var entity = await this.tableStore.GetAsync<RoleEntity>(
+                new Args { { nameof(RoleEntity.NormalizedName), normalizedRoleName }
+                });
+            return entity;
         }
 
         public Task<string> GetNormalizedRoleNameAsync(IdentityRole role, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+            return Task.FromResult(role.NormalizedName);
         }
 
         public Task<string> GetRoleIdAsync(IdentityRole role, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+            return Task.FromResult(role.Id);
         }
 
         public Task<string> GetRoleNameAsync(IdentityRole role, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+            return Task.FromResult(role.Name);
         }
 
         public Task SetNormalizedRoleNameAsync(IdentityRole role, string normalizedName, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+            role.NormalizedName = normalizedName;
+            return Task.CompletedTask;
         }
 
         public Task SetRoleNameAsync(IdentityRole role, string roleName, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+            role.Name = roleName;
+            return Task.CompletedTask;
         }
 
-        public Task<IdentityResult> UpdateAsync(IdentityRole role, CancellationToken cancellationToken) {
-            throw new System.NotImplementedException();
+        public async Task<IdentityResult> UpdateAsync(IdentityRole role, CancellationToken cancellationToken) {
+            var result = await this.tableStore.AddOrUpdateAsync<RoleEntity>(role);
+            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
+                return IdentityResult.Success;
+            return IdentityResult.Failed();
         }
     }
 }

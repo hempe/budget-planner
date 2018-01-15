@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
@@ -14,6 +15,37 @@ namespace BudgetPlanner.Middleware {
         }
 
         public static class Extensions {
+
+            public static T GetCustomAttribute<T>(this System.Type type) {
+                var attrs = type.GetCustomAttributes(typeof(T), true);
+                if (attrs?.Length != 1)
+                    return default(T);
+                return (T) attrs.FirstOrDefault();
+            }
+
+            public static bool HasCustomAttribute<T>(this System.Type type) {
+                var attrs = type.GetCustomAttributes(typeof(T), true);
+                return attrs?.Length > 0;
+            }
+            public static T GetCustomAttribute<T>(this System.Reflection.PropertyInfo property) {
+                var attrs = property.GetCustomAttributes(typeof(T), true);
+                if (attrs?.Length != 1)
+                    return default(T);
+                return (T) attrs.FirstOrDefault();
+            }
+
+            public static bool HasCustomAttribute<T>(this System.Reflection.PropertyInfo property) {
+                var attrs = property.GetCustomAttributes(typeof(T), true);
+                return attrs?.Length > 0;
+            }
+
+            public static object DefaultValue(this Type t) {
+                if (t.IsValueType)
+                    return Activator.CreateInstance(t);
+
+                return null;
+            }
+
             public static string GetExcelColumnName(this int columnNumber) {
                 int dividend = columnNumber;
                 string columnName = string.Empty;

@@ -18,6 +18,7 @@ namespace BudgetPlanner.Services {
     }
 
     public class Args : Dictionary<string, string> { }
+
     public class TableStore {
         private static readonly Dictionary<Type, CloudTable> Tables;
         private static readonly Dictionary<Type, TableAttribute> Attributes;

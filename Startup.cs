@@ -69,6 +69,9 @@ namespace BudgetPlanner {
             services.AddTransient<Services.MailService>()
                 .Configure<Services.MailServiceOptions>(Configuration.GetSection("MailService"));
 
+            services.AddTransient<Services.WarmUp>()
+                .Configure<Services.WarmUpOptions>(Configuration.GetSection("WarmUpService"));
+
             services.AddTransient<Services.Export.BaseHandler>()
                 .AddTransient<Services.Export.HtmlHandler>()
                 .AddTransient<Services.Export.XlsHandler>();
@@ -114,7 +117,7 @@ namespace BudgetPlanner {
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Services.WarmUp warmUp) {
             if (Configuration.GetValue<bool>("StaticFileHost:Enabled")) {
                 var rootDirectory = Path.Combine(env.ContentRootPath, Configuration.GetValue<string>("StaticFileHost:RootDirectory"));
                 app.UseCustomStaticFiles(rootDirectory);
@@ -124,9 +127,6 @@ namespace BudgetPlanner {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-
-            //app.UseCors("AllowAll");
-            //app.UseResponseCompression().UseDefaultFiles();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -138,6 +138,8 @@ namespace BudgetPlanner {
 
             app.UseAuthentication()
                 .UseMvc();
+
+            warmUp.Load();
         }
     }
 }

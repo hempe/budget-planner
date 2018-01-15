@@ -23,7 +23,6 @@ namespace BudgetPlanner.Services {
 
         public UserStore(TableStore tableStore) {
             this.tableStore = tableStore;
-
         }
 
         public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken) {
