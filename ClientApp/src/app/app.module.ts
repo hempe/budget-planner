@@ -25,6 +25,9 @@ import { AppComponent } from './app.component';
 import { AppRoutes } from './app.router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
+import { TableListComponent } from './components/admin/table-list.component';
+import { TableContentComponent } from './components/admin/table-content.component';
+import { TableEntryComponent } from './components/admin/table-entry.component';
 import { BudgetComponent } from './components/budget/budget.component';
 import { BudgetListComponent } from './components/budget/budget-list.component';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -91,6 +94,9 @@ import { PdfRenderService } from './services/pdf-render';
         DashboardIcon,
         OverviewChartComponent,
         OverviewComponent,
+        TableListComponent,
+        TableContentComponent,
+        TableEntryComponent,
         ThemeSelectorDialog,
         MatFileComponent
     ],

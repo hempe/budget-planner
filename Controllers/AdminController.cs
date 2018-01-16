@@ -41,74 +41,84 @@ namespace BudgetPlanner.Controllers {
         public async Task<IActionResult> GetAll([FromRoute] string tableName) {
             var table = this.FindTableType(tableName);
             var all = await this.TableStore.GetAllAsync(table, new Args { });
-            var cleaned = this.ToTableEntries(table, all);
+            var cleaned = this.ToTableEntries(table, all, false);
             return this.Ok(cleaned);
         }
 
-        [HttpGet("tables/{tableName}/{partitionKey}")]
-        [ProducesResponseType(typeof(TableEntity[]), 200)]
-        public async Task<IActionResult> GetByPartitionKey([FromRoute] string tableName, string partitionKey) {
+        [HttpGet("tables/headers/{tableName}")]
+        [ProducesResponseType(typeof(Dictionary<string, object>), 200)]
+        public IActionResult TableHeaders([FromRoute] string tableName) {
             var table = this.FindTableType(tableName);
-            var all = await this.TableStore.GetAllAsync(table, new Args { { nameof(ITableEntity.PartitionKey), partitionKey } });
-            var cleaned = this.ToTableEntries(table, all);
-            return this.Ok(cleaned);
+            var defs = this.GetTableProperties(table, false)
+                .ToDictionary(p => p.Name, p =>(object) p.PropertyType.Name);
+
+            return this.Ok(defs);
+        }
+
+        [HttpGet("tables/headers/detailed/{tableName}")]
+        [ProducesResponseType(typeof(Dictionary<string, object>), 200)]
+        public IActionResult EntryHeader([FromRoute] string tableName) {
+            var table = this.FindTableType(tableName);
+            var defs = this.GetTableProperties(table, true)
+                .ToDictionary(p => p.Name, p =>(object) p.PropertyType.Name);
+
+            return this.Ok(defs);
         }
 
         [HttpGet("tables/{tableName}/{partitionKey}/{rowKey}")]
-        [ProducesResponseType(typeof(TableEntity[]), 200)]
+        [ProducesResponseType(typeof(TableEntity), 200)]
         public async Task<IActionResult> GetByPartitionAndRowKey([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey) {
             var table = this.FindTableType(tableName);
             var all = await this.TableStore.GetAllAsync(table,
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
-            var cleaned = this.ToTableEntries(table, all);
+            var cleaned = this.ToTableEntries(table, all, true).FirstOrDefault();
             return this.Ok(cleaned);
         }
 
         [HttpDelete("tables/{tableName}/{partitionKey}/{rowKey}")]
-        [ProducesResponseType(typeof(TableEntity[]), 200)]
+        [ProducesResponseType(typeof(TableEntity), 200)]
         public async Task<IActionResult> Delete([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey) {
             var table = this.FindTableType(tableName);
             var all = await this.TableStore.GetAllAsync(table,
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
-            foreach (var del in all) {
+            var del = all.FirstOrDefault();
+            if (del != null) {
                 await this.TableStore.DeleteAsync(table, del);
+
+                var cleaned = this.ToTableEntries(table, new [] { del }.ToList(), true).FirstOrDefault();
+                return this.Ok(cleaned);
             }
-            var cleaned = this.ToTableEntries(table, all);
-            return this.Ok(cleaned);
+            return this.BadRequest();
         }
 
-        [HttpGet("tables/byPartition/{partitionKey}")]
-        [ProducesResponseType(typeof(TableEntity[]), 200)]
-        public async Task<IActionResult> GetAllByPartition([FromRoute] string partitionKey) {
-
-            var merged = new List<TableEntry>();
-            foreach (var tableName in this.GetType().Assembly.GetTypes().Where(t => t.IsTable()).Select(t => t.Table().Name).ToList()) {
-
-                var table = this.FindTableType(tableName);
-                var all = await this.TableStore.GetAllAsync(table,
-                    new Args { { nameof(ITableEntity.PartitionKey), partitionKey } });
-                merged.AddRange(this.ToTableEntries(table, all));
-            }
-            return this.Ok(merged);
-        }
-
-        private List<TableEntry> ToTableEntries(Type type, List<ITableEntity> values) {
-            var rows = new List<TableEntry>();
-            if (values == null)
-                return rows;
-            var tableName = type.Table().Name;
+        private List<System.Reflection.PropertyInfo> GetTableProperties(Type type, bool includeObjects) {
             var toIgnore = type.GetProperties()
                 .Where(p => p.HasCustomAttribute<JsonDataAttribute>())
                 .Select(p => p.GetCustomAttribute<JsonDataAttribute>().PropertyName)
                 .ToList();
 
-            var properties = type.GetProperties()
+            var query = type.GetProperties()
                 .Where(p => !p.HasCustomAttribute<SecretValueAttribute>())
                 .Where(p => !toIgnore.Contains(p.Name))
                 .Where(p => typeof(ITableEntity).GetProperty(p.Name) == null);
 
+            if (includeObjects)
+                return query.ToList();
+
+            return query
+                .Where(p => !p.Name.StartsWith("normalized", StringComparison.InvariantCultureIgnoreCase))
+                .Where(p => p.PropertyType.IsSimple())
+                .ToList();
+        }
+
+        private List<TableEntry> ToTableEntries(Type type, List<ITableEntity> values, bool includeObjects) {
+            var rows = new List<TableEntry>();
+            if (values == null)
+                return rows;
+            var tableName = type.Table().Name;
+            var properties = this.GetTableProperties(type, includeObjects);
             foreach (var obj in values) {
                 if (obj == null)
                     continue;
