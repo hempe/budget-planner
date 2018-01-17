@@ -20,6 +20,7 @@ import {
     ThemeSelectorDialog
 } from './components/theme-selector/theme-selector.component';
 
+import { AceEditorModule } from 'ng2-ace-editor';
 import { ApiService } from './services/api';
 import { AppComponent } from './app.component';
 import { AppRoutes } from './app.router';
@@ -115,6 +116,7 @@ import { PdfRenderService } from './services/pdf-render';
             AppRoutes,
             { enableTracing: true } // <-- debugging purposes only
         ),
+        AceEditorModule,
         /** NGX Translate */
         HttpClientModule,
         TranslateModule.forRoot({

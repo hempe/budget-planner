@@ -164,6 +164,39 @@ namespace BudgetPlanner.Services {
         public Task<List<ITableEntity>> GetAllAsync(Type type, Args parameter) {
             return (Task<List<ITableEntity>>) this.GetType().GetMethod(nameof(this.GetAllTableEntitesAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new [] { type }).Invoke(this, new [] { parameter });
         }
+        public Task<ITableEntity> GetAsync(Type type, Args parameter) {
+            return (Task<ITableEntity>) this.GetType().GetMethod(nameof(this.GetEntityAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new [] { type }).Invoke(this, new [] { parameter });
+        }
+
+        private async Task<ITableEntity> GetEntityAsync<T>(Args parameter) where T : class, ITableEntity, new() {
+            var type = typeof(T);
+            var table = await this.GetTableAsync(type);
+            string filter = null;
+            var attribute = this.GetAttribute(type);
+            foreach (var kv in parameter) {
+                var propertyName = attribute.PropertyName(type, kv.Key);
+                var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);
+                if (filter == null)
+                    filter = condition;
+                else
+                    filter = TableQuery.CombineFilters(filter, TableOperators.And, condition);
+            }
+
+            var query = new TableQuery<T>().Where(filter).Take(1);
+            T re = null;
+            TableContinuationToken continuationToken = null;
+            do {
+                TableQuerySegment<T> segment = await table.ExecuteQuerySegmentedAsync(query, continuationToken);
+                re = segment.Results.FirstOrDefault();
+                if (re != null) {
+                    attribute.AfterLoad(re);
+                    return re;
+                }
+                continuationToken = segment.ContinuationToken;
+            } while (continuationToken != null);
+            attribute.AfterLoad(re);
+            return re;
+        }
 
         private async Task<List<ITableEntity>> GetAllTableEntitesAsync<T>(Args parameter) where T : class, ITableEntity, new() {
             string filter = null;

@@ -37,5 +37,11 @@
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>
+    <div *ngSwitchCase="'object'" class="ace">
+        <span class="ace-label">##userId##</span>
+        <div ace-editor [(text)]="text" [mode]="'json'" [theme]="'chrome'" [options]="ace.options" [readOnly]="false" [autoUpdateContent]="true"
+            [durationBeforeCallback]="1000" style="min-height: 200px; width:100%; overflow: auto;"></div>
+        <div class="underline"></div>
+    </div>
     <strong *ngSwitchDefault style="color:red">Unknown type '{{type}}'</strong>
 </div>

@@ -69,3 +69,10 @@ mat-card {
 ngx-charts-pie-grid {
     width: 100%;
 }
+
+.ace_content * {
+    font-family: monospace !important;
+}
+.ace_active-line {
+    background: transparent !important;
+}

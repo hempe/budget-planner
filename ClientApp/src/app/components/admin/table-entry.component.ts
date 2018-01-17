@@ -13,7 +13,7 @@ import {
     DataSourceFactory,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { array, clone, guid, toNumber } from '../../common/helper';
 
@@ -38,7 +38,6 @@ export class TableEntryComponent implements OnInit, OnDestroy {
     public head: MenuEntry = {};
     public meta: any[];
     public value: any;
-
     private url = ``;
 
     constructor(
@@ -51,7 +50,7 @@ export class TableEntryComponent implements OnInit, OnDestroy {
             icon: 'arrow_back',
             name: this.config.getName('admin'),
             action: () =>
-                this.router.navigate(['../'], { relativeTo: this.route })
+                this.router.navigate(['../../'], { relativeTo: this.route })
         };
 
         this.config.setColor('admin');
@@ -78,10 +77,32 @@ export class TableEntryComponent implements OnInit, OnDestroy {
                 this.url = `/api/admin/tables/${table}/${partitionKey}/${rowKey}`;
                 console.info('and the url is ', this.url);
                 this.http
-                    .get(headerUrl)
+                    .get(this.url)
                     .map(x => x.json())
-                    .subscribe(x => (this.value = x));
+                    .subscribe(x => this.setValue(x, null));
             });
+    }
+
+    public onSubmit(form: NgForm): void {
+        this.http
+            .post(this.url, this.value)
+            .map(x => x.json())
+            .subscribe(
+                x => this.setValue(x, form),
+                err => this.resetForm(form)
+            );
+    }
+
+    private setValue(x: any, form: NgForm) {
+        this.value = clone(x);
+        this.resetForm(form);
+    }
+
+    private resetForm(form: NgForm) {
+        if (form) {
+            form.control.markAsUntouched();
+            form.control.markAsPristine();
+        }
     }
 
     ngOnDestroy(): void {}

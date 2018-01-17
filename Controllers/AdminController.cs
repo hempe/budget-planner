@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using BudgetPlanner.Attributes;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json.Linq;
 
 namespace BudgetPlanner.Controllers {
 
@@ -50,7 +52,7 @@ namespace BudgetPlanner.Controllers {
         public IActionResult TableHeaders([FromRoute] string tableName) {
             var table = this.FindTableType(tableName);
             var defs = this.GetTableProperties(table, false)
-                .ToDictionary(p => p.Name, p =>(object) p.PropertyType.Name);
+                .ToDictionary(p => p.Name, p =>(object) p.PropertyType.IsSimple());
 
             return this.Ok(defs);
         }
@@ -60,7 +62,7 @@ namespace BudgetPlanner.Controllers {
         public IActionResult EntryHeader([FromRoute] string tableName) {
             var table = this.FindTableType(tableName);
             var defs = this.GetTableProperties(table, true)
-                .ToDictionary(p => p.Name, p =>(object) p.PropertyType.Name);
+                .ToDictionary(p => p.Name, p =>(object) (p.PropertyType.IsSimple() ? "text" : "object"));
 
             return this.Ok(defs);
         }
@@ -80,17 +82,33 @@ namespace BudgetPlanner.Controllers {
         [ProducesResponseType(typeof(TableEntity), 200)]
         public async Task<IActionResult> Delete([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey) {
             var table = this.FindTableType(tableName);
-            var all = await this.TableStore.GetAllAsync(table,
+            var entry = await this.TableStore.GetAsync(table,
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
-            var del = all.FirstOrDefault();
-            if (del != null) {
-                await this.TableStore.DeleteAsync(table, del);
+            if (entry == null)
+                return this.BadRequest();
+            await this.TableStore.DeleteAsync(table, entry);
 
-                var cleaned = this.ToTableEntries(table, new [] { del }.ToList(), true).FirstOrDefault();
-                return this.Ok(cleaned);
-            }
-            return this.BadRequest();
+            return this.Ok(this.ToTableEntry(table, entry, true));
+        }
+
+        [HttpPost("tables/{tableName}/{partitionKey}/{rowKey}")]
+        [ProducesResponseType(typeof(TableEntity), 200)]
+        public async Task<IActionResult> Update([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey, [FromBody] TableEntry tableEntry) {
+            var table = this.FindTableType(tableName);
+            var entity = await this.TableStore.GetAsync(table,
+                new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
+                });
+
+            if (entity == null)
+                return BadRequest();
+            entity = this.UpdateTableEntry(table, entity, tableEntry, true);
+            await this.TableStore.AddOrUpdateAsync(table, entity);
+            entity = await this.TableStore.GetAsync(table,
+                new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
+                });
+
+            return this.Ok(this.ToTableEntry(table, entity, true));
         }
 
         private List<System.Reflection.PropertyInfo> GetTableProperties(Type type, bool includeObjects) {
@@ -111,6 +129,43 @@ namespace BudgetPlanner.Controllers {
                 .Where(p => !p.Name.StartsWith("normalized", StringComparison.InvariantCultureIgnoreCase))
                 .Where(p => p.PropertyType.IsSimple())
                 .ToList();
+        }
+
+        private ITableEntity UpdateTableEntry(Type type, ITableEntity entity, TableEntry entry, bool includeObjects) {
+            var tableName = type.Table().Name;
+            var properties = this.GetTableProperties(type, includeObjects);
+
+            foreach (var property in properties) {
+                if (entry.Data.TryGetValue(property.Name, out var v, StringComparison.InvariantCultureIgnoreCase)) {
+                    var value = v;
+                    if (value is JObject jobj) {
+                        value = jobj.ToObject(property.PropertyType);
+                    } else {
+                        value = Convert.ChangeType(value, property.PropertyType, CultureInfo.InvariantCulture);
+                    }
+                    property.SetValue(entity, value);
+                }
+            }
+            return entity;
+        }
+
+        private TableEntry ToTableEntry(Type type, ITableEntity value, bool includeObjects) {
+            if (value == null)
+                return null;
+            var tableName = type.Table().Name;
+            var properties = this.GetTableProperties(type, includeObjects);
+
+            var v = new TableEntry {
+                PartitionKey = value.PartitionKey,
+                RowKey = value.RowKey,
+                Table = tableName,
+                Data = new Dictionary<string, object>()
+            };
+
+            foreach (var property in properties) {
+                v.Data[property.Name] = property.GetValue(value);
+            }
+            return v;
         }
 
         private List<TableEntry> ToTableEntries(Type type, List<ITableEntity> values, bool includeObjects) {

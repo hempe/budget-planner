@@ -55,6 +55,16 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
         this.matcher.name = this.name;
     }
 
+    public ace = {
+        options: {
+            maxLines: 1000,
+            printMargin: false,
+            showInvisibles: false,
+            displayIndentGuides: true,
+            showGutter: false
+        }
+    };
+
     //The internal data model
     private innerValue: any = '';
 
@@ -74,12 +84,28 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
     set value(v: any) {
         if (v !== this.innerValue) {
             this.innerValue = v;
-            this.innerValue = v;
             if (this.type == 'decimal') {
                 v = toNumber(v);
             }
             this.onChangeCallback(v);
             this.change.emit(v);
+        }
+    }
+
+    get text(): string {
+        return JSON.stringify(this.innerValue, null, '\t');
+    }
+
+    set text(v: string) {
+        if (v !== this.innerValue) {
+            try {
+                let ob = JSON.parse(v);
+                if (ob) {
+                    this.innerValue = ob;
+                    this.onChangeCallback(ob);
+                    this.change.emit(ob);
+                }
+            } catch (e) {}
         }
     }
 

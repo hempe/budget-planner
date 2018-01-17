@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using OfficeOpenXml;
@@ -15,6 +16,17 @@ namespace BudgetPlanner.Middleware {
         }
 
         public static class Extensions {
+
+            public static bool TryGetValue<TValue>(this Dictionary<string, TValue> dict, string key, out TValue value, StringComparison comparison) {
+                if (dict.TryGetValue(key, out value))
+                    return true;
+                key = dict.Keys.FirstOrDefault(t => string.Equals(t, key, comparison));
+                if (key == null)
+                    return false;
+                if (dict.TryGetValue(key, out value))
+                    return true;
+                return false;
+            }
 
             public static T GetCustomAttribute<T>(this System.Type type) {
                 var attrs = type.GetCustomAttributes(typeof(T), true);
