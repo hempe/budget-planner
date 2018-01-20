@@ -21,11 +21,15 @@ namespace BudgetPlanner.Services {
 
     public class TableStore {
         private static readonly Dictionary<Type, CloudTable> Tables;
-        private static readonly Dictionary<Type, TableAttribute> Attributes;
+        private static readonly Dictionary<Type, CloudTable> Views;
+        private static readonly Dictionary<Type, TableAttribute> TableAttributes;
+        private static readonly Dictionary<Type, ViewAttribute> ViewAttributes;
 
         static TableStore() {
             Tables = new Dictionary<Type, CloudTable>();
-            Attributes = new Dictionary<Type, TableAttribute>();
+            Views = new Dictionary<Type, CloudTable>();
+            TableAttributes = new Dictionary<Type, TableAttribute>();
+            ViewAttributes = new Dictionary<Type, ViewAttribute>();
         }
 
         private readonly CloudTableClient tableClient;
@@ -37,38 +41,27 @@ namespace BudgetPlanner.Services {
             this.tableClient = cloudStorageAccount.CreateCloudTableClient();
         }
 
-        private TableAttribute GetAttribute(Type type) {
-            if (Attributes.TryGetValue(type, out var t) && t != null)
-                return t;
-            var attribute = type.Table();
-            try {
-                Attributes[type] = attribute;
-            } catch {
-                Attributes[type] = attribute;
-            }
-            return attribute;
-        }
+        private TableAttribute GetTableAttribute(Type type) => TableAttributes.GetOrAdd(type, () => type.Table());
 
-        private async Task<CloudTable> GetTableAsync(Type type) {
-            if (Tables.TryGetValue(type, out var t) && t != null)
-                return t;
+        private ViewAttribute GetViewAttribute(Type type) => ViewAttributes.GetOrAdd(type, () => type.View());
 
-            var table = tableClient.GetTableReference($"{this.options.Prefix}{this.GetAttribute(type).Name}");
-            await table.CreateIfNotExistsAsync();
-            try {
-                Tables[type] = table;
-            } catch {
-                Tables[type] = table;
-                return table;
-            }
-            return table;
-        }
+        private Task<CloudTable> GetViewAsync(Type type) => Views.GetOrAddAsync(type, async() => {
+            var view = tableClient.GetTableReference($"{this.options.Prefix}{this.GetViewAttribute(type).TableName}");
+            await view.CreateIfNotExistsAsync();
+            return view;
+        });
+
+        private Task<CloudTable> GetTableAsync(Type type) => Views.GetOrAddAsync(type, async() => {
+            var view = tableClient.GetTableReference($"{this.options.Prefix}{this.GetTableAttribute(type).TableName}");
+            await view.CreateIfNotExistsAsync();
+            return view;
+        });
 
         public async Task<TableResult> DeleteAsync(Type type, ITableEntity entity) {
 
             var table = await this.GetTableAsync(type);
             entity.ETag = "*";
-            entity = this.GetAttribute(type).BeforeSave(entity);
+            entity = this.GetTableAttribute(type).BeforeSave(entity);
             var tableOperation = TableOperation.Delete(entity);
             return await table.ExecuteAsync(tableOperation);
         }
@@ -77,7 +70,7 @@ namespace BudgetPlanner.Services {
         public Task<TableResult> AddOrUpdateAsync<T>(T entity) where T : class, ITableEntity, new() => this.AddOrUpdateAsync(typeof(T), entity);
         public async Task<TableResult> AddOrUpdateAsync(Type type, ITableEntity entity) {
             var table = await this.GetTableAsync(type);
-            entity = this.GetAttribute(type).BeforeSave(entity);
+            entity = this.GetTableAttribute(type).BeforeSave(entity);
 
             var tableOperation = TableOperation.InsertOrReplace(entity);
             return await table.ExecuteAsync(tableOperation);
@@ -85,9 +78,9 @@ namespace BudgetPlanner.Services {
 
         public async Task<T> GetAsync<T>(T entity) where T : class, ITableEntity, new() {
             var type = typeof(T);
-            var table = await this.GetTableAsync(type);
-            var attribute = this.GetAttribute(type);
-            attribute.BeforeSave(entity);
+            var table = await this.GetViewAsync(type);
+            var attribute = this.GetViewAttribute(type);
+            attribute.BeforeQuery(entity);
 
             var tableOperation = TableOperation.Retrieve<T>(entity.PartitionKey, entity.RowKey);
             var tableResult = await table.ExecuteAsync(tableOperation);
@@ -103,9 +96,9 @@ namespace BudgetPlanner.Services {
 
         public async Task<T> GetAsync<T>(Args parameter) where T : class, ITableEntity, new() {
             var type = typeof(T);
-            var table = await this.GetTableAsync(type);
+            var table = await this.GetViewAsync(type);
             string filter = null;
-            var attribute = this.GetAttribute(type);
+            var attribute = this.GetViewAttribute(type);
             foreach (var kv in parameter) {
                 var propertyName = attribute.PropertyName(type, kv.Key);
                 var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);
@@ -134,8 +127,8 @@ namespace BudgetPlanner.Services {
         public async Task<List<T>> GetAllAsync<T>(Args parameter) where T : class, ITableEntity, new() {
             string filter = null;
             var type = typeof(T);
-            var table = await this.GetTableAsync(type);
-            var attribute = this.GetAttribute(type);
+            var table = await this.GetViewAsync(type);
+            var attribute = this.GetViewAttribute(type);
             foreach (var kv in parameter) {
                 var propertyName = attribute.PropertyName(type, kv.Key);
                 var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);
@@ -170,9 +163,9 @@ namespace BudgetPlanner.Services {
 
         private async Task<ITableEntity> GetEntityAsync<T>(Args parameter) where T : class, ITableEntity, new() {
             var type = typeof(T);
-            var table = await this.GetTableAsync(type);
+            var table = await this.GetViewAsync(type);
             string filter = null;
-            var attribute = this.GetAttribute(type);
+            var attribute = this.GetViewAttribute(type);
             foreach (var kv in parameter) {
                 var propertyName = attribute.PropertyName(type, kv.Key);
                 var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);
@@ -201,8 +194,8 @@ namespace BudgetPlanner.Services {
         private async Task<List<ITableEntity>> GetAllTableEntitesAsync<T>(Args parameter) where T : class, ITableEntity, new() {
             string filter = null;
             var type = typeof(T);
-            var table = await this.GetTableAsync(type);
-            var attribute = this.GetAttribute(type);
+            var table = await this.GetViewAsync(type);
+            var attribute = this.GetViewAttribute(type);
             foreach (var kv in parameter) {
                 var propertyName = attribute.PropertyName(type, kv.Key);
                 var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);

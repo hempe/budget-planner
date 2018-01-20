@@ -37,8 +37,16 @@
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>
+    <div *ngSwitchCase="'readonly'">
+        <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+        <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">
+            <input matInput type="text" readonly placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
+                (focus)="onFocus()" [errorStateMatcher]="matcher" [min]="min" [max]="max">
+            <mat-error error [name]="name"></mat-error>
+        </mat-form-field>
+    </div>
     <div *ngSwitchCase="'object'" class="ace">
-        <span class="ace-label">##userId##</span>
+        <span class="ace-label">{{ name | translate }}</span>
         <div ace-editor [(text)]="text" [mode]="'json'" [theme]="'chrome'" [options]="ace.options" [readOnly]="false" [autoUpdateContent]="true"
             [durationBeforeCallback]="1000" style="min-height: 200px; width:100%; overflow: auto;"></div>
         <div class="underline"></div>

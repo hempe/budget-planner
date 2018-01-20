@@ -40,13 +40,13 @@ namespace BudgetPlanner.Services {
                 new Args { { nameof(LoginInfo.UserId), user.Id } }
             );
 
-            return entities.Cast<UserLoginInfo>().ToList();
+            return entities.Select(x =>(UserLoginInfo) x).ToList();
         }
 
         public async Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            var result = await this.tableStore.DeleteAsync<UserEntity>(user);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                throw new Exception("Update failed");
+            try {
+                await this.tableStore.DeleteAsync<UserEntity>(user);
+            } catch { }
         }
     }
 }

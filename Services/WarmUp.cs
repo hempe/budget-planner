@@ -33,8 +33,6 @@ namespace BudgetPlanner.Services {
             if (this.options == null || this.options.AdminUsers == null)
                 return;
 
-            //            await this.RemoveOldRoleAssignementAsync();
-
             await this.roleManager.CreateAsync(new IdentityRole("admin"));
 
             foreach (var admin in this.options.AdminUsers) {

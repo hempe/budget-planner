@@ -38,6 +38,7 @@ export class TableEntryComponent implements OnInit, OnDestroy {
     public head: MenuEntry = {};
     public meta: any[];
     public value: any;
+    private table: string;
     private url = ``;
 
     constructor(
@@ -57,11 +58,12 @@ export class TableEntryComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        let table = this.route.snapshot.params['table'];
+        this.table = this.route.snapshot.params['table'];
         let partitionKey = this.route.snapshot.params['partitionKey'];
         let rowKey = this.route.snapshot.params['rowKey'];
+        this.head.name = this.table;
 
-        let headerUrl = `/api/admin/tables/headers/detailed/${table}`;
+        let headerUrl = `/api/admin/tables/headers/detailed/${this.table}`;
         this.http
             .get(headerUrl)
             .map(x => x.json())
@@ -74,7 +76,9 @@ export class TableEntryComponent implements OnInit, OnDestroy {
                         }
                 );
 
-                this.url = `/api/admin/tables/${table}/${partitionKey}/${rowKey}`;
+                this.url = `/api/admin/tables/${
+                    this.table
+                }/${partitionKey}/${rowKey}`;
                 console.info('and the url is ', this.url);
                 this.http
                     .get(this.url)
@@ -91,6 +95,15 @@ export class TableEntryComponent implements OnInit, OnDestroy {
                 x => this.setValue(x, form),
                 err => this.resetForm(form)
             );
+    }
+
+    public delete(): void {
+        this.http
+            .delete(this.url)
+            .map(x => x.json())
+            .subscribe(x => {
+                this.router.navigate(['../../'], { relativeTo: this.route });
+            });
     }
 
     private setValue(x: any, form: NgForm) {

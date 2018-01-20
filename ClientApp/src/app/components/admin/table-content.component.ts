@@ -63,6 +63,8 @@ export class TableContentComponent implements OnInit, OnDestroy {
     ngOnInit() {
         let table = this.route.snapshot.params['table'];
         let headerUrl = `/api/admin/tables/headers/${table}`;
+        this.head.name = table;
+
         this.http
             .get(headerUrl)
             .map(x => x.json())

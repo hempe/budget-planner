@@ -8,6 +8,8 @@ using BudgetPlanner.Middleware;
 using BudgetPlanner.Models;
 using BudgetPlanner.Services;
 using BudgetPlanner.Services.I18n;
+using BudgetPlanner.Tables;
+using BudgetPlanner.Views;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +36,7 @@ namespace BudgetPlanner.Controllers {
         public IActionResult GetTables() {
             var tables = this.GetType().Assembly.GetTypes()
                 .Where(t => t.IsTable())
-                .Select(t => t.Table().Name).ToList();
+                .Select(t => t.Table().TableName).ToList();
             return this.Ok(tables);
         }
 
@@ -42,8 +44,9 @@ namespace BudgetPlanner.Controllers {
         [ProducesResponseType(typeof(TableEntity[]), 200)]
         public async Task<IActionResult> GetAll([FromRoute] string tableName) {
             var table = this.FindTableType(tableName);
+            var users = await this.GetUserMappingAsync();
             var all = await this.TableStore.GetAllAsync(table, new Args { });
-            var cleaned = this.ToTableEntries(table, all, false);
+            var cleaned = this.ToTableEntries(table, all, false, users);
             return this.Ok(cleaned);
         }
 
@@ -53,6 +56,11 @@ namespace BudgetPlanner.Controllers {
             var table = this.FindTableType(tableName);
             var defs = this.GetTableProperties(table, false)
                 .ToDictionary(p => p.Name, p =>(object) p.PropertyType.IsSimple());
+
+            if (defs.ContainsKey(nameof(UserEntity.UserId))) {
+                defs.Remove(nameof(UserEntity.UserId));
+                defs[nameof(UserEntity.UserName)] = true;
+            }
 
             return this.Ok(defs);
         }
@@ -64,6 +72,12 @@ namespace BudgetPlanner.Controllers {
             var defs = this.GetTableProperties(table, true)
                 .ToDictionary(p => p.Name, p =>(object) (p.PropertyType.IsSimple() ? "text" : "object"));
 
+            if (defs.ContainsKey(nameof(UserEntity.UserId)))
+                defs[nameof(UserEntity.UserId)] = "readonly";
+
+            if (defs.ContainsKey(nameof(UserEntity.UserId)) && !defs.ContainsKey(nameof(UserEntity.UserName)))
+                defs[nameof(UserEntity.UserName)] = "readonly";
+
             return this.Ok(defs);
         }
 
@@ -71,17 +85,27 @@ namespace BudgetPlanner.Controllers {
         [ProducesResponseType(typeof(TableEntity), 200)]
         public async Task<IActionResult> GetByPartitionAndRowKey([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey) {
             var table = this.FindTableType(tableName);
-            var all = await this.TableStore.GetAllAsync(table,
+            var users = await this.GetUserMappingAsync();
+
+            var value = await this.TableStore.GetAsync(table,
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
-            var cleaned = this.ToTableEntries(table, all, true).FirstOrDefault();
-            return this.Ok(cleaned);
+            return this.Ok(this.ToTableEntry(table, value, true, users));
         }
 
         [HttpDelete("tables/{tableName}/{partitionKey}/{rowKey}")]
         [ProducesResponseType(typeof(TableEntity), 200)]
         public async Task<IActionResult> Delete([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey) {
             var table = this.FindTableType(tableName);
+            if (table == typeof(UserEntity)) {
+                var user = await this.UserManager.FindByIdAsync(partitionKey);
+                if (user == null)
+                    return this.BadRequest();
+
+                await this.UserManager.DeleteAsync(user);
+                return this.NoContent();
+            }
+
             var entry = await this.TableStore.GetAsync(table,
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
@@ -89,13 +113,15 @@ namespace BudgetPlanner.Controllers {
                 return this.BadRequest();
             await this.TableStore.DeleteAsync(table, entry);
 
-            return this.Ok(this.ToTableEntry(table, entry, true));
+            return this.NoContent();
         }
 
         [HttpPost("tables/{tableName}/{partitionKey}/{rowKey}")]
         [ProducesResponseType(typeof(TableEntity), 200)]
         public async Task<IActionResult> Update([FromRoute] string tableName, [FromRoute] string partitionKey, [FromRoute] string rowKey, [FromBody] TableEntry tableEntry) {
             var table = this.FindTableType(tableName);
+            var users = await this.GetUserMappingAsync();
+
             var entity = await this.TableStore.GetAsync(table,
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
@@ -108,7 +134,7 @@ namespace BudgetPlanner.Controllers {
                 new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
                 });
 
-            return this.Ok(this.ToTableEntry(table, entity, true));
+            return this.Ok(this.ToTableEntry(table, entity, true, users));
         }
 
         private List<System.Reflection.PropertyInfo> GetTableProperties(Type type, bool includeObjects) {
@@ -132,7 +158,7 @@ namespace BudgetPlanner.Controllers {
         }
 
         private ITableEntity UpdateTableEntry(Type type, ITableEntity entity, TableEntry entry, bool includeObjects) {
-            var tableName = type.Table().Name;
+            var tableName = type.Table().TableName;
             var properties = this.GetTableProperties(type, includeObjects);
 
             foreach (var property in properties) {
@@ -149,10 +175,10 @@ namespace BudgetPlanner.Controllers {
             return entity;
         }
 
-        private TableEntry ToTableEntry(Type type, ITableEntity value, bool includeObjects) {
+        private TableEntry ToTableEntry(Type type, ITableEntity value, bool includeObjects, Dictionary<string, string> userMappings) {
             if (value == null)
                 return null;
-            var tableName = type.Table().Name;
+            var tableName = type.Table().TableName;
             var properties = this.GetTableProperties(type, includeObjects);
 
             var v = new TableEntry {
@@ -164,15 +190,23 @@ namespace BudgetPlanner.Controllers {
 
             foreach (var property in properties) {
                 v.Data[property.Name] = property.GetValue(value);
+                if (property.Name == nameof(UserData.UserId)) {
+                    v.Data[nameof(UserEntity.UserName)] = userMappings.GetValueOrDefault((string) v.Data[property.Name]) ?? "UNKNONW";
+                }
             }
             return v;
         }
 
-        private List<TableEntry> ToTableEntries(Type type, List<ITableEntity> values, bool includeObjects) {
+        private async Task<Dictionary<string, string>> GetUserMappingAsync() {
+            var all = await this.TableStore.GetAllAsync<UserLookupEntity>(new Args { });
+            return all.ToDictionary(x => x.UserId, x => x.UserName);
+        }
+
+        private List<TableEntry> ToTableEntries(Type type, List<ITableEntity> values, bool includeObjects, Dictionary<string, string> userMappings) {
             var rows = new List<TableEntry>();
             if (values == null)
                 return rows;
-            var tableName = type.Table().Name;
+            var tableName = type.Table().TableName;
             var properties = this.GetTableProperties(type, includeObjects);
             foreach (var obj in values) {
                 if (obj == null)
@@ -186,6 +220,9 @@ namespace BudgetPlanner.Controllers {
 
                 foreach (var property in properties) {
                     value.Data[property.Name] = property.GetValue(obj);
+                    if (property.Name == nameof(UserData.UserId)) {
+                        value.Data[nameof(UserEntity.UserName)] = userMappings.GetValueOrDefault((string) value.Data[property.Name]) ?? "UNKNONW";
+                    }
                 }
                 rows.Add(value);
             }
@@ -196,7 +233,7 @@ namespace BudgetPlanner.Controllers {
         private Type FindTableType(string tableName) {
             var type = this.GetType().Assembly.GetTypes()
                 .Where(t => t.IsTable())
-                .Where(t => string.Equals(t.Table().Name, tableName, StringComparison.OrdinalIgnoreCase))
+                .Where(t => string.Equals(t.Table().TableName, tableName, StringComparison.OrdinalIgnoreCase))
                 .FirstOrDefault();
             return type;
         }

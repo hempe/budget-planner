@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
@@ -16,6 +17,30 @@ namespace BudgetPlanner.Middleware {
         }
 
         public static class Extensions {
+
+            public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, Func<TValue> addValue) {
+                if (dict.TryGetValue(key, out var t) && t != null)
+                    return t;
+                var val = addValue();
+                try {
+                    dict[key] = val;
+                } catch {
+                    dict[key] = val;
+                }
+                return val;
+            }
+
+            public static async Task<TValue> GetOrAddAsync<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, Func<Task<TValue>> addValue) {
+                if (dict.TryGetValue(key, out var t) && t != null)
+                    return t;
+                var val = await addValue();
+                try {
+                    dict[key] = val;
+                } catch {
+                    dict[key] = val;
+                }
+                return val;
+            }
 
             public static bool TryGetValue<TValue>(this Dictionary<string, TValue> dict, string key, out TValue value, StringComparison comparison) {
                 if (dict.TryGetValue(key, out value))

@@ -3,7 +3,7 @@
         <div flexContainer>
             <menu-left>
                 <menu-header>
-                    <menu-title>{{ 'User' | translate }}</menu-title>
+                    <menu-title>{{ table }}</menu-title>
                 </menu-header>
                 <menu-container>
 
@@ -29,6 +29,10 @@
                     <menu-entry (click)="onSubmit(f)" color="{{f.dirty ? color : 'rgba(0,0,0,0.54)' }}">
                         {{'Save' | translate}}
                         <mat-icon>save</mat-icon>
+                    </menu-entry>
+                    <menu-entry (click)="delete()">
+                        {{'Delete' | translate}}
+                        <mat-icon>delete_forever</mat-icon>
                     </menu-entry>
                 </menu-container>
             </menu-right>

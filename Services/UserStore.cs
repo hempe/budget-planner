@@ -53,10 +53,11 @@ namespace BudgetPlanner.Services {
                 } catch { }
             }
 
-            var result = await this.tableStore.DeleteAsync<UserEntity>(user);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                return IdentityResult.Success;
-            return IdentityResult.Failed();
+            try {
+                await this.tableStore.DeleteAsync<UserEntity>(user);
+            } catch { }
+            return IdentityResult.Success;
+
         }
 
         public void Dispose() { }
