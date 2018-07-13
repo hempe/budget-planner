@@ -1,18 +1,12 @@
-import {} from 'chartjs-plugin-deferred/sr';
-import 'rxjs/Rx';
-
-import * as FileSaver from 'file-saver';
-
-import { ActivatedRoute, Router } from '@angular/router';
 import { Component, ElementRef, Renderer, ViewChild } from '@angular/core';
 import { Http, RequestOptions, ResponseContentType } from '@angular/http';
-import { array, makeid } from './common/helper';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import * as FileSaver from 'file-saver';
+import { makeid } from './common/helper';
 import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
-import { Profile } from './common/api';
-import { TranslateService } from '@ngx-translate/core';
 import { PdfRenderService } from './services/pdf-render';
+import { map } from 'rxjs/operators/map';
 
 declare var Chart: any;
 @Component({
@@ -44,16 +38,16 @@ export class AppComponent {
     @ViewChild('importFileInput') importFileInput: ElementRef;
 
     public download(type: string) {
-        let options = new RequestOptions({
+        const options = new RequestOptions({
             responseType: ResponseContentType.Blob
         });
 
-        if (type == 'pdf') {
+        if (type === 'pdf') {
             this.pdfRender.render('/api/export?format=html');
         } else {
             this.http
                 .get(`/api/export?format=${type}`, options)
-                .map(x => x.blob())
+                .pipe(map(x => x.blob()))
                 .subscribe(blob => {
                     FileSaver.saveAs(blob, `export.${type}`);
                 });

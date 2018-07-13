@@ -1,6 +1,5 @@
-import { EventEmitter } from '@angular/core';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { EventEmitter, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ResizeService {

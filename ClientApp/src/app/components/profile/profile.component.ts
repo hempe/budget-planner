@@ -1,15 +1,12 @@
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Colors, ConfigurationService } from '../../services/configuration';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-
-import { Http } from '@angular/http';
-import { MatPaginator } from '@angular/material';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
+import { Http } from '@angular/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Profile } from '../../common/api';
 import { clone } from '../../common/helper';
+import { Colors, ConfigurationService } from '../../services/configuration';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'profile',
@@ -17,7 +14,8 @@ import { clone } from '../../common/helper';
     styleUrls: ['profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-    public uploadUrl: string = 'api/profile/upload';
+    public uploadUrl = 'api/profile/upload';
+    public value: Profile;
     public avatar: string;
     public languages: { name: string; value: string }[] = [
         { name: 'English', value: 'en' },
@@ -40,6 +38,13 @@ export class ProfileComponent implements OnInit {
     }
 
     public colors: { name: string; value: string }[];
+
+    public head: MenuEntry = {
+        icon: 'account_circle',
+        name: 'Profile',
+        action: () => {}
+    };
+
     public get color(): string {
         return this.config.color;
     }
@@ -51,7 +56,7 @@ export class ProfileComponent implements OnInit {
     ngOnInit() {
         this.http
             .get('/api/profile')
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(
                 x => this.setValue(x, null),
                 err => this.resetForm(null)
@@ -63,23 +68,15 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['../'], { relativeTo: this.route });
     }
 
-    public value: Profile;
-
     public onSubmit(form: NgForm): void {
         this.http
             .post('/api/profile', this.value)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(
                 x => this.setValue(x, form),
                 err => this.resetForm(form)
             );
     }
-
-    public head: MenuEntry = {
-        icon: 'account_circle',
-        name: 'Profile',
-        action: () => {}
-    };
 
     private setValue(x: any, form: NgForm) {
         this.config.profile = x;
@@ -91,7 +88,7 @@ export class ProfileComponent implements OnInit {
     public reloadFiles() {
         this.http
             .get('/api/profile/image')
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(uri => {
                 this.config.avatar = uri ? uri.uri : undefined;
 

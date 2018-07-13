@@ -1,6 +1,6 @@
+import { Injectable } from '@angular/core';
 import {
     ConnectionBackend,
-    Headers,
     Http,
     Request,
     RequestOptions,
@@ -8,15 +8,12 @@ import {
     Response,
     XHRBackend
 } from '@angular/http';
-
+import { MatSnackBar } from '@angular/material';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable, Subject } from 'rxjs';
 import { ConfigurationService } from './configuration';
 import { CustomErrorStateMatcher } from './custom-error-state-matcher';
-import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 
 export function httpFactory(
     xhrBackend: XHRBackend,

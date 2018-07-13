@@ -22,10 +22,15 @@ namespace BudgetPlanner {
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-            .UseContentRoot(Environment.GetEnvironmentVariable("ASPNETCORE_CONTENTROOTPATH") ?? Directory.GetCurrentDirectory())
-            .UseStartup<Startup>()
-            .Build();
+        public static IWebHost BuildWebHost(string[] args) {
+            var path = Environment.GetEnvironmentVariable("ASPNETCORE_CONTENTROOTPATH");
+            var fallback = Directory.GetCurrentDirectory();
+
+            var hostBuilder = WebHost.CreateDefaultBuilder(args)
+                .UseContentRoot(Environment.GetEnvironmentVariable("ASPNETCORE_CONTENTROOTPATH") ?? Directory.GetCurrentDirectory())
+                .UseStartup<Startup>();
+
+            return hostBuilder.Build();
+        }
     }
 }

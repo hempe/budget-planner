@@ -1,27 +1,18 @@
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BudgetOverview, OverviewValue } from '../../common/api';
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    OnDestroy,
-    OnInit,
-    ViewChild
-} from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { BudgetOverview } from '../../common/api';
+import { guid } from '../../common/helper';
+import { ConfigurationService } from '../../services/configuration';
 import {
     DataSourceColumn,
     DataSourceFactory,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { array, clone, guid, toNumber } from '../../common/helper';
-
-import { ConfigurationService } from '../../services/configuration';
-import { Http } from '@angular/http';
 import { KeyboardService } from '../../services/keyboard';
-import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'budget-list',
@@ -60,10 +51,16 @@ export class BudgetListComponent implements OnInit, OnDestroy {
 
         this.config.setColor('budgets');
         this.keyDown = this.keyboardService.keyDown.subscribe(e => {
-            if (this.keyboardService.isInputActive()) return;
+            if (this.keyboardService.isInputActive()) {
+                return;
+            }
 
-            if (e.key == 'Delete') this.delete();
-            if (e.key == 'Insert') this.add();
+            if (e.key === 'Delete') {
+                this.delete();
+            }
+            if (e.key === 'Insert') {
+                this.add();
+            }
         });
     }
 
@@ -78,8 +75,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
     private getData(): Observable<BudgetOverview[]> {
         this.http
             .get(this.url)
-            .map(x => x.json())
-            .map((x: BudgetOverview[]) => x)
+            .pipe(
+                map(x => x.json()),
+                map((x: BudgetOverview[]) => x)
+            )
             .subscribe(x => {
                 this._data = x;
                 this.data.emit(this._data);
@@ -94,8 +93,10 @@ export class BudgetListComponent implements OnInit, OnDestroy {
     public delete(): void {
         console.info('delete');
         for (let i = 0; i < this._data.length; i++) {
-            let x = this._data[i];
-            if (!x.checked) continue;
+            const x = this._data[i];
+            if (!x.checked) {
+                continue;
+            }
             this._data.splice(i, 1);
             this.deleteFromServer(x.id);
             i--;

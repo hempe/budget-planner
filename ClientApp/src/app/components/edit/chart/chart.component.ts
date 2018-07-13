@@ -1,35 +1,21 @@
-import { BaseChartDirective, Color, Colors } from 'ng2-charts';
 import {
     Component,
-    DoCheck,
     EventEmitter,
-    HostListener,
     Input,
-    IterableDiffer,
-    IterableDiffers,
     OnDestroy,
     OnInit,
     Output,
     ViewChild
 } from '@angular/core';
+import { BaseChartDirective, Color, Colors } from 'ng2-charts';
+import { Observable, Subscription } from 'rxjs';
 import {
     DatedValue,
     FrequencyValue,
     NamedValue,
     Unit
 } from '../../../common/api';
-import {
-    array,
-    hexToRgb,
-    numberWithSeperator,
-    toSum
-} from '../../../common/helper';
-
-import { ConfigurationService } from '../../../services/configuration';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { ResizeService } from '../../../services/resize';
-import { Subscription } from 'rxjs/Subscription';
+import { array, numberWithSeperator, toSum } from '../../../common/helper';
 
 @Component({
     selector: 'edit-chart',

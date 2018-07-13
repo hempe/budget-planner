@@ -1,17 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    HostBinding,
-    HostListener,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output
-} from '@angular/core';
-import { array, numberWithSeperator, toSum } from '../../../common/helper';
-
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, HostBinding, Input } from '@angular/core';
 
 @Component({
     selector: 'menu-container',

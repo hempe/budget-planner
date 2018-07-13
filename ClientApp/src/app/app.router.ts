@@ -1,16 +1,14 @@
-import { AppComponent } from './app.component';
-import { BudgetComponent } from './components/budget/budget.component';
-import { BudgetListComponent } from './components/budget/budget-list.component';
-import { TableListComponent } from './components/admin/table-list.component';
+import { Routes } from '@angular/router';
 import { TableContentComponent } from './components/admin/table-content.component';
 import { TableEntryComponent } from './components/admin/table-entry.component';
+import { TableListComponent } from './components/admin/table-list.component';
+import { BudgetListComponent } from './components/budget/budget-list.component';
+import { BudgetComponent } from './components/budget/budget.component';
 import { DevelopmentComponent } from './components/development/development.component';
 import { EditComponent } from './components/edit/edit.component';
 import { HomeComponent } from './components/home/home.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login.component';
 
 export const AppRoutes: Routes = [
     { path: 'home', component: HomeComponent },

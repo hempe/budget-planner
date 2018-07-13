@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-
-import { ConfigurationService } from '../../services/configuration';
 import { Router } from '@angular/router';
+import { ConfigurationService } from '../../services/configuration';
 
 export interface MenuGroup extends MenuEntry {
     entries: MenuEntry[];

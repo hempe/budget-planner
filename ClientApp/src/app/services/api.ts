@@ -1,9 +1,10 @@
-import { ConfigurationService } from './configuration';
-import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { TranslateService } from '@ngx-translate/core';
+import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { ConfigurationService } from './configuration';
+import { map } from 'rxjs/operators';
 
 export interface Provider {
     name: string;
@@ -57,10 +58,10 @@ export class ApiService {
                 language: this.configuration.language
             })
             .subscribe(
-                x => {},
-                x => {},
+                () => {},
+                () => {},
                 () => {
-                    let trx = this.translateService
+                    this.translateService
                         .get('RegisterEmailSend')
                         .subscribe(x => {
                             this.snackBar.open(x, undefined, {
@@ -77,10 +78,9 @@ export class ApiService {
     }
 
     public getProviders(): Observable<Provider[]> {
-        return this.http
-            .get('/.auth')
-            .map(x => x.json())
-            .map((x: { name: string; displayName: string }[]) =>
+        return this.http.get('/.auth').pipe(
+            map(x => x.json()),
+            map((x: { name: string; displayName: string }[]) =>
                 x.map(
                     y =>
                         <Provider>{
@@ -89,7 +89,8 @@ export class ApiService {
                             key: y.name.toLowerCase()
                         }
                 )
-            );
+            )
+        );
     }
 
     public signOut() {
@@ -101,7 +102,7 @@ export class ApiService {
             this.translate.setDefaultLang('en');
             this.http
                 .get('.auth/self')
-                .map(x => x.json())
+                .pipe(map(x => x.json()))
                 .subscribe(
                     x => {
                         x = x ? x : {};
@@ -109,13 +110,13 @@ export class ApiService {
                         this.configuration.username = x.userName;
                         this.http
                             .get('/api/profile')
-                            .map(y => y.json())
+                            .pipe(map(y => y.json()))
                             .subscribe(
                                 y => {
                                     this.configuration.profile = y;
                                     this.http
                                         .get('/api/profile/image')
-                                        .map(x => x.json())
+                                        .pipe(map(z => z.json()))
                                         .subscribe(
                                             uri => {
                                                 this.configuration.avatar = uri

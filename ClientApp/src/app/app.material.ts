@@ -1,3 +1,4 @@
+import { NgModule } from '@angular/core';
 import {
     MatAutocompleteModule,
     MatButtonModule,
@@ -28,8 +29,7 @@ import {
     MatTableModule,
     MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule,
-    MatPaginatorIntl
+    MatTooltipModule
 } from '@angular/material';
 
 /*import { CdkTableModule } from '@angular/cdk/table';*/
@@ -66,7 +66,6 @@ const MATERIAL_MODULES = [
     MatToolbarModule,
     MatTooltipModule
 ];
-import { NgModule } from '@angular/core';
 
 @NgModule({
     /*imports: MATERIAL_MODULES,*/

@@ -1,10 +1,4 @@
-import {
-    Directive,
-    ElementRef,
-    HostBinding,
-    Input,
-    Renderer
-} from '@angular/core';
+import { Directive, HostBinding, Input } from '@angular/core';
 @Directive({
     selector: '[flexContainer]'
 })
@@ -24,7 +18,7 @@ export class FlexDirective {
     @Input() flex: number = 0;
     ngOnInit() {
         if (this.flex) {
-            this.flexBasis = this.flex / 10 * 100 + '%';
+            this.flexBasis = (this.flex / 10) * 100 + '%';
         } else {
             this.flex = 1;
             this.flexBasis = 'auto';

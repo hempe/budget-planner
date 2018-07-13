@@ -10,5 +10,8 @@
         ".prettierrc": true,
         "**/.gitignore": true
     },
-    "csharpfixformat.style.spaces.beforeParenthesis": false
+    "csharpfixformat.style.spaces.beforeParenthesis": false,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
 }

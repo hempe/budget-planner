@@ -1,18 +1,13 @@
-import { Color, Colors } from 'ng2-charts';
 import {
     Component,
-    DoCheck,
-    EventEmitter,
     HostBinding,
-    HostListener,
     Input,
-    IterableDiffer,
-    IterableDiffers,
     OnDestroy,
-    OnInit,
-    Output
+    OnInit
 } from '@angular/core';
-import { DashboardConfig, Themes } from '../dashboard';
+import { Http } from '@angular/http';
+import { Router } from '@angular/router';
+import { Color, Colors } from 'ng2-charts';
 import {
     NamedValue,
     OverviewContainer,
@@ -26,14 +21,9 @@ import {
     numberWithSeperator,
     toSum
 } from '../../../common/helper';
-
-import { ActivatedRoute } from '@angular/router/src/router_state';
 import { ConfigurationService } from '../../../services/configuration';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { ResizeService } from '../../../services/resize';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
+import { DashboardConfig, Themes } from '../dashboard';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'dashboard-bar',
@@ -47,7 +37,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         private router: Router
     ) {}
 
-    @HostBinding('style.display') display: string = 'block';
+    @HostBinding('style.display') display = 'block';
 
     public options: any = {
         scales: {
@@ -71,9 +61,12 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         },
         hover: {
             onHover: function(e) {
-                var point = this.getElementAtEvent(e);
-                if (point.length) e.target.style.cursor = 'pointer';
-                else e.target.style.cursor = 'default';
+                const point = this.getElementAtEvent(e);
+                if (point.length) {
+                    e.target.style.cursor = 'pointer';
+                } else {
+                    e.target.style.cursor = 'default';
+                }
             }
         },
         tooltips: {
@@ -102,14 +95,14 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
     @Input() public config: DashboardConfig;
 
-    public chartType: string = 'bar';
-    public color: string = '';
+    public chartType = 'bar';
+    public color = '';
     public colors: Color[] = [{}];
     public datasets: Colors[] = [];
-    public label: string = '';
+    public label = '';
     public labels: string[];
-    public loaded: boolean = false;
-    public more: boolean = false;
+    public loaded = false;
+    public more = false;
     public tooltip: string[];
     public unit: OverviewContainer = undefined;
 
@@ -118,10 +111,12 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     private _total: string[];
     private _totalUnits: { key: string; value: OverviewContainer };
     private _units: OverviewValue;
-    private _key: string = 'total';
+    private _key = 'total';
 
     public set units(value: OverviewValue) {
-        if (!value) return;
+        if (!value) {
+            return;
+        }
         value.negative = array(value.negative);
         value.positive = array(value.positive);
 
@@ -139,32 +134,40 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
     public get isBase(): boolean {
         return (
-            this.unit == this._totalUnits[UnitKey.total] ||
-            this.unit == this._totalUnits[UnitKey.positive] ||
-            this.unit == this._totalUnits[UnitKey.negative]
+            this.unit === this._totalUnits[UnitKey.total] ||
+            this.unit === this._totalUnits[UnitKey.positive] ||
+            this.unit === this._totalUnits[UnitKey.negative]
         );
     }
 
     public onEdit(tab: string) {
-        let route = [].concat(this.config.path.split('.'));
+        const route = [].concat(this.config.path.split('.'));
         if (!isNullOrWhitespace(this.config.id)) {
             route.push(this.config.id);
         }
-        if (this._key != UnitKey.total) {
+        if (this._key !== UnitKey.total) {
             route.push(this._key);
-            if (tab) route.push(<any>{ tab: tab });
+            if (tab) {
+                route.push(<any>{ tab: tab });
+            }
         }
         this.router.navigate(route);
     }
 
     public back(): void {
-        if (this.unit == this._totalUnits[this._key]) this._key = UnitKey.total;
+        if (this.unit === this._totalUnits[this._key]) {
+            this._key = UnitKey.total;
+        }
         this.unit = this._totalUnits[this._key];
     }
 
     public itemClick(label: any): void {
-        if (label.key) this._key = label.key;
-        if (this.isBase) this.setUnitByName(this._key, label.name);
+        if (label.key) {
+            this._key = label.key;
+        }
+        if (this.isBase) {
+            this.setUnitByName(this._key, label.name);
+        }
     }
 
     public chartClicked(e: any): void {
@@ -175,14 +178,14 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         }
 
         this._key = e.active[0]._model.borderColor;
-        let label = e.active[0]._model.label;
+        const label = e.active[0]._model.label;
 
         this.more = this.getUnitByName(this._key, label) !== this.unit;
         this.setUnitByName(this._key, label);
     }
 
     public toggleTotals() {
-        if (this.unit == this._totalUnits[UnitKey.total]) {
+        if (this.unit === this._totalUnits[UnitKey.total]) {
             this.more = !this.more;
         } else {
             this.more = true;
@@ -193,21 +196,23 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {}
 
     public ngOnInit(): void {
-        if (!this.config) return;
-        let url = !isNullOrWhitespace(this.config.id)
+        if (!this.config) {
+            return;
+        }
+        const url = !isNullOrWhitespace(this.config.id)
             ? `api/${this.config.path}/${this.config.id}`
             : `api/${this.config.path}`;
 
         this.http
             .get(url)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe((x: OverviewValue) => {
                 this.units = x;
 
                 this.label = x.name; // this.configService.getName(this.config.path);
 
                 this.color =
-                    this.config.theme == Themes.light
+                    this.config.theme === Themes.light
                         ? '#fff'
                         : this.configService.getColor(this.config.path);
 
@@ -227,7 +232,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     }
 
     public unpin() {
-        let url = !isNullOrWhitespace(this.config.id)
+        const url = !isNullOrWhitespace(this.config.id)
             ? `api/dashboard/${this.config.path}/${this.config.id}`
             : `api/dashboard/${this.config.path}`;
         this.http.delete(url).subscribe(x => this.reload());
@@ -240,25 +245,27 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
     }
 
     private rgba(x: any) {
-        var arr: number[];
-        if (this.config.theme == Themes.light) {
+        let arr: number[];
+        if (this.config.theme === Themes.light) {
             arr =
-                x.key == UnitKey.positive
+                x.key === UnitKey.positive
                     ? hexToRgb(this._colorPositiv)
                     : hexToRgb(this._colorNegativ);
         } else {
-            let v = x.key == UnitKey.positive ? 255 : 0;
+            const v = x.key === UnitKey.positive ? 255 : 0;
             arr = [v, v, v];
         }
         return arr.join(',');
     }
 
     private updateGraphic() {
-        if (!this.units) return;
+        if (!this.units) {
+            return;
+        }
         this._total = ['Total', numberWithSeperator(this.units.value)];
         this.tooltip = this._total;
 
-        let all = this.units.positive
+        const all = this.units.positive
             .map(
                 x =>
                     <any>{ name: x.name, value: x.value, key: UnitKey.positive }
@@ -279,7 +286,7 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
                 data: all.map(x => x.value),
                 backgroundColor: all.map(
                     (x, i) =>
-                        this.config.theme == Themes.light
+                        this.config.theme === Themes.light
                             ? `rgb(${this.rgba(x)})`
                             : `rgba(${this.rgba(x)},${0.25 +
                                   i / (4 * all.length)})`
@@ -294,8 +301,8 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
         this.labels = all.map(x => x.name);
 
         this._totalUnits = <any>{};
-        let pos = {};
-        let neg = {};
+        const pos = {};
+        const neg = {};
 
         this._totalUnits[UnitKey.total] = {
             name: 'Total',
@@ -344,8 +351,8 @@ export class DashboardBarComponent implements OnInit, OnDestroy {
 
     private getUnitByName(key: string, label: string): OverviewContainer {
         if (this.units[key]) {
-            let unit: OverviewContainer[] = this.units[key];
-            let filter = unit.filter(x => x.name === label);
+            const unit: OverviewContainer[] = this.units[key];
+            const filter = unit.filter(x => x.name === label);
             return filter && filter[0] ? filter[0] : this._totalUnits[key];
         }
 

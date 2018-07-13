@@ -1,10 +1,5 @@
 import {
-    AfterViewInit,
-    OnDestroy
-} from '@angular/core/src/metadata/lifecycle_hooks';
-import {
     Component,
-    DoCheck,
     ElementRef,
     EventEmitter,
     Input,
@@ -12,23 +7,21 @@ import {
     Output,
     ViewChild
 } from '@angular/core';
-import {
-    DataSourceColumn,
-    DataSourceFactory,
-    ExtendedDataSource
-} from '../../services/data-source-wrapper';
+import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { MatPaginator, MatSort } from '@angular/material';
+import { Subscription } from 'rxjs';
+import { FREQUENCIES } from '../../common/frequencies';
 import {
     getCompare,
     getTransformCompare,
     toNumber,
     unique
 } from '../../common/helper';
-
-import { DataSource } from '@angular/cdk/table';
-import { FREQUENCIES } from '../../common/frequencies';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { Subscription } from 'rxjs/Subscription';
+import {
+    DataSourceColumn,
+    DataSourceFactory,
+    ExtendedDataSource
+} from '../../services/data-source-wrapper';
 
 @Component({
     selector: 'data-source-table',
@@ -39,6 +32,11 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
     constructor() {}
 
     public frequencies = FREQUENCIES;
+    public dataSource: ExtendedDataSource<any>;
+    public headers: DataSourceColumn[];
+    public cols: string[];
+    public checked: boolean;
+    public indeterminate: boolean;
 
     @ViewChild('filter') filter: ElementRef;
 
@@ -89,8 +87,8 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
             sort: this.sort,
             columns: this.columns,
             getCompare: (property: string, direction: '' | 'asc' | 'desc') => {
-                let col = this.columns.find(x => x.key == property);
-                if (col.type == 'decimal' || col.type == 'number') {
+                const col = this.columns.find(x => x.key === property);
+                if (col.type === 'decimal' || col.type === 'number') {
                     return getTransformCompare(property, direction, x =>
                         toNumber(x)
                     );
@@ -104,18 +102,9 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
         );
     }
 
-    public dataSource: ExtendedDataSource<any>;
-    public headers: DataSourceColumn[];
-
-    public cols: string[];
-
-    public checked: boolean;
-
     public check(value: any) {
         this.values.forEach(x => (x.checked = this.checked));
     }
-
-    public indeterminate: boolean;
 
     public setIndeterminate() {
         this.checkIndeterminate(this.values);
@@ -131,14 +120,17 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
 
     private checkIndeterminate(values: any[]): void {
         this.values = values;
-        if (!values) return;
+        if (!values) {
+            return;
+        }
 
-        let oldValue = this.indeterminate;
         this.indeterminate = false;
-        let first = undefined;
+        let first;
 
-        for (let x of values) {
-            if (first === undefined) first = x;
+        for (const x of values) {
+            if (first === undefined) {
+                first = x;
+            }
             if (!x.checked !== !first.checked) {
                 this.indeterminate = true;
                 break;

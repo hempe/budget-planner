@@ -1,26 +1,23 @@
-import { Colors, ConfigurationService } from '../../services/configuration';
-import { Component, HostListener } from '@angular/core';
-import { Group, OverviewValue } from '../../common/api';
-import { array, numberWithSeperator } from '../../common/helper';
-
-import { Color } from 'ng2-charts';
-import { DashboardConfig } from '../dashboard/dashboard';
+import { Component, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { MouseService } from '../../services/mouse';
 import { Router } from '@angular/router';
+import { Colors, ConfigurationService } from '../../services/configuration';
+import { DashboardConfig } from '../dashboard/dashboard';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'home',
     templateUrl: 'home.component.html',
     styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
     public head: MenuEntry = {
         icon: 'home',
         name: 'Home'
     };
 
+    public items: DashboardConfig[];
     public colors: { name: string; value: string }[];
     public color: undefined;
 
@@ -28,7 +25,6 @@ export class HomeComponent {
         this.config.setCustomColor(this.color);
     }
 
-    public items: DashboardConfig[];
     constructor(
         private router: Router,
         private http: Http,
@@ -46,7 +42,7 @@ export class HomeComponent {
     ngOnInit(): void {
         this.http
             .get('/api/dashboard')
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => (this.items = x));
     }
 }

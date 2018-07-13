@@ -1,22 +1,15 @@
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-    BudgetOverview,
-    FrequencyValue,
-    Group,
-    OverviewValue,
-    Profile
-} from '../../common/api';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NgForm } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { array, clone, guid, toNumber } from '../../common/helper';
-
+import { Observable } from 'rxjs';
+import { OverviewValue } from '../../common/api';
+import { clone, guid } from '../../common/helper';
 import { ConfigurationService } from '../../services/configuration';
 import { DashboardConfig } from '../dashboard/dashboard';
-import { Http } from '@angular/http';
-import { MatPaginator } from '@angular/material';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'budget',
@@ -26,7 +19,7 @@ import { ThemeSelector } from '../theme-selector/theme-selector.component';
 export class BudgetComponent implements OnInit {
     public head: MenuEntry = {};
 
-    public type: string = 'budgets';
+    public type = 'budgets';
     public color: string;
 
     private value: OverviewValue;
@@ -59,7 +52,7 @@ export class BudgetComponent implements OnInit {
 
         this.http
             .get(`/api/dashboard/${this.type}/${this.id}`)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => (this.theme = x.theme));
     }
 
@@ -68,10 +61,10 @@ export class BudgetComponent implements OnInit {
     }
 
     private getData(): Observable<OverviewValue> {
-        return this.http
-            .get(this.url)
-            .map(x => x.json())
-            .map((x: OverviewValue) => x);
+        return this.http.get(this.url).pipe(
+            map(x => x.json()),
+            map((x: OverviewValue) => x)
+        );
     }
 
     public delete(): void {
@@ -83,16 +76,16 @@ export class BudgetComponent implements OnInit {
     public copy(): void {
         this.http
             .post(`/api/budgets/${this.id}/copy/${guid()}`, null)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe();
     }
 
     public pin() {
-        if (this.theme)
+        if (this.theme) {
             this.http
                 .delete(`/api/dashboard/${this.type}/${this.id}`)
                 .subscribe(x => (this.theme = undefined));
-        else
+        } else {
             this.themeSelector.selectTheme().subscribe(theme => {
                 this.http
                     .post('/api/dashboard', <DashboardConfig>{
@@ -101,15 +94,16 @@ export class BudgetComponent implements OnInit {
                         theme: theme,
                         type: 'bar'
                     })
-                    .map(x => x.json())
+                    .pipe(map(x => x.json()))
                     .subscribe(x => (this.theme = x.theme));
             });
+        }
     }
 
     public save(form: NgForm): void {
         this.http
             .post(`/api/budgets/${this.id}`, this.value)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(
                 x => this.setValue(x, form),
                 err => this.resetForm(form)

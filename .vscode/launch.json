@@ -7,7 +7,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program":
-                "${workspaceFolder}/bin/Debug/netcoreapp2.0/BudgetPlanner.dll",
+                "${workspaceFolder}/bin/Debug/netcoreapp2.1/BudgetPlanner.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
@@ -30,7 +30,8 @@
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_CONTENTROOTPATH": "${workspaceFolder}"
             },
-            "sourceFileMap": {}
+            "sourceFileMap": {},
+            "requireExactSource": false
         }
     ]
 }

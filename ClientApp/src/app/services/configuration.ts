@@ -1,9 +1,7 @@
-import { hexToRgb, makeid } from '../common/helper';
-
 import { Injectable } from '@angular/core';
-import { Profile } from '../common/api';
-import { retry } from 'rxjs/operator/retry';
 import { TranslateService } from '@ngx-translate/core';
+import { Profile } from '../common/api';
+import { hexToRgb, makeid } from '../common/helper';
 
 export const Colors = {
     Amber: '#FFCA28',

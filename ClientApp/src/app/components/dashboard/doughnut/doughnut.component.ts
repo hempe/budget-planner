@@ -1,19 +1,13 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { Color, Colors } from 'ng2-charts';
 import {
     Component,
-    DoCheck,
-    EventEmitter,
     HostBinding,
-    HostListener,
     Input,
-    IterableDiffer,
-    IterableDiffers,
     OnDestroy,
-    OnInit,
-    Output
+    OnInit
 } from '@angular/core';
-import { DashboardConfig, Themes } from '../dashboard';
+import { Http } from '@angular/http';
+import { Router } from '@angular/router';
+import { Color, Colors } from 'ng2-charts';
 import {
     NamedValue,
     OverviewContainer,
@@ -26,12 +20,10 @@ import {
     numberWithSeperator,
     toSum
 } from '../../../common/helper';
-
 import { ConfigurationService } from '../../../services/configuration';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 import { ResizeService } from '../../../services/resize';
-import { Subscription } from 'rxjs/Subscription';
+import { DashboardConfig, Themes } from '../dashboard';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'dashboard-doughnut',
@@ -46,7 +38,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         private router: Router
     ) {}
 
-    @HostBinding('style.display') display: string = 'block';
+    @HostBinding('style.display') display = 'block';
     public options: any = {
         scales: {
             xAxes: [
@@ -69,9 +61,12 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         },
         hover: {
             onHover: function(e) {
-                var point = this.getElementAtEvent(e);
-                if (point.length) e.target.style.cursor = 'pointer';
-                else e.target.style.cursor = 'default';
+                const point = this.getElementAtEvent(e);
+                if (point.length) {
+                    e.target.style.cursor = 'pointer';
+                } else {
+                    e.target.style.cursor = 'default';
+                }
             }
         },
         tooltips: {
@@ -108,16 +103,18 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
         type: 'doughnut'
     };
 
-    public chartType: string = 'doughnut';
-    public color: string = '';
+    public chartType = 'doughnut';
+    public color = '';
     public colors: Color[] = [{}];
     public datasets: Colors[] = [];
     public labels: string[];
-    public label: string = '';
-    public loaded: boolean = false;
-    public more: boolean = false;
+    public label = '';
+    public loaded = false;
+    public more = false;
     public tooltip: string[];
+    public unit: OverviewContainer = undefined;
 
+    private _units: OverviewContainer[];
     private total: string[];
     private totalUnit: OverviewContainer;
 
@@ -126,21 +123,25 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     public onEdit(tab: string) {
-        var type = this.config.path.split('.');
-        var route = [type[0]];
+        const type = this.config.path.split('.');
+        const route = [type[0]];
 
         if (!isNullOrWhitespace(this.config.id)) {
             route.push(<any>this.config.id);
         }
 
         route.push(type[1]);
-        if (tab) route.push(<any>{ tab: tab });
+        if (tab) {
+            route.push(<any>{ tab: tab });
+        }
 
         this.router.navigate(route);
     }
 
     public set units(value: OverviewContainer[]) {
-        if (!value) return;
+        if (!value) {
+            return;
+        }
         value = array(value);
         value.forEach(val => (val.elements = array(val.elements)));
         this._units = value;
@@ -150,17 +151,16 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     public get isBase(): boolean {
-        return this.unit == this.totalUnit;
+        return this.unit === this.totalUnit;
     }
-
-    private _units: OverviewContainer[];
-    public unit: OverviewContainer = undefined;
 
     public back(): void {
         this.unit = this.totalUnit;
     }
     public itemClick(label: string): void {
-        if (this.isBase) this.setUnitByName(label);
+        if (this.isBase) {
+            this.setUnitByName(label);
+        }
     }
 
     public chartClicked(e: any): void {
@@ -168,13 +168,13 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
             this.unit = this.totalUnit;
             return;
         }
-        let label = e.active[0]._model.label;
+        const label = e.active[0]._model.label;
         this.more = this.getUnitByName(label) !== this.unit;
         this.setUnitByName(label);
     }
 
     public toggleTotals() {
-        if (this.unit == this.totalUnit) {
+        if (this.unit === this.totalUnit) {
             this.more = !this.more;
         } else {
             this.more = true;
@@ -184,7 +184,7 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
 
     public ngOnDestroy(): void {}
     public unpin() {
-        let url = !isNullOrWhitespace(this.config.id)
+        const url = !isNullOrWhitespace(this.config.id)
             ? `api/dashboard/${this.config.path}/${this.config.id}`
             : `api/dashboard/${this.config.path}`;
         this.http.delete(url).subscribe(x => this.reload());
@@ -192,22 +192,24 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
-        if (!this.config) return;
-        let type = this.config.path.split('.');
-        let url = !isNullOrWhitespace(this.config.id)
+        if (!this.config) {
+            return;
+        }
+        const type = this.config.path.split('.');
+        const url = !isNullOrWhitespace(this.config.id)
             ? `api/${type[0]}/${this.config.id}`
             : `api/${type[0]}`;
 
         this.http
             .get(url)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe((x: OverviewValue) => {
                 this.units = x[type[1]];
                 this.label = this.configService.getTranslatedName(
                     this.config.path
                 );
                 this.color =
-                    this.config.theme == Themes.light
+                    this.config.theme === Themes.light
                         ? '#fff'
                         : this.configService.getColor(this.config.path);
 
@@ -222,9 +224,9 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     private rgba(x: any) {
-        var arr: number[];
-        if (this.config.theme == Themes.light) {
-            let c = this.configService.getColor(this.config.path);
+        let arr: number[];
+        if (this.config.theme === Themes.light) {
+            const c = this.configService.getColor(this.config.path);
             arr = hexToRgb(c);
         } else {
             arr = [255, 255, 255];
@@ -253,12 +255,12 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
                         `rgba(${this.rgba(x)},${0.5 + i / (2 * value.length)})`
                 ),
                 hoverBackgroundColor:
-                    this.config.theme == Themes.light
+                    this.config.theme === Themes.light
                         ? value.map(x => `rgba(${this.rgba(x)},0.5)`)
                         : value.map(x => '#fff'),
                 borderColor: this.color ? this.color : 'transparent',
                 hoverBorderColor: this.color ? this.color : 'transparent',
-                borderWidth: this.config.theme == Themes.light ? 2 : 4
+                borderWidth: this.config.theme === Themes.light ? 2 : 4
             }
         ];
 
@@ -280,8 +282,8 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
     }
 
     private getUnitByName(label: string): OverviewContainer {
-        let filter = this.units.filter(x => x.name === label);
-        let newUnit = filter && filter[0] ? filter[0] : this.totalUnit;
+        const filter = this.units.filter(x => x.name === label);
+        const newUnit = filter && filter[0] ? filter[0] : this.totalUnit;
         return newUnit;
     }
     private setUnitByName(label: string) {

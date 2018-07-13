@@ -1,34 +1,23 @@
-import { BaseChartDirective, Color, Colors } from 'ng2-charts';
 import {
     Component,
-    DoCheck,
     EventEmitter,
-    HostListener,
     Input,
-    IterableDiffer,
-    IterableDiffers,
     OnDestroy,
     OnInit,
     Output,
     ViewChild
 } from '@angular/core';
-import {
-    NamedValue,
-    OverviewContainer,
-    OverviewValue
-} from '../../../common/api';
+import { BaseChartDirective, Color, Colors } from 'ng2-charts';
+import { Observable, Subscription } from 'rxjs';
+import { OverviewContainer } from '../../../common/api';
 import {
     array,
     hexToRgb,
     numberWithSeperator,
     toSum
 } from '../../../common/helper';
-
 import { ConfigurationService } from '../../../services/configuration';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
 import { ResizeService } from '../../../services/resize';
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'overview-chart',

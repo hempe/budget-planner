@@ -1,27 +1,11 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { BudgetOverview, OverviewValue } from '../../common/api';
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    OnDestroy,
-    OnInit,
-    ViewChild
-} from '@angular/core';
-import {
-    DataSourceColumn,
-    DataSourceFactory,
-    ListDataSource
-} from '../../services/data-source-wrapper';
-import { FormControl, FormGroup, NgForm } from '@angular/forms';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { array, clone, guid, toNumber } from '../../common/helper';
-
-import { ConfigurationService } from '../../services/configuration';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Http } from '@angular/http';
-import { KeyboardService } from '../../services/keyboard';
-import { MatPaginator } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { clone } from '../../common/helper';
+import { ConfigurationService } from '../../services/configuration';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 interface Table {
     partitionKey: string;
@@ -59,14 +43,14 @@ export class TableEntryComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.table = this.route.snapshot.params['table'];
-        let partitionKey = this.route.snapshot.params['partitionKey'];
-        let rowKey = this.route.snapshot.params['rowKey'];
+        const partitionKey = this.route.snapshot.params['partitionKey'];
+        const rowKey = this.route.snapshot.params['rowKey'];
         this.head.name = this.table;
 
-        let headerUrl = `/api/admin/tables/headers/detailed/${this.table}`;
+        const headerUrl = `/api/admin/tables/headers/detailed/${this.table}`;
         this.http
             .get(headerUrl)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe((x: Map<string, any>[]) => {
                 this.meta = Object.keys(x).map(
                     c =>
@@ -82,15 +66,15 @@ export class TableEntryComponent implements OnInit, OnDestroy {
                 console.info('and the url is ', this.url);
                 this.http
                     .get(this.url)
-                    .map(x => x.json())
-                    .subscribe(x => this.setValue(x, null));
+                    .pipe(map(y => y.json()))
+                    .subscribe(y => this.setValue(y, null));
             });
     }
 
     public onSubmit(form: NgForm): void {
         this.http
             .post(this.url, this.value)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(
                 x => this.setValue(x, form),
                 err => this.resetForm(form)
@@ -100,7 +84,7 @@ export class TableEntryComponent implements OnInit, OnDestroy {
     public delete(): void {
         this.http
             .delete(this.url)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => {
                 this.router.navigate(['../../'], { relativeTo: this.route });
             });

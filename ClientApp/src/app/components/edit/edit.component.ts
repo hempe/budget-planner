@@ -1,40 +1,27 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import {
-    AfterViewInit,
     Component,
     EventEmitter,
-    HostListener,
     OnDestroy,
     OnInit,
     ViewChild
 } from '@angular/core';
-import { Color, Colors } from 'ng2-charts';
+import { Http } from '@angular/http';
+import { MatTabChangeEvent } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { NamedValue, Unit } from '../../common/api';
+import { array, clone, isNullOrWhitespace } from '../../common/helper';
+import { ConfigurationService } from '../../services/configuration';
 import {
     DataSourceColumn,
     DataSourceFactory,
-    DataSourceValue,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { Group, NamedValue, Unit } from '../../common/api';
-import { MatPaginator, MatTabChangeEvent } from '@angular/material';
-import {
-    array,
-    clone,
-    isNullOrWhitespace,
-    numberWithSeperator,
-    toNumber
-} from '../../common/helper';
-
-import { ConfigurationService } from '../../services/configuration';
-import { DashboardConfig } from '../dashboard/dashboard';
-import { DataSource } from '@angular/cdk/table';
-import { Http } from '@angular/http';
 import { KeyboardService } from '../../services/keyboard';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { MouseService } from '../../services/mouse';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs';
+import { DashboardConfig } from '../dashboard/dashboard';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'edit',
@@ -69,7 +56,7 @@ export class EditComponent implements OnInit, OnDestroy {
     public dataSources: DataSourceFactory<Unit<NamedValue>[], NamedValue>[];
     public label: string;
     public color: string;
-    public touched: boolean = false;
+    public touched = false;
     public type: string;
     public subType: string;
 
@@ -89,26 +76,38 @@ export class EditComponent implements OnInit, OnDestroy {
         private themeSelector: ThemeSelector
     ) {
         this.keyDown = this.keyboardService.keyDown.subscribe(e => {
-            if (this.keyboardService.isInputActive()) return;
+            if (this.keyboardService.isInputActive()) {
+                return;
+            }
 
-            if (e.key == 'ArrowDown') this.down();
-            if (e.key == 'ArrowUp') this.up();
-            if (e.key == 'ArrowRight') {
+            if (e.key === 'ArrowDown') {
+                this.down();
+            }
+            if (e.key === 'ArrowUp') {
+                this.up();
+            }
+            if (e.key === 'ArrowRight') {
                 if (this.unitId < this.units.length - 1) {
                     this.unitId++;
                 }
             }
-            if (e.key == 'ArrowLeft') {
+            if (e.key === 'ArrowLeft') {
                 if (this.unitId > 0) {
                     this.unitId--;
                 }
             }
-            if (e.key == 'Delete') this.delete();
-            if (e.key == 'Insert') this.add();
+            if (e.key === 'Delete') {
+                this.delete();
+            }
+            if (e.key === 'Insert') {
+                this.add();
+            }
         });
 
-        let id = this.route.snapshot.params['id'];
-        if (!isNullOrWhitespace(id)) this.id = id;
+        const id = this.route.snapshot.params['id'];
+        if (!isNullOrWhitespace(id)) {
+            this.id = id;
+        }
 
         this.type = this.route.snapshot.data.type;
         this.subType = this.route.snapshot.data.subType;
@@ -133,20 +132,22 @@ export class EditComponent implements OnInit, OnDestroy {
         );
         this.color = this.config.getColor(`${this.type}.${this.subType}`);
 
-        if (this.type == 'assets')
+        if (this.type === 'assets') {
             this.columns = [
                 { key: 'name', name: 'name', type: 'text' },
                 { key: 'value', name: 'amount', type: 'decimal' }
             ];
+        }
 
-        if (this.type == 'revenue')
+        if (this.type === 'revenue') {
             this.columns = [
                 { key: 'name', name: 'name', type: 'text' },
                 { key: 'year', name: 'Year', type: 'number' },
                 { key: 'value', name: 'amount', type: 'decimal' }
             ];
+        }
 
-        if (this.type == 'budgets')
+        if (this.type === 'budgets') {
             this.columns = [
                 { key: 'name', name: 'name', type: 'text' },
                 {
@@ -156,8 +157,9 @@ export class EditComponent implements OnInit, OnDestroy {
                 },
                 { key: 'value', name: 'amount', type: 'decimal' }
             ];
+        }
 
-        let path = `${this.type}.${this.subType}`;
+        const path = `${this.type}.${this.subType}`;
         this.config.setColor(path);
         this.head = {
             icon: 'arrow_back',
@@ -166,7 +168,7 @@ export class EditComponent implements OnInit, OnDestroy {
                 this.router.navigate(['../'], { relativeTo: this.route })
         };
 
-        let startTab = this.route.snapshot.params['tab'];
+        const startTab = this.route.snapshot.params['tab'];
 
         setTimeout(() => {
             this.dataSources = this.units.map((unit, index) =>
@@ -174,16 +176,18 @@ export class EditComponent implements OnInit, OnDestroy {
             );
 
             if (startTab) {
-                let index = this.units.findIndex(u => u.name == startTab);
-                if (index >= 0) this.unitId = index;
+                const index = this.units.findIndex(u => u.name === startTab);
+                if (index >= 0) {
+                    this.unitId = index;
+                }
             }
 
-            if (!this.unitId) this.unitId = 0;
+            if (!this.unitId) {
+                this.unitId = 0;
+            }
             this.onUpdate(false);
         });
     }
-
-    ngDoCheck() {}
 
     public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         this.unitId = this.tabGroup.selectedIndex;
@@ -196,7 +200,7 @@ export class EditComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.http
             .get(this.url)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => {
                 this.units = x;
                 this.init();
@@ -204,7 +208,7 @@ export class EditComponent implements OnInit, OnDestroy {
 
         this.http
             .get(this.dashboardUrl)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => (this.theme = x.theme));
     }
 
@@ -237,9 +241,12 @@ export class EditComponent implements OnInit, OnDestroy {
         this.dataSources = this.units.map((unit, index) =>
             this.buidDataSource(unit, index)
         );
-        if (this.unitId > this.units.length)
+        if (this.unitId > this.units.length) {
             this.unitId = this.units.length - 1;
-        if (this.unitId < 0) this.unitId = 0;
+        }
+        if (this.unitId < 0) {
+            this.unitId = 0;
+        }
 
         this.unitId = this.unitId;
         this.onUpdate(true);
@@ -249,9 +256,13 @@ export class EditComponent implements OnInit, OnDestroy {
     public up() {
         console.info('up');
         this.unit.elements.forEach((x, i) => {
-            if (!x.checked) return;
-            if (i <= 0 || this.unit.elements[i - 1].checked) return;
-            let el = this.unit.elements.splice(i, 1)[0];
+            if (!x.checked) {
+                return;
+            }
+            if (i <= 0 || this.unit.elements[i - 1].checked) {
+                return;
+            }
+            const el = this.unit.elements.splice(i, 1)[0];
             this.unit.elements.splice(i - 1, 0, el);
         });
 
@@ -261,9 +272,13 @@ export class EditComponent implements OnInit, OnDestroy {
     public down() {
         console.info('down');
         this.unit.elements.reverse().forEach((x, i) => {
-            if (!x.checked) return;
-            if (i <= 0 || this.unit.elements[i - 1].checked) return;
-            let el = this.unit.elements.splice(i, 1)[0];
+            if (!x.checked) {
+                return;
+            }
+            if (i <= 0 || this.unit.elements[i - 1].checked) {
+                return;
+            }
+            const el = this.unit.elements.splice(i, 1)[0];
             this.unit.elements.splice(i - 1, 0, el);
         });
         this.unit.elements.reverse();
@@ -274,9 +289,11 @@ export class EditComponent implements OnInit, OnDestroy {
     public copy() {
         console.info('copy');
         this.unit.elements.forEach((x, i) => {
-            if (!x.checked) return;
+            if (!x.checked) {
+                return;
+            }
             x.checked = false;
-            let y = clone(x);
+            const y = clone(x);
             y.name = y.name + '(Copy)';
             this.unit.elements.splice(i + 1, 0, y);
         });
@@ -287,8 +304,10 @@ export class EditComponent implements OnInit, OnDestroy {
     public delete() {
         console.info('delete');
         for (let i = 0; i < this.unit.elements.length; i++) {
-            let x = this.unit.elements[i];
-            if (!x.checked) continue;
+            const x = this.unit.elements[i];
+            if (!x.checked) {
+                continue;
+            }
             this.unit.elements.splice(i, 1);
             i--;
         }
@@ -305,7 +324,7 @@ export class EditComponent implements OnInit, OnDestroy {
         console.info('save');
         this.http
             .post(this.url, this.units)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(
                 x => {
                     this.units = x;
@@ -321,16 +340,18 @@ export class EditComponent implements OnInit, OnDestroy {
     }
 
     public onEdit(name: string) {
-        let index = this.units.findIndex(x => x.name == name);
-        if (index >= 0) this.unitId = index;
+        const index = this.units.findIndex(x => x.name === name);
+        if (index >= 0) {
+            this.unitId = index;
+        }
     }
 
     public pin() {
-        if (this.theme)
+        if (this.theme) {
             this.http
                 .delete(this.dashboardUrl)
                 .subscribe(x => (this.theme = undefined));
-        else
+        } else {
             this.themeSelector.selectTheme().subscribe(theme => {
                 this.http
                     .post('/api/dashboard', <DashboardConfig>{
@@ -339,13 +360,16 @@ export class EditComponent implements OnInit, OnDestroy {
                         id: this.id,
                         type: 'doughnut'
                     })
-                    .map(x => x.json())
+                    .pipe(map(x => x.json()))
                     .subscribe(x => (this.theme = x.theme));
             });
+        }
     }
 
     private onUpdate(touched?: boolean) {
-        if (touched !== undefined) this.touched = touched;
+        if (touched !== undefined) {
+            this.touched = touched;
+        }
 
         for (let i = 0; i < this.units.length; i++) {
             this.updateEvents[i].emit(this.units[i].elements);

@@ -1,18 +1,15 @@
 import {
     Component,
     EventEmitter,
+    forwardRef,
     Input,
     OnInit,
-    Output,
-    forwardRef
+    Output
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { numberWithSeperator, toNumber } from '../../common/helper';
-
-import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
-import { ErrorStateMatcher } from '@angular/material';
 import { Router } from '@angular/router';
-import { retry } from 'rxjs/operators/retry';
+import { numberWithSeperator, toNumber } from '../../common/helper';
+import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
 
 const noop = () => {};
 const inputTypes = [

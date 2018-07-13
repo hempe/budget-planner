@@ -1,4 +1,4 @@
-export const FREQUENCIES: [{ name: string; value: number }] = [
+export const FREQUENCIES: { name: string; value: number }[] = [
     { name: 'frequency.never', value: 0 },
     { name: 'frequency.daily', value: 365 },
     { name: 'frequency.weekly', value: 52 },

@@ -1,72 +1,70 @@
-import 'chartjs-plugin-deferred';
-
-import { ErrorStateMatcher, MatDialog, MatSnackBar } from '@angular/material';
-import {
-    FlexBreakDirective,
-    FlexContainerDirective,
-    FlexDirective
-} from './directives/flex/flex.directive';
-import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
+import { CdkTableModule } from '@angular/cdk/table';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Http, HttpModule, RequestOptions, XHRBackend } from '@angular/http';
+import { ErrorStateMatcher, MatSnackBar } from '@angular/material';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router, RouterModule } from '@angular/router';
 import {
     MissingTranslationHandler,
     TranslateLoader,
     TranslateModule,
     TranslateService
 } from '@ngx-translate/core';
-import { Router, RouterModule } from '@angular/router';
-import {
-    ThemeSelector,
-    ThemeSelectorDialog
-} from './components/theme-selector/theme-selector.component';
-
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import 'chartjs-plugin-deferred';
 import { AceEditorModule } from 'ng2-ace-editor';
-import { ApiService } from './services/api';
+import { ChartsModule } from 'ng2-charts';
+import { FileUploadModule } from 'ng2-file-upload';
 import { AppComponent } from './app.component';
+import { MaterialModule } from './app.material';
 import { AppRoutes } from './app.router';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BrowserModule } from '@angular/platform-browser';
-import { TableListComponent } from './components/admin/table-list.component';
+import { NumberWithSeperatorPipe } from './common/helper';
 import { TableContentComponent } from './components/admin/table-content.component';
 import { TableEntryComponent } from './components/admin/table-entry.component';
-import { BudgetComponent } from './components/budget/budget.component';
+import { TableListComponent } from './components/admin/table-list.component';
 import { BudgetListComponent } from './components/budget/budget-list.component';
-import { CdkTableModule } from '@angular/cdk/table';
-import { ChartsModule } from 'ng2-charts';
-import { ConfigurationService } from './services/configuration';
-import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
+import { BudgetComponent } from './components/budget/budget.component';
 import { DashboardBarComponent } from './components/dashboard/bar/bar.component';
 import { DashboardDoughnutComponent } from './components/dashboard/doughnut/doughnut.component';
 import { DashboardIcon } from './components/dashboard/icon/icon.component';
 import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
-import { DecimalFormatDirective } from './directives/decimal-format/decimal-format.directive';
 import { DevelopmentComponent } from './components/development/development.component';
 import { EditChartComponent } from './components/edit/chart/chart.component';
 import { EditComponent } from './components/edit/edit.component';
 import { ErrorComponent } from './components/error/error.component';
 import { FieldComponent } from './components/field/field.component';
-import { FileUploadModule } from 'ng2-file-upload';
 import { FlatFieldComponent } from './components/flat-field/flat-field.component';
-import { FormsModule } from '@angular/forms';
 import { HomeComponent } from './components/home/home.component';
-import { KeyboardService } from './services/keyboard';
 import { LoginComponent } from './components/login/login.component';
 import { MatFileComponent } from './components/matfile/matfile.component';
-import { MaterialModule } from './app.material';
 import { MenuModule } from './components/menu/menu.module';
-import { MouseService } from './services/mouse';
-import { NgModule } from '@angular/core';
-import { NumberWithSeperatorPipe } from './common/helper';
 import { OverviewChartComponent } from './components/overview/chart/chart.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { ReloadOnResizeDirective } from './directives/reload-onresize/reload-onresize.directive';
-import { ResizeService } from './services/resize';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import {
+    ThemeSelector,
+    ThemeSelectorDialog
+} from './components/theme-selector/theme-selector.component';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
-import { WarnMissingTranslationHandler } from './services/warn-missing-translation-handler';
+import { DecimalFormatDirective } from './directives/decimal-format/decimal-format.directive';
+import {
+    FlexBreakDirective,
+    FlexContainerDirective,
+    FlexDirective
+} from './directives/flex/flex.directive';
+import { ReloadOnResizeDirective } from './directives/reload-onresize/reload-onresize.directive';
+import { ApiService } from './services/api';
+import { ConfigurationService } from './services/configuration';
+import { CustomErrorStateMatcher } from './services/custom-error-state-matcher';
 import { httpFactory } from './services/http-interceptor';
+import { KeyboardService } from './services/keyboard';
+import { MouseService } from './services/mouse';
 import { PdfRenderService } from './services/pdf-render';
+import { ResizeService } from './services/resize';
+import { WarnMissingTranslationHandler } from './services/warn-missing-translation-handler';
 
 @NgModule({
     declarations: [

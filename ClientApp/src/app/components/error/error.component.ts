@@ -1,12 +1,4 @@
-import {
-    Component,
-    ViewChild,
-    Input,
-    AfterViewInit,
-    ElementRef,
-    Inject,
-    OnInit
-} from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnInit } from '@angular/core';
 import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
 
 @Component({

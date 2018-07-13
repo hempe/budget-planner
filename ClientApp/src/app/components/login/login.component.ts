@@ -1,13 +1,11 @@
-import { ApiService, Provider } from '../../services/api';
-
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { NgForm } from '@angular/forms';
-import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
+import { ActivatedRoute, Router } from '@angular/router';
 import { isNullOrWhitespace } from '../../common/helper';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ApiService, Provider } from '../../services/api';
+import { CustomErrorStateMatcher } from '../../services/custom-error-state-matcher';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 
 @Component({
     selector: 'login',

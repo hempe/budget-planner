@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {
-    TranslateService,
     MissingTranslationHandler,
     MissingTranslationHandlerParams
 } from '@ngx-translate/core';

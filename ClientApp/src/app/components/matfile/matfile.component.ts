@@ -1,18 +1,10 @@
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import {
-    Component,
-    EventEmitter,
-    Inject,
-    Input,
-    OnInit,
-    Output
-} from '@angular/core';
-import {
-    FileItem,
     FileLikeObject,
     FileUploader,
     FileUploaderOptions
 } from 'ng2-file-upload';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
     selector: 'mat-file',

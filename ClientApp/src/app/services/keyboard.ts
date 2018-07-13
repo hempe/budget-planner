@@ -1,6 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class KeyboardService {
@@ -37,8 +36,8 @@ export class KeyboardService {
     public isInputActive(): boolean {
         return (
             document.activeElement &&
-            (document.activeElement.nodeName == 'INPUT' ||
-                document.activeElement.nodeName == 'TEXTAREA') &&
+            (document.activeElement.nodeName === 'INPUT' ||
+                document.activeElement.nodeName === 'TEXTAREA') &&
             !document.activeElement.classList.contains('mat-checkbox-input')
         );
     }

@@ -1,37 +1,26 @@
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Color, Colors } from 'ng2-charts';
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    OnInit,
-    ViewChild
-} from '@angular/core';
-import {
-    DataSourceColumn,
-    DataSourceFactory,
-    ListDataSource
-} from '../../services/data-source-wrapper';
-import { DevelopmentElement, OverviewValue } from '../../common/api';
-import { Observable, Subject } from 'rxjs';
+import { Colors } from 'ng2-charts';
+import { DevelopmentElement } from '../../common/api';
 import {
     clone,
     hexToRgb,
     isNullOrWhitespace,
     numberWithSeperator,
-    toNumber,
     toSum
 } from '../../common/helper';
-
 import { ConfigurationService } from '../../services/configuration';
-import { Http } from '@angular/http';
-import { MatPaginator } from '@angular/material';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import {
+    DataSourceColumn,
+    DataSourceFactory,
+    ListDataSource
+} from '../../services/data-source-wrapper';
 import { MouseService } from '../../services/mouse';
-import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { DashboardConfig } from '../dashboard/dashboard';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'development',
@@ -40,6 +29,22 @@ import { ThemeSelector } from '../theme-selector/theme-selector.component';
 })
 export class DevelopmentComponent implements OnInit {
     private theme: string;
+    public value: DevelopmentElement[];
+    public dev: any[];
+
+    public tooltip: {
+        year: number;
+        group: string;
+        value: string;
+        top: any;
+        left: any;
+    };
+
+    public head: MenuEntry = {
+        icon: 'arrow_back',
+        name: 'Development',
+        action: () => this.router.navigate(['../'], { relativeTo: this.route })
+    };
 
     public options: any = {
         scales: {
@@ -63,7 +68,6 @@ export class DevelopmentComponent implements OnInit {
                         displayFormats: {
                             quarter: 'MMM YYYY'
                         }
-                        //unit: 'year'
                     }
                 }
             ],
@@ -104,9 +108,12 @@ export class DevelopmentComponent implements OnInit {
         },
         hover: {
             onHover: function(e) {
-                var point = this.getElementAtEvent(e);
-                if (point.length) e.target.style.cursor = 'pointer';
-                else e.target.style.cursor = 'default';
+                const point = this.getElementAtEvent(e);
+                if (point.length) {
+                    e.target.style.cursor = 'pointer';
+                } else {
+                    e.target.style.cursor = 'default';
+                }
             }
         },
         deferred: {
@@ -121,10 +128,10 @@ export class DevelopmentComponent implements OnInit {
                     return;
                 }
                 try {
-                    let year = tooltipModel.title[0].getFullYear();
-                    let line = tooltipModel.body[0].lines[0].split(':');
-                    let group = line[0].trim();
-                    let value = numberWithSeperator(line[1].trim());
+                    const year = tooltipModel.title[0].getFullYear();
+                    const line = tooltipModel.body[0].lines[0].split(':');
+                    const group = line[0].trim();
+                    const value = numberWithSeperator(line[1].trim());
 
                     this.tooltip = {
                         year: year,
@@ -134,7 +141,7 @@ export class DevelopmentComponent implements OnInit {
                         left: this.mouse.getX() + 20 + 'px'
                     };
                 } catch (err) {
-                    //this.tooltip = undefined;
+                    // this.tooltip = undefined;
                 }
             }
         }
@@ -179,21 +186,21 @@ export class DevelopmentComponent implements OnInit {
 
         this.http
             .get('/api/development')
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => this.setValue(x));
 
         this.http
             .get('/api/dashboard/development')
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => (this.theme = x.theme));
     }
 
     public pin() {
-        if (this.theme)
+        if (this.theme) {
             this.http
                 .delete('/api/dashboard/development')
                 .subscribe(x => (this.theme = undefined));
-        else
+        } else {
             this.themeSelector.selectTheme().subscribe(theme => {
                 this.http
                     .post('/api/dashboard', <DashboardConfig>{
@@ -202,52 +209,58 @@ export class DevelopmentComponent implements OnInit {
                         type: 'icon',
                         icon: 'insert_chart'
                     })
-                    .map(x => x.json())
+                    .pipe(map(x => x.json()))
                     .subscribe(x => (this.theme = x.theme));
             });
+        }
     }
 
     public setValue(value: DevelopmentElement[]) {
         this.value = value;
-        let start = Math.min.apply(
+        const start = Math.min.apply(
             null,
             this.value.filter(x => x.start > 0).map(x => x.start)
         );
 
-        let end = Math.max.apply(null, this.value.map(x => x.end));
+        const end = Math.max.apply(null, this.value.map(x => x.end));
         console.info('Start: %o End: %o', start, end, this.value);
 
         this.labels = [];
         this.dev = [];
         let index = 0;
-        var startValues = this.value
+        const startValues = this.value
             .filter(x => !x.start && !x.end)
             .map(x => x.value);
-        var startValue = startValues.length > 0 ? startValues.reduce(toSum) : 0;
+        const startValue =
+            startValues.length > 0 ? startValues.reduce(toSum) : 0;
 
         for (let year = start; year <= end; year++) {
-            //Current elements?
-            let values = this.value
+            // Current elements?
+            const values = this.value
                 .filter(x => x.start <= year && x.end >= year)
                 .map(x => x.value);
 
-            let revenues = this.value
+            const revenues = this.value
                 .filter(
-                    x => x.start <= year && x.end >= year && x.type == 'revenue'
+                    x =>
+                        x.start <= year && x.end >= year && x.type === 'revenue'
                 )
                 .map(x => x.value);
 
-            let revenue =
+            const revenue =
                 revenues && revenues.length ? revenues.reduce(toSum) : 0;
 
-            let value = values && values.length ? values.reduce(toSum) : 0;
-            let current = value;
-            if (index > 0) value += this.dev[index - 1].value;
-            else value += startValue;
+            let v = values && values.length ? values.reduce(toSum) : 0;
+            const current = v;
+            if (index > 0) {
+                v += this.dev[index - 1].v;
+            } else {
+                v += startValue;
+            }
 
             this.dev.push({
                 year: year,
-                value: value,
+                value: v,
                 current: current,
                 revenue: revenue
             });
@@ -318,7 +331,7 @@ export class DevelopmentComponent implements OnInit {
                 data: this.dev.map(
                     x => <any>{ x: new Date(x.year, 0), y: x.value }
                 ),
-                //data: this.dev.map(x => x.value),
+                // data: this.dev.map(x => x.value),
                 type: 'line'
             }
         ];
@@ -330,7 +343,7 @@ export class DevelopmentComponent implements OnInit {
 
     private toDataSource(values: any[]): any[] {
         return values.map(x => {
-            let y = <any>clone(x);
+            const y = <any>clone(x);
             y.tab = x.name;
             y.value = numberWithSeperator(x.value);
             if (x.type === 'budgets') {
@@ -350,7 +363,7 @@ export class DevelopmentComponent implements OnInit {
     }
 
     public selected(row: DevelopmentElement) {
-        var route = [row.type];
+        const route = [row.type];
 
         if (!isNullOrWhitespace(row.id)) {
             route.push(row.id);
@@ -368,25 +381,8 @@ export class DevelopmentComponent implements OnInit {
         }
 
         console.info(this.tooltip);
-        let year = this.tooltip.year;
-        let filted = this.value.filter(x => x.start <= year && x.end >= year);
+        const year = this.tooltip.year;
+        const filted = this.value.filter(x => x.start <= year && x.end >= year);
         this.valueEmitter.emit(this.toDataSource(filted));
     }
-
-    public tooltip: {
-        year: number;
-        group: string;
-        value: string;
-        top: any;
-        left: any;
-    };
-
-    public value: DevelopmentElement[];
-    public dev: any[];
-
-    public head: MenuEntry = {
-        icon: 'arrow_back',
-        name: 'Development',
-        action: () => this.router.navigate(['../'], { relativeTo: this.route })
-    };
 }

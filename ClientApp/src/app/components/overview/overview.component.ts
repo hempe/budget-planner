@@ -1,21 +1,13 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { DashboardConfig, Themes } from '../dashboard/dashboard';
-import { FormControl, FormGroup } from '@angular/forms';
-import {
-    FrequencyValue,
-    Group,
-    OverviewValue,
-    Profile
-} from '../../common/api';
-import { Observable, Subject } from 'rxjs';
-import { array, clone, toNumber } from '../../common/helper';
-
-import { ConfigurationService } from '../../services/configuration';
+import { Component, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
-import { MatPaginator } from '@angular/material';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { OverviewValue } from '../../common/api';
+import { ConfigurationService } from '../../services/configuration';
+import { DashboardConfig } from '../dashboard/dashboard';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'overview',
@@ -51,7 +43,7 @@ export class OverviewComponent implements OnInit {
 
         this.http
             .get(`/api/dashboard/${this.type}`)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => (this.theme = x.theme));
 
         this.name = this.config.getTranslatedName(this.type);
@@ -67,11 +59,11 @@ export class OverviewComponent implements OnInit {
     }
 
     public pin() {
-        if (this.theme)
+        if (this.theme) {
             this.http
                 .delete(`/api/dashboard/${this.type}`)
                 .subscribe(x => (this.theme = undefined));
-        else
+        } else {
             this.themeSelector.selectTheme().subscribe(theme => {
                 this.http
                     .post('/api/dashboard', <DashboardConfig>{
@@ -79,15 +71,13 @@ export class OverviewComponent implements OnInit {
                         theme: theme,
                         type: 'bar'
                     })
-                    .map(x => x.json())
+                    .pipe(map(x => x.json()))
                     .subscribe(x => (this.theme = x.theme));
             });
+        }
     }
 
     private getData(): Observable<OverviewValue> {
-        return this.http
-            .get(this.url)
-            .map(x => x.json())
-            .map((x: OverviewValue) => x);
+        return this.http.get(this.url).pipe(map(x => x.json()));
     }
 }

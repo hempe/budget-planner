@@ -1,27 +1,15 @@
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BudgetOverview, OverviewValue } from '../../common/api';
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    OnDestroy,
-    OnInit,
-    ViewChild
-} from '@angular/core';
+import { Observable } from 'rxjs';
+import { ConfigurationService } from '../../services/configuration';
 import {
     DataSourceColumn,
     DataSourceFactory,
     ListDataSource
 } from '../../services/data-source-wrapper';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { array, clone, guid, toNumber } from '../../common/helper';
-
-import { ConfigurationService } from '../../services/configuration';
-import { Http } from '@angular/http';
-import { KeyboardService } from '../../services/keyboard';
-import { MatPaginator } from '@angular/material';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
+import { map } from 'rxjs/operators';
 
 interface Table {
     partitionKey: string;
@@ -61,13 +49,13 @@ export class TableContentComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        let table = this.route.snapshot.params['table'];
-        let headerUrl = `/api/admin/tables/headers/${table}`;
+        const table = this.route.snapshot.params['table'];
+        const headerUrl = `/api/admin/tables/headers/${table}`;
         this.head.name = table;
 
         this.http
             .get(headerUrl)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe((x: Map<string, any>[]) => {
                 this.columns = Object.keys(x).map(
                     c =>
@@ -91,7 +79,7 @@ export class TableContentComponent implements OnInit, OnDestroy {
     private getData(): Observable<Table[]> {
         this.http
             .get(this.url)
-            .map(x => x.json())
+            .pipe(map(x => x.json()))
             .subscribe(x => {
                 this._data = x.map(c =>
                     Object.assign(
