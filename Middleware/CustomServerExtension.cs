@@ -28,13 +28,16 @@ namespace BudgetPlanner.Middleware {
                 FileProvider = new PhysicalFileProvider(rootDirectory),
                     ServeUnknownFileTypes = true,
                     OnPrepareResponse = (context) => {
+                        /*
                         var path = context.Context.Request.Path.Value.ToLower();
                         if (UncachedFiles.Contains(path)) {
                             var headers = context.Context.Response.Headers;
                             headers.Append("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
                             headers.Append("Pragma", "no-cache"); // HTTP 1.0
                             headers.Append("Expires", "0"); // Proxies
-                        }
+                        }*/
+                        context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+                        context.Context.Response.Headers.Add("Expires", "-1");
                     }
             };
 
@@ -58,6 +61,10 @@ namespace BudgetPlanner.Middleware {
                     innerApp.UseStaticFiles(options);
                 });
 
+            /*
+                    context.Context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
+                    context.Context.Response.Headers.Add("Expires", "-1");
+             */
             return app;
         }
     }
