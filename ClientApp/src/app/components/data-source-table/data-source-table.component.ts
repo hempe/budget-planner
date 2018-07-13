@@ -1,27 +1,10 @@
-import {
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { FREQUENCIES } from '../../common/frequencies';
-import {
-    getCompare,
-    getTransformCompare,
-    toNumber,
-    unique
-} from '../../common/helper';
-import {
-    DataSourceColumn,
-    DataSourceFactory,
-    ExtendedDataSource
-} from '../../services/data-source-wrapper';
+import { getCompare, getTransformCompare, toNumber, unique } from '../../common/helper';
+import { DataSourceColumn, DataSourceFactory, ExtendedDataSource } from '../../services/data-source-wrapper';
 
 @Component({
     selector: 'data-source-table',
@@ -77,8 +60,8 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
         this.headers = unique(this.columns);
         this.cols = unique(
             this.selectable
-                ? [''].concat(this.columns.map(x => x.key))
-                : this.columns.map(x => x.key)
+                ? [''].concat(this.columns.map(x => x.key)).filter(x => x)
+                : this.columns.map(x => x.key).filter(x => x)
         );
 
         this.dataSource = this.dataSourceFactory({
