@@ -15,423 +15,428 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
 namespace BudgetPlanner.Services.Export {
-    public class XlsHandler : IDisposable {
+        public class XlsHandler : IDisposable {
 
-        private readonly ExcelPackage package;
-        private readonly BaseHandler baseHandler;
-        private string lang;
-        public XlsHandler(BaseHandler baseHandler) {
-            this.baseHandler = baseHandler;
+            private readonly ExcelPackage package;
+            private readonly BaseHandler baseHandler;
+            private string lang;
+            public XlsHandler(BaseHandler baseHandler) {
+                this.baseHandler = baseHandler;
 
-            this.package = new ExcelPackage();
-        }
-
-        public void Dispose() {
-            this.package.Dispose();
-        }
-
-        private string Trx(string key) {
-            return this.baseHandler.I18n.TranslateAsync(this.lang, key).GetAwaiter().GetResult();
-        }
-
-        public async Task<Stream> GetExportAsync(string userId) {
-            var export = await this.baseHandler.GetJsonAsync(userId);
-            this.lang = export?.Client?.Language;
-
-            foreach (var budget in export.Budgets) {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
-
-                var (rI, cI) = this.DoBudget(worksheet, 2, 2, Trx("Income"), budget.Positive);
-                var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, Trx("Expenses"), budget.Negative);
-
-                worksheet.Cells(1, 1, 0, cE)
-                    .Merge()
-                    .Value(budget.Name)
-                    .FontColor(Color.FromArgb(0, 140, 180))
-                    .FontSize(40)
-                    .Left(3)
-                    .Height(60);
-
-                worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
-                    .Style(x => x.Font.Name = "URW Gothic");
+                this.package = new ExcelPackage();
             }
 
-            if (export.Revenue != null) {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Trx("Revenue"));
-
-                var (rI, cI) = this.DoRevenue(worksheet, 2, 2, Trx("PlannedRevenue"), export.Revenue.Positive);
-                var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, Trx("PlannedExpenses"), export.Revenue.Negative);
-
-                worksheet.Cells(1, 1, 0, cE)
-                    .Merge()
-                    .Value(Trx("Revenue"))
-                    .FontColor(Color.FromArgb(0, 140, 180))
-                    .FontSize(40)
-                    .Left(3)
-                    .Height(60);
-
-                worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
-                    .Style(x => x.Font.Name = "URW Gothic");
+            public void Dispose() {
+                this.package.Dispose();
             }
 
-            if (export.Assets != null) {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Trx("Assets"));
-
-                var (rI, cI) = this.DoAssets(worksheet, 2, 2, Trx("Assets"), export.Assets.Positive);
-                var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, Trx("Debts"), export.Assets.Negative);
-
-                worksheet.Cells(1, 1, 0, cE)
-                    .Merge()
-                    .Value(Trx("Assets"))
-                    .FontColor(Color.FromArgb(0, 140, 180))
-                    .FontSize(40)
-                    .Left(3)
-                    .Height(60);
-
-                worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
-                    .Style(x => x.Font.Name = "URW Gothic");
+            private string Translate(string key) {
+                return this.baseHandler.I18n.TranslateAsync(this.lang, key).GetAwaiter().GetResult();
             }
 
-            return new MemoryStream(package.GetAsByteArray());
-        }
+            public async Task<Stream> GetExportAsync(string userId) {
+                var export = await this.baseHandler.GetJsonAsync(userId);
+                this.lang = export?.Client?.Language;
 
-        private(int row, int col) DoBudget(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<FrequencyValue>> values) {
+                foreach (var budget in export.Budgets) {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
 
-            var nameElement = worksheet.Cells(row, col, 0, 3)
-                .Merge()
-                .Value(name);
+                    var (rI, cI) = this.DoBudget(worksheet, 2, 2, Translate("Income"), budget.Positive);
+                    var (rE, cE) = this.DoBudget(worksheet, 2, cI + 2, Translate("Expenses"), budget.Negative);
 
-            row++;
+                    worksheet.Cells(1, 1, 0, cE)
+                        .Merge()
+                        .Value(budget.Name)
+                        .FontColor(0, 140, 180)
+                        .FontSize(40)
+                        .Left(3)
+                        .Height(60);
 
-            worksheet.Cells(row, col, 0, 3)
-                .Bold().FontSize(11).FontColor(Color.White)
-                .BackgroundColor(Color.FromArgb(0, 140, 180))
-                .Height(30);
+                    worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
+                        .Style(x => x.Font.Name = "URW Gothic");
+                }
 
-            worksheet.Cells(row, col)
-                .Column(x => {
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    x.Style.Indent = 1;
-                })
-                .Width(20);
+                if (export.Revenue != null) {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Translate("Revenue"));
 
-            worksheet.Cells(row, col + 1)
-                .Value(Trx("Name"))
-                .Column(x => {
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    x.Style.Indent = 1;
-                })
-                .Width(30);
+                    var (rI, cI) = this.DoRevenue(worksheet, 2, 2, Translate("PlannedRevenue"), export.Revenue.Positive);
+                    var (rE, cE) = this.DoRevenue(worksheet, 2, cI + 2, Translate("PlannedExpenses"), export.Revenue.Negative);
 
-            worksheet.Cells(row, col + 2)
-                .Value(Trx("frequency.frequency"))
-                .Column(x => {
-                    x.Style.Numberformat.Format = "0";
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    x.Style.Indent = 1;
-                })
-                .Width(15);
+                    worksheet.Cells(1, 1, 0, cE)
+                        .Merge()
+                        .Value(Translate("Revenue"))
+                        .FontColor(0, 140, 180)
+                        .FontSize(40)
+                        .Left(3)
+                        .Height(60);
 
-            worksheet.Cells(row, col + 3)
-                .Value(Trx("Amount"))
-                .Column(x => {
-                    x.Style.Numberformat.Format = "#,###.00";
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    x.Style.Indent = 1;
-                })
-                .Width(15);
-            worksheet.Column(col + 4).Hidden = true;
-            row++;
+                    worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
+                        .Style(x => x.Font.Name = "URW Gothic");
+                }
 
-            nameElement.Center().FontSize(20).Height(40);
+                if (export.Assets != null) {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Translate("Assets"));
 
-            foreach (var income in values) {
-                var start = row;
-                var i = 0;
-                var elements = income.Elements.ToList();
-                elements.AddRange(new [] { new FrequencyValue { }, new FrequencyValue { } });
+                    var (rI, cI) = this.DoAssets(worksheet, 2, 2, Translate("Assets"), export.Assets.Positive);
+                    var (rE, cE) = this.DoAssets(worksheet, 2, cI + 2, Translate("Debts"), export.Assets.Negative);
 
-                foreach (var e in elements) {
-                    i++;
-                    worksheet.Cells(row, col + 1, 0, 3)
-                        .Height(30)
-                        .BackgroundColor(i % 2 == 1 ? Color.FromArgb(239, 239, 239) : Color.White);
+                    worksheet.Cells(1, 1, 0, cE)
+                        .Merge()
+                        .Value(Translate("Assets"))
+                        .FontColor(0, 140, 180)
+                        .FontSize(40)
+                        .Left(3)
+                        .Height(60);
 
-                    worksheet.Cells(row, col + 1).Value(e.Name);
-                    if (e.Frequency != 0)
-                        worksheet.Cells(row, col + 2).Value(e.Frequency);
-                    if (e.Value != 0)
-                        worksheet.Cells(row, col + 3).Value(e.Value);
-                    worksheet.Cells(row, col + 4).Formula($"{(col+2).GetExcelColumnName()}{row}*{(col+3).GetExcelColumnName()}{row}");
+                    worksheet.Cells(1, 1, Math.Max(rI, rE), cE)
+                        .Style(x => x.Font.Name = "URW Gothic");
+                }
+
+                return new MemoryStream(package.GetAsByteArray());
+            }
+
+            private(int row, int col) DoBudget(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<FrequencyValue>> values) {
+
+                var nameElement = worksheet.Cells(row, col, 0, 3)
+                    .Merge()
+                    .Value(name);
+
+                row++;
+
+                worksheet.Cells(row, col, 0, 3)
+                    .Bold().FontSize(11).FontColor(255, 255, 255)
+                    .BackgroundColor(0, 140, 180)
+                    .Height(30);
+
+                worksheet.Cells(row, col)
+                    .Column(x => {
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(20);
+
+                worksheet.Cells(row, col + 1)
+                    .Value(Translate("Name"))
+                    .Column(x => {
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(30);
+
+                worksheet.Cells(row, col + 2)
+                    .Value(Translate("frequency.frequency"))
+                    .Column(x => {
+                        x.Style.Numberformat.Format = "0";
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(15);
+
+                worksheet.Cells(row, col + 3)
+                    .Value(Translate("Amount"))
+                    .Column(x => {
+                        x.Style.Numberformat.Format = "#,###.00";
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(15);
+                worksheet.Column(col + 4).Hidden = true;
+                row++;
+
+                nameElement.Center().FontSize(20).Height(40);
+
+                foreach (var income in values) {
+                    var start = row;
+                    var i = 0;
+                    var elements = income.Elements.ToList();
+                    elements.AddRange(new [] { new FrequencyValue { }, new FrequencyValue { } });
+
+                    foreach (var e in elements) {
+                        i++;
+                        worksheet.Cells(row, col + 1, 0, 3)
+                            .Height(30)
+                            .If(i % 2 == 1)
+                            .Then(x => x.BackgroundColor(239, 239, 239))
+                            .Else(x => x.BackgroundColor(255, 255, 255));
+
+                        worksheet.Cells(row, col + 1).Value(e.Name);
+                        if (e.Frequency != 0)
+                            worksheet.Cells(row, col + 2).Value(e.Frequency);
+                        if (e.Value != 0)
+                            worksheet.Cells(row, col + 3).Value(e.Value);
+                        worksheet.Cells(row, col + 4).Formula($"{(col+2).GetExcelColumnName()}{row}*{(col+3).GetExcelColumnName()}{row}");
+
+                        row++;
+                    }
+
+                    worksheet.Cells(start, col)
+                        .Value(income.Name)
+                        .BackgroundColor(231, 246, 251)
+                        .Height(30);
+
+                    if (elements.Count > 1)
+                        worksheet.Cells(start + 1, col, elements.Count - 2, 0)
+                        .Merge()
+                        .BackgroundColor(231, 246, 251);
+
+                    worksheet.Cells(row, col, 0, 2)
+                        .Merge()
+                        .Value(Translate("Subtotal"))
+                        .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
+                        .FontColor(0, 140, 180)
+                        .Height(30);
+
+                    var subT = (col + 4).GetExcelColumnName();
+                    worksheet.Cells(row, col + 3)
+                        .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
+                        .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
+                        .FontColor(0, 140, 180);
 
                     row++;
                 }
 
-                worksheet.Cells(start, col)
-                    .Value(income.Name)
-                    .BackgroundColor(Color.FromArgb(231, 246, 251))
-                    .Height(30);
-
-                if (elements.Count > 1)
-                    worksheet.Cells(start + 1, col, elements.Count - 2, 0)
-                    .Merge()
-                    .BackgroundColor(Color.FromArgb(231, 246, 251));
-
                 worksheet.Cells(row, col, 0, 2)
                     .Merge()
-                    .Value(Trx("Subtotal"))
-                    .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
-                    .FontColor(Color.FromArgb(0, 140, 180))
+                    .Value(Translate("Total"))
+                    .Bold().FontColor(0, 140, 180)
+                    .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
                     .Height(30);
 
-                var subT = (col + 4).GetExcelColumnName();
+                var colname = (col + 4).GetExcelColumnName();
                 worksheet.Cells(row, col + 3)
-                    .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
-                    .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
-                    .FontColor(Color.FromArgb(0, 140, 180));
+                    .Formula($"SUM({colname}:{colname})")
+                    .Bold().FontColor(0, 140, 180)
+                    .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180));
 
                 row++;
+
+                return (row, col + 4);
             }
 
-            worksheet.Cells(row, col, 0, 2)
-                .Merge()
-                .Value(Trx("Total"))
-                .Bold().FontColor(Color.FromArgb(0, 140, 180))
-                .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
-                .Height(30);
+            private(int row, int col) DoRevenue(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<DatedValue>> values) {
 
-            var colname = (col + 4).GetExcelColumnName();
-            worksheet.Cells(row, col + 3)
-                .Formula($"SUM({colname}:{colname})")
-                .Bold().FontColor(Color.FromArgb(0, 140, 180))
-                .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180));
+                var nameElement = worksheet.Cells(row, col, 0, 3)
+                    .Merge()
+                    .Value(name);
 
-            row++;
+                row++;
 
-            return (row, col + 4);
-        }
+                worksheet.Cells(row, col, 0, 3)
+                    .Bold().FontSize(11).FontColor(255, 255, 255)
+                    .BackgroundColor(0, 140, 180)
+                    .Height(30);
 
-        private(int row, int col) DoRevenue(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<DatedValue>> values) {
+                worksheet.Cells(row, col)
+                    .Column(x => {
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(20);
 
-            var nameElement = worksheet.Cells(row, col, 0, 3)
-                .Merge()
-                .Value(name);
+                worksheet.Cells(row, col + 1)
+                    .Value(Translate("Name"))
+                    .Column(x => {
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(30);
 
-            row++;
+                worksheet.Cells(row, col + 2)
+                    .Value(Translate("Year"))
+                    .Column(x => {
+                        x.Style.Numberformat.Format = "0";
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(15);
 
-            worksheet.Cells(row, col, 0, 3)
-                .Bold().FontSize(11).FontColor(Color.White)
-                .BackgroundColor(Color.FromArgb(0, 140, 180))
-                .Height(30);
+                worksheet.Cells(row, col + 3)
+                    .Value(Translate("Amount"))
+                    .Column(x => {
+                        x.Style.Numberformat.Format = "#,###.00";
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(15);
+                worksheet.Column(col + 4).Hidden = true;
+                row++;
 
-            worksheet.Cells(row, col)
-                .Column(x => {
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    x.Style.Indent = 1;
-                })
-                .Width(20);
+                nameElement.Center().FontSize(20).Height(40);
 
-            worksheet.Cells(row, col + 1)
-                .Value(Trx("Name"))
-                .Column(x => {
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    x.Style.Indent = 1;
-                })
-                .Width(30);
+                foreach (var income in values) {
+                    var start = row;
+                    var i = 0;
+                    var elements = income.Elements.ToList();
+                    elements.AddRange(new [] { new DatedValue { }, new DatedValue { } });
 
-            worksheet.Cells(row, col + 2)
-                .Value(Trx("Year"))
-                .Column(x => {
-                    x.Style.Numberformat.Format = "0";
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    x.Style.Indent = 1;
-                })
-                .Width(15);
+                    foreach (var e in elements) {
+                        i++;
+                        worksheet.Cells(row, col + 1, 0, 3)
+                            .Height(30)
+                            .If(i % 2 == 1)
+                            .Then(x => x.BackgroundColor(239, 239, 239))
+                            .Else(x => x.BackgroundColor(255, 255, 255));
 
-            worksheet.Cells(row, col + 3)
-                .Value(Trx("Amount"))
-                .Column(x => {
-                    x.Style.Numberformat.Format = "#,###.00";
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    x.Style.Indent = 1;
-                })
-                .Width(15);
-            worksheet.Column(col + 4).Hidden = true;
-            row++;
+                        worksheet.Cells(row, col + 1).Value(e.Name);
+                        if (e.Year != 0)
+                            worksheet.Cells(row, col + 2).Value(e.Year);
+                        if (e.Value != 0)
+                            worksheet.Cells(row, col + 3).Value(e.Value);
+                        worksheet.Cells(row, col + 4).Formula($"{(col+3).GetExcelColumnName()}{row}");
 
-            nameElement.Center().FontSize(20).Height(40);
+                        row++;
+                    }
 
-            foreach (var income in values) {
-                var start = row;
-                var i = 0;
-                var elements = income.Elements.ToList();
-                elements.AddRange(new [] { new DatedValue { }, new DatedValue { } });
+                    worksheet.Cells(start, col)
+                        .Value(income.Name)
+                        .BackgroundColor(231, 246, 251)
+                        .Height(30);
 
-                foreach (var e in elements) {
-                    i++;
-                    worksheet.Cells(row, col + 1, 0, 3)
-                        .Height(30)
-                        .BackgroundColor(i % 2 == 1 ? Color.FromArgb(239, 239, 239) : Color.White);
+                    if (elements.Count > 1)
+                        worksheet.Cells(start + 1, col, elements.Count - 2, 0)
+                        .Merge()
+                        .BackgroundColor(231, 246, 251);
 
-                    worksheet.Cells(row, col + 1).Value(e.Name);
-                    if (e.Year != 0)
-                        worksheet.Cells(row, col + 2).Value(e.Year);
-                    if (e.Value != 0)
-                        worksheet.Cells(row, col + 3).Value(e.Value);
-                    worksheet.Cells(row, col + 4).Formula($"{(col+3).GetExcelColumnName()}{row}");
+                    worksheet.Cells(row, col, 0, 2)
+                        .Merge()
+                        .Value(Translate("Subtotal"))
+                        .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
+                        .FontColor(0, 140, 180)
+                        .Height(30);
+
+                    var subT = (col + 4).GetExcelColumnName();
+                    worksheet.Cells(row, col + 3)
+                        .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
+                        .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
+                        .FontColor(0, 140, 180);
 
                     row++;
                 }
 
-                worksheet.Cells(start, col)
-                    .Value(income.Name)
-                    .BackgroundColor(Color.FromArgb(231, 246, 251))
-                    .Height(30);
-
-                if (elements.Count > 1)
-                    worksheet.Cells(start + 1, col, elements.Count - 2, 0)
-                    .Merge()
-                    .BackgroundColor(Color.FromArgb(231, 246, 251));
-
                 worksheet.Cells(row, col, 0, 2)
                     .Merge()
-                    .Value(Trx("Subtotal"))
-                    .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
-                    .FontColor(Color.FromArgb(0, 140, 180))
+                    .Value(Translate("Total"))
+                    .Bold().FontColor(0, 140, 180)
+                    .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
                     .Height(30);
 
-                var subT = (col + 4).GetExcelColumnName();
+                var colname = (col + 4).GetExcelColumnName();
                 worksheet.Cells(row, col + 3)
-                    .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
-                    .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
-                    .FontColor(Color.FromArgb(0, 140, 180));
+                    .Formula($"SUM({colname}:{colname})")
+                    .Bold().FontColor(0, 140, 180)
+                    .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180));
 
                 row++;
+
+                return (row, col + 4);
             }
 
-            worksheet.Cells(row, col, 0, 2)
-                .Merge()
-                .Value(Trx("Total"))
-                .Bold().FontColor(Color.FromArgb(0, 140, 180))
-                .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
-                .Height(30);
+            private(int row, int col) DoAssets(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<NamedValue>> values) {
 
-            var colname = (col + 4).GetExcelColumnName();
-            worksheet.Cells(row, col + 3)
-                .Formula($"SUM({colname}:{colname})")
-                .Bold().FontColor(Color.FromArgb(0, 140, 180))
-                .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180));
+                var nameElement = worksheet.Cells(row, col, 0, 3)
+                    .Merge()
+                    .Value(name);
 
-            row++;
+                row++;
 
-            return (row, col + 4);
-        }
+                worksheet.Cells(row, col, 0, 3)
+                    .Bold().FontSize(11).FontColor(255, 255, 255)
+                    .BackgroundColor(0, 140, 180)
+                    .Height(30);
 
-        private(int row, int col) DoAssets(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<NamedValue>> values) {
+                worksheet.Cells(row, col)
+                    .Column(x => {
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(20);
 
-            var nameElement = worksheet.Cells(row, col, 0, 3)
-                .Merge()
-                .Value(name);
+                worksheet.Cells(row, col + 1, 0, 1)
+                    .Value(Translate("Name"))
+                    .Column(x => {
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                        x.Style.Indent = 1;
+                    })
+                    .Merge()
+                    .Width(30);
 
-            row++;
+                worksheet.Cells(row, col + 3)
+                    .Value(Translate("Amount"))
+                    .Column(x => {
+                        x.Style.Numberformat.Format = "#,###.00";
+                        x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                        x.Style.Indent = 1;
+                    })
+                    .Width(15);
+                worksheet.Column(col + 4).Hidden = true;
+                row++;
 
-            worksheet.Cells(row, col, 0, 3)
-                .Bold().FontSize(11).FontColor(Color.White)
-                .BackgroundColor(Color.FromArgb(0, 140, 180))
-                .Height(30);
+                nameElement.Center().FontSize(20).Height(40);
 
-            worksheet.Cells(row, col)
-                .Column(x => {
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    x.Style.Indent = 1;
-                })
-                .Width(20);
+                foreach (var income in values) {
+                    var start = row;
+                    var i = 0;
+                    var elements = income.Elements.ToList();
+                    elements.AddRange(new [] { new NamedValue { }, new NamedValue { } });
 
-            worksheet.Cells(row, col + 1, 0, 1)
-                .Value(Trx("Name"))
-                .Column(x => {
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                    x.Style.Indent = 1;
-                })
-                .Merge()
-                .Width(30);
+                    foreach (var e in elements) {
+                        i++;
+                        worksheet.Cells(row, col + 1, 0, 3)
+                            .Height(30)
+                            .If(i % 2 == 1)
+                            .Then(x => x.BackgroundColor(239, 239, 239))
+                            .Else(x => x.BackgroundColor(255, 255, 255));
 
-            worksheet.Cells(row, col + 3)
-                .Value(Trx("Amount"))
-                .Column(x => {
-                    x.Style.Numberformat.Format = "#,###.00";
-                    x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                    x.Style.Indent = 1;
-                })
-                .Width(15);
-            worksheet.Column(col + 4).Hidden = true;
-            row++;
+                        worksheet.Cells(row, col + 1, 0, 1).Merge().Value(e.Name);
 
-            nameElement.Center().FontSize(20).Height(40);
+                        if (e.Value != 0)
+                            worksheet.Cells(row, col + 3).Value(e.Value);
+                        worksheet.Cells(row, col + 4).Formula($"{(col+3).GetExcelColumnName()}{row}");
 
-            foreach (var income in values) {
-                var start = row;
-                var i = 0;
-                var elements = income.Elements.ToList();
-                elements.AddRange(new [] { new NamedValue { }, new NamedValue { } });
+                        row++;
+                    }
 
-                foreach (var e in elements) {
-                    i++;
-                    worksheet.Cells(row, col + 1, 0, 3)
-                        .Height(30)
-                        .BackgroundColor(i % 2 == 1 ? Color.FromArgb(239, 239, 239) : Color.White);
+                    worksheet.Cells(start, col)
+                        .Value(income.Name)
+                        .BackgroundColor(231, 246, 251)
+                        .Height(30);
 
-                    worksheet.Cells(row, col + 1, 0, 1).Merge().Value(e.Name);
+                    if (elements.Count > 1)
+                        worksheet.Cells(start + 1, col, elements.Count - 2, 0)
+                        .Merge()
+                        .BackgroundColor(231, 246, 251);
 
-                    if (e.Value != 0)
-                        worksheet.Cells(row, col + 3).Value(e.Value);
-                    worksheet.Cells(row, col + 4).Formula($"{(col+3).GetExcelColumnName()}{row}");
+                    worksheet.Cells(row, col, 0, 2)
+                        .Merge()
+                        .Value(Translate("Subtotal"))
+                        .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
+                        .FontColor(0, 140, 180)
+                        .Height(30);
+
+                    var subT = (col + 4).GetExcelColumnName();
+                    worksheet.Cells(row, col + 3)
+                        .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
+                        .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
+                        .FontColor(0, 140, 180);
 
                     row++;
                 }
 
-                worksheet.Cells(start, col)
-                    .Value(income.Name)
-                    .BackgroundColor(Color.FromArgb(231, 246, 251))
-                    .Height(30);
-
-                if (elements.Count > 1)
-                    worksheet.Cells(start + 1, col, elements.Count - 2, 0)
-                    .Merge()
-                    .BackgroundColor(Color.FromArgb(231, 246, 251));
-
                 worksheet.Cells(row, col, 0, 2)
                     .Merge()
-                    .Value(Trx("Subtotal"))
-                    .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
-                    .FontColor(Color.FromArgb(0, 140, 180))
-                    .Height(30);
+                    .Value(Translate("Total"))
+                    .Bold().FontColor(0, 140, 180)
+                    .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
+                    .Height((30);
 
-                var subT = (col + 4).GetExcelColumnName();
-                worksheet.Cells(row, col + 3)
-                    .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
-                    .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
-                    .FontColor(Color.FromArgb(0, 140, 180));
+                        var colname = (col + 4).GetExcelColumnName(); worksheet.Cells(row, col + 3)
+                        .Formula($"SUM({colname}:{colname})")
+                        .Bold().FontColor(0, 140, 180)
+                        .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180));
 
-                row++;
+                        row++;
+
+                        return (row, col + 4);
+                    }
             }
-
-            worksheet.Cells(row, col, 0, 2)
-                .Merge()
-                .Value(Trx("Total"))
-                .Bold().FontColor(Color.FromArgb(0, 140, 180))
-                .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180))
-                .Height(30);
-
-            var colname = (col + 4).GetExcelColumnName();
-            worksheet.Cells(row, col + 3)
-                .Formula($"SUM({colname}:{colname})")
-                .Bold().FontColor(Color.FromArgb(0, 140, 180))
-                .BorderTop(ExcelBorderStyle.Medium, Color.FromArgb(0, 140, 180));
-
-            row++;
-
-            return (row, col + 4);
         }
-    }
-}

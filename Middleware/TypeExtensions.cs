@@ -11,9 +11,11 @@ namespace BudgetPlanner.Middleware {
         public static bool IsView(this Type type) => type.GetCustomAttributes(typeof(ViewAttribute), false).Any() || type.GetCustomAttributes(typeof(TableAttribute), false).Any();
 
         public static bool IsSimple(this Type type) {
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
+            if (type == null)
+                return false;
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 return IsSimple(type.GetGenericArguments() [0]);
-            }
+
             return type.IsPrimitive ||
                 type.IsEnum ||
                 type.Equals(typeof(string)) ||
