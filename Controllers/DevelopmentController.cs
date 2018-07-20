@@ -108,7 +108,7 @@ namespace BudgetPlanner.Controllers {
                             Name = x.Key,
                             Value = x.Sum(y => y.Value),
                             Type = "assets",
-                            SubType = "negativ"
+                            SubType = "negative"
                     }));
             }
 

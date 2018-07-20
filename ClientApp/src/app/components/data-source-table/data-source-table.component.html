@@ -8,8 +8,8 @@
 
     <mat-table #table [dataSource]="dataSource" matSort [ngClass]="{'selectable':selectable}">
         <ng-container *ngFor="let header of headers">
-            <ng-container matColumnDef="{{header.key}}">
-                <mat-header-cell *matHeaderCellDef translate mat-sort-header [ngClass]="header.type">{{ header.name | translate }}</mat-header-cell>
+            <ng-container *ngIf="header.key != selectableMagicKey" matColumnDef="{{header.key}}">
+                <mat-header-cell *matHeaderCellDef translate mat-sort-header [ngClass]="header.type"> {{ header.name | translate }}</mat-header-cell>
                 <mat-cell *matCellDef="let row" style="position:relative;line-height:46px" (click)="onSelected(row)" [ngClass]="header.type">
                     <ng-container [ngSwitch]="header.type">
                         <ng-container *ngSwitchCase="'frequency'">
@@ -35,8 +35,7 @@
                 </mat-cell>
             </ng-container>
         </ng-container>
-
-        <ng-container matColumnDef="" *ngIf="selectable">
+        <ng-container *ngIf="selectable" matColumnDef="{{selectableMagicKey}}">
             <mat-header-cell *matHeaderCellDef class="checkbox-row">
                 <mat-checkbox class="checkbox" [(ngModel)]="checked" (change)="check($event)" [indeterminate]="indeterminate"></mat-checkbox>
             </mat-header-cell>

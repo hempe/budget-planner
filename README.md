@@ -10,3 +10,19 @@ Start debugging the backend in vscode by launching `.NET Core Launch (web)`.
 ## Demo
 
 There is a demo running at [budget-planner.azurewebsites.net](https://budget-planner.azurewebsites.net)
+
+## TODOs
+
+* Templates for:
+    * Budgets
+    * Revenue
+    * Assets
+
+* Save as "Private Template"
+* Save as "Public Template"
+* Create new From Template (Public and private)
+* Add first usage Guide.
+* ~~Fix icon in development table.~~
+* ~~Fix development row click redirect. (Clicking on an asset does not work)~~
+* Add delete my account option (with an `are you sure?` question)
+* ~~Fix missing checkboxes in lists (they do no longer show);~~

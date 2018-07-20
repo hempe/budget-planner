@@ -38,6 +38,10 @@
     left: 24px;
 }
 
+flat-field {
+    width: 100%;
+}
+
 .number,
 .decimal {
     max-width: 200px;
@@ -45,16 +49,18 @@
 }
 
 mat-header-cell.decimal ::ng-deep .mat-sort-header-container,
-mat-header-cell.number ::ng-deep .mat-sort-header-container {
+mat-header-cell.number ::ng-deep .mat-sort-header-container,
+mat-cell.decimal,
+mat-cell.number,
+mat-cell.decimal ::ng-deep input,
+mat-cell.number ::ng-deep input {
     align-items: flex-end;
     flex-direction: row;
     justify-content: flex-end;
+    margin-left: auto;
+    margin-right: 0;
 }
 
-mat-cell.decimal ::ng-deep input,
-mat-cell.number ::ng-deep input {
-    text-align: right;
-}
 .icon {
     max-width: 72px;
     width: 72px;
@@ -66,6 +72,5 @@ mat-cell.icon {
 }
 .icon > mat-icon {
     position: absolute;
-    left: 0;
     top: 12px;
 }

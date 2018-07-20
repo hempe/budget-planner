@@ -1,10 +1,27 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { FREQUENCIES } from '../../common/frequencies';
-import { getCompare, getTransformCompare, toNumber, unique } from '../../common/helper';
-import { DataSourceColumn, DataSourceFactory, ExtendedDataSource } from '../../services/data-source-wrapper';
+import {
+    getCompare,
+    getTransformCompare,
+    toNumber,
+    unique
+} from '../../common/helper';
+import {
+    DataSourceColumn,
+    DataSourceFactory,
+    ExtendedDataSource
+} from '../../services/data-source-wrapper';
 
 @Component({
     selector: 'data-source-table',
@@ -20,6 +37,7 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
     public cols: string[];
     public checked: boolean;
     public indeterminate: boolean;
+    public selectableMagicKey = '**selectableMagicKey**';
 
     @ViewChild('filter') filter: ElementRef;
 
@@ -57,6 +75,15 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
+        if (this.selectable) {
+            if (!this.columns.find(x => x.key === this.selectableMagicKey)) {
+                this.columns.unshift({
+                    key: this.selectableMagicKey,
+                    name: ''
+                });
+            }
+        }
+
         this.headers = unique(this.columns);
         this.cols = unique(
             this.selectable
@@ -87,6 +114,7 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
 
     public check(value: any) {
         this.values.forEach(x => (x.checked = this.checked));
+        this.setIndeterminate();
     }
 
     public setIndeterminate() {
@@ -114,7 +142,7 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
             if (first === undefined) {
                 first = x;
             }
-            if (!x.checked !== !first.checked) {
+            if (!!x.checked === !first.checked) {
                 this.indeterminate = true;
                 break;
             }

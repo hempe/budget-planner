@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Colors } from 'ng2-charts';
+import { map } from 'rxjs/operators';
 import { DevelopmentElement } from '../../common/api';
 import {
     clone,
@@ -20,7 +21,6 @@ import { MouseService } from '../../services/mouse';
 import { DashboardConfig } from '../dashboard/dashboard';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'development',
@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
     styleUrls: ['development.component.css']
 })
 export class DevelopmentComponent implements OnInit {
-    private theme: string;
+    public theme: string;
     public value: DevelopmentElement[];
     public dev: any[];
 
