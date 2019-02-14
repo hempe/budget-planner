@@ -12,18 +12,22 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BudgetPlanner.Controllers {
+namespace BudgetPlanner.Controllers
+{
 
     [Route(".auth")]
-    public class AuthController : BaseController {
+    public class AuthController : BaseController
+    {
         private readonly SignInManager<User> signInManager;
-        public AuthController(UserManager<User> userManager, TableStore tableStore, SignInManager<User> signInManager) : base(userManager, tableStore) {
+        public AuthController(UserManager<User> userManager, TableStore tableStore, SignInManager<User> signInManager) : base(userManager, tableStore)
+        {
             this.signInManager = signInManager;
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Index() {
+        public async Task<IActionResult> Index()
+        {
             var schemes = await this.signInManager.GetExternalAuthenticationSchemesAsync();
             var loginProviders = schemes.Select(x => new { x.Name, x.DisplayName }).ToList();
             return this.Ok(loginProviders);
@@ -31,79 +35,98 @@ namespace BudgetPlanner.Controllers {
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromServices] MailService mailService, [FromServices] TranslationService translationService, [FromBody] Register model) {
+        public async Task<IActionResult> Register([FromServices] MailService mailService, [FromServices] TranslationService translationService, [FromBody] Register model)
+        {
             if (this.User.Identity.IsAuthenticated)
                 return this.BadRequest("Already signed in");
 
-            if (string.IsNullOrWhiteSpace(model.Email)) {
-                return this.BadRequest(new { Email = new [] { "Required" } });
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                return this.BadRequest(new { Email = new[] { "Required" } });
             }
-            if (string.IsNullOrWhiteSpace(model.Password)) {
-                return this.BadRequest(new { Password = new [] { "Required" } });
+            if (string.IsNullOrWhiteSpace(model.Password))
+            {
+                return this.BadRequest(new { Password = new[] { "Required" } });
             }
 
             var user = new User() { Email = model.Email, UserName = model.Email };
             var created = await this.UserManager.CreateAsync(user, model.Password);
-            if (created.Succeeded) {
+            if (created.Succeeded)
+            {
                 await this.signInManager.SignInAsync(user, isPersistent: false);
                 await this.RequestEmailConfirmationAsync(mailService, translationService, user, model.Language);
                 return this.Ok();
             }
 
-            return this.BadRequest(new {
+            return this.BadRequest(new
+            {
                 Email = created.Errors.Where(e => e.Code.ToLower().Contains("email")).Select(x => x.Code).ToList(),
-                    Password = created.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
+                Password = created.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
             });
         }
 
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<IActionResult> Login([FromBody] Login model) {
+        public async Task<IActionResult> Login([FromBody] Login model)
+        {
             if (this.User.Identity.IsAuthenticated)
                 return this.BadRequest("Already signed in");
 
             // lockoutOnFailure: true
             var result = await this.signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 return this.Ok();
             }
-            if (result.RequiresTwoFactor) {
-                return this.BadRequest(new {
-                    Email = new [] { "TwoFactorNotSupported" }
+            if (result.RequiresTwoFactor)
+            {
+                return this.BadRequest(new
+                {
+                    Email = new[] { "TwoFactorNotSupported" }
                 });
             }
-            if (result.IsLockedOut) {
-                return this.BadRequest(new {
-                    Email = new [] { "Lockout" }
+            if (result.IsLockedOut)
+            {
+                return this.BadRequest(new
+                {
+                    Email = new[] { "Lockout" }
                 });
-            } else {
-                return this.BadRequest(new {
-                    Email = new [] { "InvalidLoginAttempt" }
+            }
+            else
+            {
+                return this.BadRequest(new
+                {
+                    Email = new[] { "InvalidLoginAttempt" }
                 });
             }
         }
 
         [AllowAnonymous, Route("error/{code}"), HttpGet, HttpDelete, HttpPost, HttpPut, HttpPatch]
-        public IActionResult accessdenied([FromRoute] int code) {
+        public IActionResult accessdenied([FromRoute] int code)
+        {
             return this.StatusCode(code);
         }
 
         [AllowAnonymous]
         [HttpGet("self")]
-        public IActionResult UserInfo() {
+        public IActionResult UserInfo()
+        {
             if (!this.User.Identity.IsAuthenticated)
-                return this.Ok(new {
+                return this.Ok(new
+                {
                     loggedIn = false
                 });
 
-            return this.Ok(new {
+            return this.Ok(new
+            {
                 loggedIn = true,
-                    UserName = this.User.Identity.Name
+                UserName = this.User.Identity.Name
             });
         }
 
         [HttpGet("signout")]
-        public async Task<IActionResult> SignOut([FromQuery] string returnUrl = null) {
+        public async Task<IActionResult> SignOut([FromQuery] string returnUrl = null)
+        {
             await this.signInManager.SignOutAsync();
             return this.RedirectToLocal(returnUrl);
         }
@@ -114,7 +137,8 @@ namespace BudgetPlanner.Controllers {
 
         [AllowAnonymous]
         [HttpGet("signin/{provider}")]
-        public async Task<IActionResult> ExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl = null) {
+        public async Task<IActionResult> ExternalLogin([FromRoute] string provider, [FromQuery] string returnUrl = null)
+        {
             var schemes = await this.signInManager.GetExternalAuthenticationSchemesAsync();
             var schema = schemes.Where(x => string.Equals(provider, x.Name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             var url = "/.auth/signin/callback".SetQueryParam("returnUrl", returnUrl);
@@ -124,37 +148,47 @@ namespace BudgetPlanner.Controllers {
 
         [AllowAnonymous]
         [HttpGet("signin/callback")]
-        public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl = null, [FromQuery] string remoteError = null) {
-            if (remoteError != null) {
+        public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl = null, [FromQuery] string remoteError = null)
+        {
+            if (remoteError != null)
+            {
                 ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
                 return this.BadRequest("Error from external provider");
             }
             var info = await this.signInManager.GetExternalLoginInfoAsync();
 
-            if (info == null) {
+            if (info == null)
+            {
                 return this.BadRequest();
             }
             var claims = info.Principal.Claims.ToList();
 
             var result = await this.signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 await this.signInManager.UpdateExternalAuthenticationTokensAsync(info);
                 return this.RedirectToLocal(returnUrl);
             }
-            if (result.RequiresTwoFactor) {
+            if (result.RequiresTwoFactor)
+            {
                 return this.BadRequest("Two factor not supported");
             }
-            if (result.IsLockedOut) {
+            if (result.IsLockedOut)
+            {
                 return this.BadRequest("Lockout");
-            } else {
+            }
+            else
+            {
 
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 var user = new User { UserName = email, Email = email, EmailConfirmed = true, };
 
                 var created = await this.UserManager.CreateAsync(user);
-                if (created.Succeeded) {
+                if (created.Succeeded)
+                {
                     created = await this.UserManager.AddLoginAsync(user, info);
-                    if (created.Succeeded) {
+                    if (created.Succeeded)
+                    {
                         await this.signInManager.SignInAsync(user, isPersistent: false);
                         //_logger.LogInformation(6, "User created an account using {Name} provider.", info.LoginProvider);
                         await this.signInManager.UpdateExternalAuthenticationTokensAsync(info);
@@ -168,13 +202,16 @@ namespace BudgetPlanner.Controllers {
 
         [HttpGet("confirm")]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string code) {
-            if (userId == null || code == null) {
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string code)
+        {
+            if (userId == null || code == null)
+            {
                 return this.RedirectToLocal("/");
             }
 
             var user = await UserManager.FindByIdAsync(userId);
-            if (user == null) {
+            if (user == null)
+            {
                 return this.RedirectToLocal("/");
             }
             var result = await UserManager.ConfirmEmailAsync(user, code);
@@ -183,21 +220,25 @@ namespace BudgetPlanner.Controllers {
 
         [HttpPost("forgot")]
         [AllowAnonymous]
-        public async Task<ActionResult> ForgotPassword([FromServices] MailService mailService, [FromServices] TranslationService translationService, [FromBody] ForgotPassword model) {
+        public async Task<ActionResult> ForgotPassword([FromServices] MailService mailService, [FromServices] TranslationService translationService, [FromBody] ForgotPassword model)
+        {
             var user = await UserManager.FindByEmailAsync(model.Email);
-            if (user == null) {
+            if (user == null)
+            {
                 return this.Ok();
             }
 
-            if (!await UserManager.IsEmailConfirmedAsync(user)) {
+            if (!await UserManager.IsEmailConfirmedAsync(user))
+            {
                 await this.RequestEmailConfirmationAsync(mailService, translationService, user, string.Empty);
                 return this.Ok();
             }
 
             string code = await UserManager.GeneratePasswordResetTokenAsync(user);
-            var callbackUrl = this.Request.GetDisplayUrl().ResetToRoot().SetQueryParams(new {
+            var callbackUrl = this.Request.GetDisplayUrl().ResetToRoot().SetQueryParams(new
+            {
                 forgotCode = code,
-                    email = user.Email
+                email = user.Email
             }).ToString();
 
             var profile = await this.TableStore.GetAsync(new Tables.Profile { UserId = user.Id });
@@ -206,10 +247,11 @@ namespace BudgetPlanner.Controllers {
                 model.Email,
                 await translationService.TranslateAsync(model.Language, "ResetPasswordTemplate.Title"),
                 "Templates/ResetPassword.html.template",
-                new {
+                new
+                {
                     Name = $"{profile?.Data?.Prename} {profile?.Data?.Name}",
-                        CallbackUrl = callbackUrl,
-                        Url = this.Request.GetDisplayUrl().ResetToRoot()
+                    CallbackUrl = callbackUrl,
+                    Url = this.Request.GetDisplayUrl().ResetToRoot()
                 }, model.Language);
 
             return this.Ok();
@@ -217,28 +259,35 @@ namespace BudgetPlanner.Controllers {
 
         [AllowAnonymous]
         [HttpPost("reset")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPassword model) {
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPassword model)
+        {
             var user = await UserManager.FindByNameAsync(model.Email);
-            if (user == null) {
+            if (user == null)
+            {
                 return this.Ok();
             }
             var result = await UserManager.ResetPasswordAsync(user, model.Code, model.Password);
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 return this.Ok();
             }
 
-            return this.BadRequest(new {
+            return this.BadRequest(new
+            {
                 Email = result.Errors.Where(e => e.Code.ToLower().Contains("email")).Select(x => x.Code).ToList(),
-                    Password = result.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
+                Password = result.Errors.Where(e => e.Code.ToLower().Contains("password")).Select(x => x.Code).ToList(),
             });
         }
 
-        private async Task RequestEmailConfirmationAsync(MailService mailService, TranslationService translationService, Models.User user, string language) {
-            try {
+        private async Task RequestEmailConfirmationAsync(MailService mailService, TranslationService translationService, Models.User user, string language)
+        {
+            try
+            {
                 string code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = this.Request.GetDisplayUrl().ResetToRoot().AppendPathSegments(".auth", "confirm").SetQueryParams(new {
+                var callbackUrl = this.Request.GetDisplayUrl().ResetToRoot().AppendPathSegments(".auth", "confirm").SetQueryParams(new
+                {
                     code = code,
-                        userId = user.Id
+                    userId = user.Id
                 }).ToString();
 
                 var profile = await this.TableStore.GetAsync(new Tables.Profile { UserId = user.Id });
@@ -247,18 +296,24 @@ namespace BudgetPlanner.Controllers {
                     user.Email,
                     await translationService.TranslateAsync(language, "RegisterTemplate.Title"),
                     "Templates/Register.html.template",
-                    new {
+                    new
+                    {
                         Name = $"{profile?.Data?.Prename} {profile?.Data?.Name}",
-                            CallbackUrl = callbackUrl,
-                            Url = this.Request.GetDisplayUrl().ResetToRoot()
+                        CallbackUrl = callbackUrl,
+                        Url = this.Request.GetDisplayUrl().ResetToRoot()
                     }, language);
-            } catch { }
+            }
+            catch { }
         }
 
-        private IActionResult RedirectToLocal(string returnUrl) {
-            if (Url.IsLocalUrl(returnUrl)) {
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
                 return Redirect(returnUrl);
-            } else {
+            }
+            else
+            {
                 return Redirect("~/");
             }
         }

@@ -15,5 +15,6 @@
         "source.organizeImports": true
     },
     "appService.defaultWebAppToDeploy": "/subscriptions/c2412b4a-78bf-4578-ad35-f273bf516f2d/resourceGroups/budget-planner/providers/Microsoft.Web/sites/budget-planner",
-    "appService.deploySubpath": ".publish"
+    "appService.deploySubpath": ".publish",
+    "msbuildProjectTools.nuget.includePreRelease": false
 }
