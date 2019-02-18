@@ -6,23 +6,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BudgetPlanner.Controllers {
+namespace BudgetPlanner.Controllers
+{
 
     [Route("api/dashboard")]
     [Authorize]
-    public class DashboardController : BaseController {
+    public class DashboardController : BaseController
+    {
         public DashboardController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
 
         [HttpGet("")]
         [ProducesResponseType(typeof(DashboardConfiguration[]), 200)]
-        public async Task<IActionResult> GetAll() {
+        public async Task<IActionResult> GetAll()
+        {
             var values = await this.TableStore.GetAllAsync<Tables.Dashboard>(new Args { { nameof(Tables.Dashboard.UserId), this.UserId } });
-            return this.Ok(values.Select(x =>(DashboardConfiguration) x));
+            return this.Ok(values.Select(x => (DashboardConfiguration)x));
         }
 
         [HttpGet("{path}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetTheme([FromRoute] string path) {
+        public async Task<IActionResult> GetTheme([FromRoute] string path)
+        {
             Tables.Dashboard source = new DashboardConfiguration { Path = path };
             source.UserId = this.UserId;
             var result = await this.TableStore.GetAsync(source);
@@ -31,7 +35,8 @@ namespace BudgetPlanner.Controllers {
 
         [HttpGet("{path}/{id}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetTheme([FromRoute] string path, [FromRoute] string id) {
+        public async Task<IActionResult> GetTheme([FromRoute] string path, [FromRoute] string id)
+        {
             Tables.Dashboard source = new DashboardConfiguration { Path = path, Id = id };
             source.UserId = this.UserId;
             var result = await this.TableStore.GetAsync(source);
@@ -40,7 +45,8 @@ namespace BudgetPlanner.Controllers {
 
         [HttpDelete("{path}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Delete([FromRoute] string path) {
+        public async Task<IActionResult> Delete([FromRoute] string path)
+        {
             Tables.Dashboard source = new DashboardConfiguration { Path = path };
             source.UserId = this.UserId;
             await this.TableStore.DeleteAsync(source);
@@ -49,7 +55,8 @@ namespace BudgetPlanner.Controllers {
 
         [HttpDelete("{path}/{id}")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Delete([FromRoute] string path, [FromRoute] string id) {
+        public async Task<IActionResult> Delete([FromRoute] string path, [FromRoute] string id)
+        {
             Tables.Dashboard source = new DashboardConfiguration { Path = path, Id = id };
             source.UserId = this.UserId;
             await this.TableStore.DeleteAsync(source);
@@ -58,7 +65,8 @@ namespace BudgetPlanner.Controllers {
 
         [HttpPost("")]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> Add([FromBody] DashboardConfiguration config) {
+        public async Task<IActionResult> Add([FromBody] DashboardConfiguration config)
+        {
             Tables.Dashboard dashboard = config;
             dashboard.UserId = this.UserId;
             await this.TableStore.AddOrUpdateAsync(dashboard);

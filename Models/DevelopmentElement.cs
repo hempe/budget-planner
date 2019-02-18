@@ -1,5 +1,7 @@
-namespace BudgetPlanner.Models {
-    public class DevelopmentElement {
+namespace BudgetPlanner.Models
+{
+    public class DevelopmentElement
+    {
         public string Group { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }

@@ -1,5 +1,7 @@
-namespace BudgetPlanner.Models {
-    public enum SubType {
+namespace BudgetPlanner.Models
+{
+    public enum SubType
+    {
         Positive,
         Negative,
     }

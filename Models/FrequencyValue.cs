@@ -1,7 +1,9 @@
 using Newtonsoft.Json;
 
-namespace BudgetPlanner.Models {
-    public class FrequencyValue : NamedValue {
+namespace BudgetPlanner.Models
+{
+    public class FrequencyValue : NamedValue
+    {
         public int Frequency { get; set; }
 
         [JsonIgnore]

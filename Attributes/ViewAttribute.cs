@@ -16,6 +16,7 @@ namespace BudgetPlanner.Attributes {
         public ITableEntity BeforeQuery(ITableEntity entity) {
             if (entity == null)
                 return entity;
+
             var type = entity.GetType();
             var rowKey = this.RowKey(type);
             var partitionKey = this.PartitionKey(type);
@@ -32,6 +33,7 @@ namespace BudgetPlanner.Attributes {
         public ITableEntity AfterLoad(ITableEntity entity) {
             if (entity == null)
                 return entity;
+            
             var type = entity.GetType();
             var rowKey = this.RowKey(type);
             var partitionKey = this.PartitionKey(type);

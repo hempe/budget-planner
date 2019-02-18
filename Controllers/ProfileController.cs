@@ -17,25 +17,30 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
 
-namespace BudgetPlanner.Controllers {
+namespace BudgetPlanner.Controllers
+{
 
     [Route("api/profile")]
     [Authorize]
-    public class ProfileController : BaseController {
+    public class ProfileController : BaseController
+    {
         private readonly StoreOption storageOptions;
-        public ProfileController(UserManager<User> userManager, TableStore tableStore, IOptions<StoreOption> storageOptions) : base(userManager, tableStore) {
+        public ProfileController(UserManager<User> userManager, TableStore tableStore, IOptions<StoreOption> storageOptions) : base(userManager, tableStore)
+        {
             this.storageOptions = storageOptions.Value;
         }
 
         [HttpGet("")]
         [ProducesResponseType(typeof(ProfileData), 200)]
-        public async Task<IActionResult> GetProfile() {
+        public async Task<IActionResult> GetProfile()
+        {
             var value = await this.TableStore.GetAsync(new Tables.Profile { UserId = this.UserId });
             return this.Ok(value?.Data ?? new ProfileData());
         }
 
         [HttpGet("image")]
-        public async Task<IActionResult> GetProfileImageUri() {
+        public async Task<IActionResult> GetProfileImageUri()
+        {
             var blob = this.GetBlobReference(this.UserId);
             if (await blob.ExistsAsync())
                 return this.Ok(new { Uri = blob.Uri });
@@ -44,7 +49,8 @@ namespace BudgetPlanner.Controllers {
 
         [HttpPost("")]
         [ProducesResponseType(typeof(ProfileData), 200)]
-        public async Task<IActionResult> SetProfile([FromBody] ProfileData data) {
+        public async Task<IActionResult> SetProfile([FromBody] ProfileData data)
+        {
             await this.TableStore.AddOrUpdateAsync(new Tables.Profile { UserId = this.UserId, Data = data });
             return this.Ok(data);
         }
@@ -52,11 +58,14 @@ namespace BudgetPlanner.Controllers {
         [HttpPost]
         [HttpPut]
         [Route("upload")]
-        public async Task<IActionResult> UploadFile() {
+        public async Task<IActionResult> UploadFile()
+        {
             var boundary = GetBoundary(Request.ContentType);
 
-            if (boundary == null) {
-                if (await UploadFileToStorage(Request.Body, this.UserId.ToString())) {
+            if (boundary == null)
+            {
+                if (await UploadFileToStorage(Request.Body, this.UserId.ToString()))
+                {
                     return this.Ok();
                 }
                 return this.BadRequest();
@@ -65,11 +74,14 @@ namespace BudgetPlanner.Controllers {
             var reader = new MultipartReader(boundary, Request.Body, 80 * 1024);
             MultipartSection section;
 
-            using(Stream stream = new MemoryStream()) {
-                while ((section = await reader.ReadNextSectionAsync()) != null) {
+            using (Stream stream = new MemoryStream())
+            {
+                while ((section = await reader.ReadNextSectionAsync()) != null)
+                {
                     var contentDispo = section.GetContentDispositionHeader();
 
-                    if (contentDispo.IsFileDisposition()) {
+                    if (contentDispo.IsFileDisposition())
+                    {
                         var fileSection = section.AsFileSection();
                         var bufferSize = 32 * 1024;
                         byte[] buffer = new byte[bufferSize];
@@ -78,9 +90,13 @@ namespace BudgetPlanner.Controllers {
                             return BadRequest("Only one file is accepted per request.");
 
                         await fileSection.FileStream.CopyToAsync(stream);
-                    } else if (contentDispo.IsFormDisposition()) {
+                    }
+                    else if (contentDispo.IsFormDisposition())
+                    {
                         return BadRequest("Only one file is accepted per request.");
-                    } else {
+                    }
+                    else
+                    {
                         return BadRequest("Malformatted message body.");
                     }
                 }
@@ -89,7 +105,8 @@ namespace BudgetPlanner.Controllers {
                     return BadRequest("No file submitted.");
 
                 stream.Seek(0, SeekOrigin.Begin);
-                if (await UploadFileToStorage(stream, this.UserId.ToString())) {
+                if (await UploadFileToStorage(stream, this.UserId.ToString()))
+                {
                     return this.Ok();
                 }
                 return this.BadRequest();
@@ -97,7 +114,8 @@ namespace BudgetPlanner.Controllers {
 
         }
 
-        private CloudBlockBlob GetBlobReference(string fileName) {
+        private CloudBlockBlob GetBlobReference(string fileName)
+        {
             var storageAccount = CloudStorageAccount.Parse(this.storageOptions.ConnectionString);
 
             // Create the blob client.
@@ -111,14 +129,17 @@ namespace BudgetPlanner.Controllers {
             return blockBlob;
         }
 
-        private async Task<bool> UploadFileToStorage(Stream fileStream, string fileName) {
+        private async Task<bool> UploadFileToStorage(Stream fileStream, string fileName)
+        {
 
-            using(var stream = new MemoryStream())
-            using(var image = Image.Load(fileStream))
-            using(Image<Rgba32> cropped = image.Clone(x => x.Resize(new ResizeOptions {
+            using (var stream = new MemoryStream())
+            using (var image = Image.Load(fileStream))
+            using (Image<Rgba32> cropped = image.Clone(x => x.Resize(new ResizeOptions
+            {
                 Size = new Size(200, 200),
-                    Mode = ResizeMode.Crop
-            }))) {
+                Mode = ResizeMode.Crop
+            })))
+            {
                 cropped.Save(stream, new PngEncoder());
                 stream.Position = 0;
                 var blockBlob = GetBlobReference(fileName);
@@ -127,7 +148,8 @@ namespace BudgetPlanner.Controllers {
             }
         }
 
-        private static string GetBoundary(string contentType) {
+        private static string GetBoundary(string contentType)
+        {
             if (contentType == null)
                 return null;
             //throw new ArgumentNullException(nameof(contentType));

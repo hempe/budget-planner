@@ -2,11 +2,11 @@ using BudgetPlanner.Attributes;
 using BudgetPlanner.Models;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace BudgetPlanner.Tables {
-
+namespace BudgetPlanner.Tables
+{
     [Table("Dashboards")]
-    public class Dashboard : UserData {
-
+    public class Dashboard : UserData
+    {
         [IgnoreProperty]
         [RowKey]
         public string Key { get => this.Path.ToLower() + "_" + this.Id; }

@@ -18,21 +18,22 @@ using Scriban.Parsing;
 using Scriban.Runtime;
 using Scriban.Syntax;
 
-namespace BudgetPlanner.Services.Export {
-    public class HtmlHandler : IDisposable {
-
+namespace BudgetPlanner.Services.Export
+{
+    public class HtmlHandler : IDisposable
+    {
         private readonly BaseHandler baseHandler;
         private readonly TemplateService templateService;
-        public HtmlHandler(BaseHandler baseHandler, TemplateService templateService) {
+        public HtmlHandler(BaseHandler baseHandler, TemplateService templateService)
+        {
             this.baseHandler = baseHandler;
             this.templateService = templateService;
         }
 
-        public void Dispose() {
+        public void Dispose() { }
 
-        }
-
-        public async Task<Stream> GetExportAsync(string userId) {
+        public async Task<Stream> GetExportAsync(string userId)
+        {
             var data = await this.baseHandler.GetJsonAsync(userId);
             var content = await this.templateService.LoadTemplateAsync("Templates/Export.html.template");
             var result = this.templateService.Render(content, data, data?.Client.Language);

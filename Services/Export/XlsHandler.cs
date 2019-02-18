@@ -14,31 +14,36 @@ using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
-namespace BudgetPlanner.Services.Export {
-    public class XlsHandler : IDisposable {
-
+namespace BudgetPlanner.Services.Export
+{
+    public class XlsHandler : IDisposable
+    {
         private readonly ExcelPackage package;
         private readonly BaseHandler baseHandler;
         private string lang;
-        public XlsHandler(BaseHandler baseHandler) {
+        public XlsHandler(BaseHandler baseHandler)
+        {
             this.baseHandler = baseHandler;
-
             this.package = new ExcelPackage();
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             this.package.Dispose();
         }
 
-        private string Translate(string key) {
+        private string Translate(string key)
+        {
             return this.baseHandler.I18n.TranslateAsync(this.lang, key).GetAwaiter().GetResult();
         }
 
-        public async Task<Stream> GetExportAsync(string userId) {
+        public async Task<Stream> GetExportAsync(string userId)
+        {
             var export = await this.baseHandler.GetJsonAsync(userId);
             this.lang = export?.Client?.Language;
 
-            foreach (var budget in export.Budgets) {
+            foreach (var budget in export.Budgets)
+            {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add($"Budget: {budget.Name}");
 
                 var (rI, cI) = this.DoBudget(worksheet, 2, 2, Translate("Income"), budget.Positive);
@@ -56,7 +61,8 @@ namespace BudgetPlanner.Services.Export {
                     .Style(x => x.Font.Name = "URW Gothic");
             }
 
-            if (export.Revenue != null) {
+            if (export.Revenue != null)
+            {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Translate("Revenue"));
 
                 var (rI, cI) = this.DoRevenue(worksheet, 2, 2, Translate("PlannedRevenue"), export.Revenue.Positive);
@@ -74,7 +80,8 @@ namespace BudgetPlanner.Services.Export {
                     .Style(x => x.Font.Name = "URW Gothic");
             }
 
-            if (export.Assets != null) {
+            if (export.Assets != null)
+            {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets.Add(Translate("Assets"));
 
                 var (rI, cI) = this.DoAssets(worksheet, 2, 2, Translate("Assets"), export.Assets.Positive);
@@ -95,7 +102,8 @@ namespace BudgetPlanner.Services.Export {
             return new MemoryStream(package.GetAsByteArray());
         }
 
-        private(int row, int col) DoBudget(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<FrequencyValue>> values) {
+        private (int row, int col) DoBudget(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<FrequencyValue>> values)
+        {
 
             var nameElement = worksheet.Cells(row, col, 0, 3)
                 .Merge()
@@ -109,7 +117,8 @@ namespace BudgetPlanner.Services.Export {
                 .Height(30);
 
             worksheet.Cells(row, col)
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
                 })
@@ -117,7 +126,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 1)
                 .Value(Translate("Name"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
                 })
@@ -125,7 +135,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 2)
                 .Value(Translate("frequency.frequency"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.Numberformat.Format = "0";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                     x.Style.Indent = 1;
@@ -134,7 +145,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 3)
                 .Value(Translate("Amount"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.Numberformat.Format = "#,###.00";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     x.Style.Indent = 1;
@@ -145,13 +157,15 @@ namespace BudgetPlanner.Services.Export {
 
             nameElement.Center().FontSize(20).Height(40);
 
-            foreach (var income in values) {
+            foreach (var income in values)
+            {
                 var start = row;
                 var i = 0;
                 var elements = income.Elements.ToList();
-                elements.AddRange(new [] { new FrequencyValue { }, new FrequencyValue { } });
+                elements.AddRange(new[] { new FrequencyValue { }, new FrequencyValue { } });
 
-                foreach (var e in elements) {
+                foreach (var e in elements)
+                {
                     i++;
                     worksheet.Cells(row, col + 1, 0, 3)
                         .Height(30)
@@ -164,7 +178,7 @@ namespace BudgetPlanner.Services.Export {
                         worksheet.Cells(row, col + 2).Value(e.Frequency);
                     if (e.Value != 0)
                         worksheet.Cells(row, col + 3).Value(e.Value);
-                    worksheet.Cells(row, col + 4).Formula($"{(col+2).GetExcelColumnName()}{row}*{(col+3).GetExcelColumnName()}{row}");
+                    worksheet.Cells(row, col + 4).Formula($"{(col + 2).GetExcelColumnName()}{row}*{(col + 3).GetExcelColumnName()}{row}");
 
                     row++;
                 }
@@ -188,7 +202,7 @@ namespace BudgetPlanner.Services.Export {
 
                 var subT = (col + 4).GetExcelColumnName();
                 worksheet.Cells(row, col + 3)
-                    .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
+                    .Formula($"SUM({subT}{start}:{subT}{start + elements.Count})")
                     .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
                     .FontColor(0, 140, 180);
 
@@ -213,7 +227,8 @@ namespace BudgetPlanner.Services.Export {
             return (row, col + 4);
         }
 
-        private(int row, int col) DoRevenue(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<DatedValue>> values) {
+        private (int row, int col) DoRevenue(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<DatedValue>> values)
+        {
 
             var nameElement = worksheet.Cells(row, col, 0, 3)
                 .Merge()
@@ -227,7 +242,8 @@ namespace BudgetPlanner.Services.Export {
                 .Height(30);
 
             worksheet.Cells(row, col)
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
                 })
@@ -235,7 +251,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 1)
                 .Value(Translate("Name"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
                 })
@@ -243,7 +260,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 2)
                 .Value(Translate("Year"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.Numberformat.Format = "0";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                     x.Style.Indent = 1;
@@ -252,7 +270,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 3)
                 .Value(Translate("Amount"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.Numberformat.Format = "#,###.00";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     x.Style.Indent = 1;
@@ -263,13 +282,15 @@ namespace BudgetPlanner.Services.Export {
 
             nameElement.Center().FontSize(20).Height(40);
 
-            foreach (var income in values) {
+            foreach (var income in values)
+            {
                 var start = row;
                 var i = 0;
                 var elements = income.Elements.ToList();
-                elements.AddRange(new [] { new DatedValue { }, new DatedValue { } });
+                elements.AddRange(new[] { new DatedValue { }, new DatedValue { } });
 
-                foreach (var e in elements) {
+                foreach (var e in elements)
+                {
                     i++;
                     worksheet.Cells(row, col + 1, 0, 3)
                         .Height(30)
@@ -282,7 +303,7 @@ namespace BudgetPlanner.Services.Export {
                         worksheet.Cells(row, col + 2).Value(e.Year);
                     if (e.Value != 0)
                         worksheet.Cells(row, col + 3).Value(e.Value);
-                    worksheet.Cells(row, col + 4).Formula($"{(col+3).GetExcelColumnName()}{row}");
+                    worksheet.Cells(row, col + 4).Formula($"{(col + 3).GetExcelColumnName()}{row}");
 
                     row++;
                 }
@@ -306,7 +327,7 @@ namespace BudgetPlanner.Services.Export {
 
                 var subT = (col + 4).GetExcelColumnName();
                 worksheet.Cells(row, col + 3)
-                    .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
+                    .Formula($"SUM({subT}{start}:{subT}{start + elements.Count})")
                     .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
                     .FontColor(0, 140, 180);
 
@@ -331,7 +352,8 @@ namespace BudgetPlanner.Services.Export {
             return (row, col + 4);
         }
 
-        private(int row, int col) DoAssets(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<NamedValue>> values) {
+        private (int row, int col) DoAssets(ExcelWorksheet worksheet, int row, int col, string name, IEnumerable<Unit<NamedValue>> values)
+        {
 
             var nameElement = worksheet.Cells(row, col, 0, 3)
                 .Merge()
@@ -345,7 +367,8 @@ namespace BudgetPlanner.Services.Export {
                 .Height(30);
 
             worksheet.Cells(row, col)
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
                 })
@@ -353,7 +376,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 1, 0, 1)
                 .Value(Translate("Name"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
                     x.Style.Indent = 1;
                 })
@@ -362,7 +386,8 @@ namespace BudgetPlanner.Services.Export {
 
             worksheet.Cells(row, col + 3)
                 .Value(Translate("Amount"))
-                .Column(x => {
+                .Column(x =>
+                {
                     x.Style.Numberformat.Format = "#,###.00";
                     x.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                     x.Style.Indent = 1;
@@ -373,13 +398,15 @@ namespace BudgetPlanner.Services.Export {
 
             nameElement.Center().FontSize(20).Height(40);
 
-            foreach (var income in values) {
+            foreach (var income in values)
+            {
                 var start = row;
                 var i = 0;
                 var elements = income.Elements.ToList();
-                elements.AddRange(new [] { new NamedValue { }, new NamedValue { } });
+                elements.AddRange(new[] { new NamedValue { }, new NamedValue { } });
 
-                foreach (var e in elements) {
+                foreach (var e in elements)
+                {
                     i++;
                     worksheet.Cells(row, col + 1, 0, 3)
                         .Height(30)
@@ -391,7 +418,7 @@ namespace BudgetPlanner.Services.Export {
 
                     if (e.Value != 0)
                         worksheet.Cells(row, col + 3).Value(e.Value);
-                    worksheet.Cells(row, col + 4).Formula($"{(col+3).GetExcelColumnName()}{row}");
+                    worksheet.Cells(row, col + 4).Formula($"{(col + 3).GetExcelColumnName()}{row}");
 
                     row++;
                 }
@@ -415,7 +442,7 @@ namespace BudgetPlanner.Services.Export {
 
                 var subT = (col + 4).GetExcelColumnName();
                 worksheet.Cells(row, col + 3)
-                    .Formula($"SUM({subT}{start}:{subT}{start+elements.Count})")
+                    .Formula($"SUM({subT}{start}:{subT}{start + elements.Count})")
                     .BorderTop(ExcelBorderStyle.Thin, Color.FromArgb(0, 140, 180))
                     .FontColor(0, 140, 180);
 

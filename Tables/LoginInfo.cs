@@ -2,11 +2,11 @@ using BudgetPlanner.Attributes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace BudgetPlanner.Tables {
-
+namespace BudgetPlanner.Tables
+{
     [Table("Logins")]
-    public class LoginInfo : TableEntity {
-
+    public class LoginInfo : TableEntity
+    {
         [IgnoreProperty]
         [PartitionKey]
         public string LoginProvider { get; set; }
@@ -24,12 +24,11 @@ namespace BudgetPlanner.Tables {
 
         public static implicit operator UserLoginInfo(LoginInfo user) => user == null ? null : new UserLoginInfo(user.LoginProvider, user.ProviderKey, user.DisplayName);
 
-        public static implicit operator LoginInfo(UserLoginInfo user) => user == null ? null : new LoginInfo {
+        public static implicit operator LoginInfo(UserLoginInfo user) => user == null ? null : new LoginInfo
+        {
             DisplayName = user.ProviderDisplayName,
             LoginProvider = user.LoginProvider,
             ProviderKey = user.ProviderKey,
         };
-
     }
-
 }

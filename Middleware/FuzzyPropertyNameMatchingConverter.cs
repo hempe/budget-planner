@@ -6,15 +6,19 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BudgetPlanner.Middleware {
-    public class FuzzyPropertyNameMatchingConverter : JsonConverter {
-        public override bool CanConvert(Type objectType) {
+namespace BudgetPlanner.Middleware
+{
+    public class FuzzyPropertyNameMatchingConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
             return objectType.Assembly == this.GetType().Assembly && objectType.GetConstructor(Type.EmptyTypes) != null;
         }
 
         public override bool CanWrite => false;
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
             var constructor = objectType.GetConstructor(Type.EmptyTypes);
 
             var instance = constructor.Invoke(null);
@@ -23,12 +27,14 @@ namespace BudgetPlanner.Middleware {
             if (reader.ValueType.IsSimple())
                 return reader.Value;
 
-            foreach (JProperty jProperty in JObject.Load(reader).Properties()) {
+            foreach (JProperty jProperty in JObject.Load(reader).Properties())
+            {
                 var property = this.FindBestMatch(properties, jProperty.Name, 3);
                 if (property == null)
                     continue;
 
-                if (property.PropertyType.IsArray && !(jProperty.Value is JArray)) {
+                if (property.PropertyType.IsArray && !(jProperty.Value is JArray))
+                {
                     this.ParseDictionaryAsListByType(
                         property.PropertyType.GetElementType(),
                         jProperty,
@@ -36,26 +42,32 @@ namespace BudgetPlanner.Middleware {
                         property,
                         instance
                     );
-                } else {
+                }
+                else
+                {
                     property.SetValue(instance, jProperty.Value.ToObject(property.PropertyType, serializer));
                 }
             }
             return instance;
         }
 
-        private PropertyInfo FindBestMatch(Dictionary<string, PropertyInfo> properties, string name, int maxDistance) {
+        private PropertyInfo FindBestMatch(Dictionary<string, PropertyInfo> properties, string name, int maxDistance)
+        {
 
             PropertyInfo prop = null;
             int distance = Int32.MaxValue;
             var search = this.Simplify(name);
 
-            foreach (var kv in properties) {
-                if (kv.Key.Equals(search)) {
+            foreach (var kv in properties)
+            {
+                if (kv.Key.Equals(search))
+                {
                     return kv.Value;
                 }
 
                 var d = kv.Key.LevenshteinDistance(search);
-                if (0 < d && d < distance && d < maxDistance) {
+                if (0 < d && d < distance && d < maxDistance)
+                {
                     d = distance;
                     prop = kv.Value;
                 }
@@ -64,15 +76,17 @@ namespace BudgetPlanner.Middleware {
             return prop;
         }
 
-        private void ParseDictionaryAsListByType(Type elementType, JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance) {
+        private void ParseDictionaryAsListByType(Type elementType, JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance)
+        {
             this.GetType()
                 .GetMethod(nameof(ParseDictionaryAsList), BindingFlags.Instance | BindingFlags.NonPublic)
                 .MakeGenericMethod(elementType)
-                .Invoke(this, new [] { jp, serializer, prop, instance });
+                .Invoke(this, new[] { jp, serializer, prop, instance });
         }
 
-        private void ParseDictionaryAsList<TElement>(JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance) {
-            var surogateValue = (Dictionary<string, object>) jp.Value.ToObject(typeof(Dictionary<string, object>), serializer);
+        private void ParseDictionaryAsList<TElement>(JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance)
+        {
+            var surogateValue = (Dictionary<string, object>)jp.Value.ToObject(typeof(Dictionary<string, object>), serializer);
             var value = surogateValue
                 .Where(kv => int.TryParse(kv.Key.ToString(), out _))
                 .Select(x => x.Value as JObject)

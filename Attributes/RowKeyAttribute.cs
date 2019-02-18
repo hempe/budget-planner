@@ -1,5 +1,6 @@
 using System;
 
-namespace BudgetPlanner.Attributes {
+namespace BudgetPlanner.Attributes
+{
     public class RowKeyAttribute : Attribute { }
 }

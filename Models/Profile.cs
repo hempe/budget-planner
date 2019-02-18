@@ -1,7 +1,9 @@
 using BudgetPlanner.Attributes;
 
-namespace BudgetPlanner.Models {
-    public class ProfileData {
+namespace BudgetPlanner.Models
+{
+    public class ProfileData
+    {
         public string City { get; set; }
         public string Comment { get; set; }
         public string Company { get; set; }

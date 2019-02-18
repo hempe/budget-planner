@@ -1,7 +1,9 @@
 using Newtonsoft.Json;
 
-namespace BudgetPlanner.Models {
-    public class NamedValue : ISum {
+namespace BudgetPlanner.Models
+{
+    public class NamedValue : ISum
+    {
         public string Name { get; set; }
         public decimal Value { get; set; }
 

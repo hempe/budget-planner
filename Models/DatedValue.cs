@@ -1,5 +1,7 @@
-namespace BudgetPlanner.Models {
-    public class DatedValue : NamedValue {
+namespace BudgetPlanner.Models
+{
+    public class DatedValue : NamedValue
+    {
         public int Year { get; set; }
     }
 }

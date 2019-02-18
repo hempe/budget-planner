@@ -4,16 +4,21 @@ using BudgetPlanner.Middleware;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 
-namespace BudgetPlanner.Attributes {
-    public class TableAttribute : ViewAttribute {
+namespace BudgetPlanner.Attributes
+{
+    public class TableAttribute : ViewAttribute
+    {
 
         public TableAttribute(string name) : base(name) { }
 
-        public ITableEntity BeforeSave(ITableEntity entity) {
+        public ITableEntity BeforeSave(ITableEntity entity)
+        {
             if (this.BeforeQuery(entity) == null)
                 return entity;
+
             var type = entity.GetType();
-            foreach (var p in type.GetProperties()) {
+            foreach (var p in type.GetProperties())
+            {
                 var jsonData = p.GetCustomAttributes(typeof(JsonDataAttribute), true).Cast<JsonDataAttribute>().FirstOrDefault();
                 if (jsonData == null)
                     continue;
@@ -22,6 +27,5 @@ namespace BudgetPlanner.Attributes {
 
             return entity;
         }
-
     }
 }
