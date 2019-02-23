@@ -137,6 +137,7 @@ namespace BudgetPlanner.Services {
                 return this.i18n.TranslateAsync(this.lang, key).GetAwaiter().GetResult();
             }
         }
+        
         private static string ToCamelCase(string str) =>(str == null || str.Length < 2) ? str : Char.ToLowerInvariant(str[0]) + str.Substring(1);
     }
 }

@@ -59,23 +59,24 @@ namespace BudgetPlanner.Services
             this.tableClient = cloudStorageAccount.CreateCloudTableClient();
         }
 
-        private TableAttribute GetTableAttribute(Type type) => TableAttributes.GetOrAdd(type, () => type.Table());
+        private TableAttribute GetTableAttribute(Type type) 
+            => TableAttributes.GetOrAdd(type, () => type.Table());
 
-        private ViewAttribute GetViewAttribute(Type type) => ViewAttributes.GetOrAdd(type, () => type.View());
+        private ViewAttribute GetViewAttribute(Type type) 
+            => ViewAttributes.GetOrAdd(type, () => type.View());
 
-        private Task<CloudTable> GetViewAsync(Type type) => Views.GetOrAddAsync(type, async () =>
+        private Task<CloudTable> GetViewAsync(Type type) 
+            => Views.GetOrAddAsync(type, () => this.GetCloudTableAsync($"{this.options.Prefix}{this.GetViewAttribute(type).TableName}"));
+
+        private Task<CloudTable> GetTableAsync(Type type) 
+            => Tables.GetOrAddAsync(type, () => this.GetCloudTableAsync($"{this.options.Prefix}{this.GetTableAttribute(type).TableName}"));
+
+        private async Task<CloudTable> GetCloudTableAsync(string name)
         {
-            var view = tableClient.GetTableReference($"{this.options.Prefix}{this.GetViewAttribute(type).TableName}");
+            var view = tableClient.GetTableReference(name);
             await view.CreateIfNotExistsAsync();
             return view;
-        });
-
-        private Task<CloudTable> GetTableAsync(Type type) => Views.GetOrAddAsync(type, async () =>
-        {
-            var view = tableClient.GetTableReference($"{this.options.Prefix}{this.GetTableAttribute(type).TableName}");
-            await view.CreateIfNotExistsAsync();
-            return view;
-        });
+        }
 
         public async Task<TableResult> DeleteAsync(Type type, ITableEntity entity)
         {
@@ -86,11 +87,13 @@ namespace BudgetPlanner.Services
             var tableOperation = TableOperation.Delete(entity);
             return await table.ExecuteAsync(tableOperation);
         }
+
         public Task<TableResult> DeleteAsync<T>(T entity) where T : class, ITableEntity, new()
             => this.DeleteAsync(typeof(T), entity);
 
         public Task<TableResult> AddOrUpdateAsync<T>(T entity) where T : class, ITableEntity, new()
             => this.AddOrUpdateAsync(typeof(T), entity);
+            
         public async Task<TableResult> AddOrUpdateAsync(Type type, ITableEntity entity)
         {
             var table = await this.GetTableAsync(type);
