@@ -10,20 +10,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace BudgetPlanner.Services {
+namespace BudgetPlanner.Services
+{
 
-    internal partial class UserStore : IUserPasswordStore<User> {
-        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken) {
-            return Task.FromResult(user.PasswordHash);
-        }
+    internal partial class UserStore : IUserPasswordStore<User>
+    {
+        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
+            => user.PasswordHash.AsTask();
 
-        public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken) {
-            return Task.FromResult(!string.IsNullOrWhiteSpace(user.PasswordHash));
-        }
+        public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
+            => user.AsTask(u =>!string.IsNullOrWhiteSpace(user.PasswordHash));
 
-        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken) {
-            user.PasswordHash = passwordHash;
-            return Task.CompletedTask;
-        }
+        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
+            => user.AsTask(u => u.PasswordHash = passwordHash);
     }
 }

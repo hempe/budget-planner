@@ -22,12 +22,13 @@ namespace BudgetPlanner.Middleware
             var constructor = objectType.GetConstructor(Type.EmptyTypes);
 
             var instance = constructor.Invoke(null);
-            var properties = objectType.GetProperties().ToDictionary(x => this.Simplify(x.Name), x => x);
 
             if (reader.ValueType.IsSimple())
                 return reader.Value;
 
-            foreach (JProperty jProperty in JObject.Load(reader).Properties())
+            var properties = objectType.GetProperties().ToDictionary(x => this.Simplify(x.Name), x => x);
+
+            foreach (var jProperty in JObject.Load(reader).Properties())
             {
                 var property = this.FindBestMatch(properties, jProperty.Name, 3);
                 if (property == null)

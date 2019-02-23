@@ -11,42 +11,34 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace BudgetPlanner.Services {
+namespace BudgetPlanner.Services
+{
 
-    internal partial class UserStore : IUserAuthenticationTokenStore<User> {
-        public async Task RemoveTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) {
-            var result = await this.tableStore.DeleteAsync(new Token {
+    internal partial class UserStore : IUserAuthenticationTokenStore<User>
+    {
+        public Task RemoveTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
+            => this.tableStore.DeleteAsync(new Token
+            {
                 LoginProvider = loginProvider,
-                    UserId = user.Id,
-                    Name = name
-            });
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                throw new Exception("Update failed");
-        }
+                UserId = user.Id,
+                Name = name
+            }).ThrowOnError();
 
-        public async Task SetTokenAsync(User user, string loginProvider, string name, string value, CancellationToken cancellationToken) {
-            var entity = new Token {
+        public Task SetTokenAsync(User user, string loginProvider, string name, string value, CancellationToken cancellationToken)
+           => this.tableStore.AddOrUpdateAsync(new Token
+            {
                 LoginProvider = loginProvider,
                 UserId = user.Id,
                 Name = name,
                 Value = value
-            };
+            }).ThrowOnError();
 
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                return;
-
-            throw new Exception("Update failed");
-        }
-
-        public async Task<string> GetTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetAsync(new Token {
+        public Task<string> GetTokenAsync(User user, string loginProvider, string name, CancellationToken cancellationToken)
+            => this.tableStore.GetAsync(new Token
+            {
                 LoginProvider = loginProvider,
-                    UserId = user.Id,
-                    Name = name
-            });
-
-            return entity?.Value;
-        }
+                UserId = user.Id,
+                Name = name
+            }).ContinueWith(x => x.Result?.Value);
     }
 }

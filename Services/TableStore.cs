@@ -65,9 +65,11 @@ namespace BudgetPlanner.Services {
             var tableOperation = TableOperation.Delete(entity);
             return await table.ExecuteAsync(tableOperation);
         }
-        public Task<TableResult> DeleteAsync<T>(T entity) where T : class, ITableEntity, new() => this.DeleteAsync(typeof(T), entity);
+        public Task<TableResult> DeleteAsync<T>(T entity) where T : class, ITableEntity, new() 
+            => this.DeleteAsync(typeof(T), entity);
 
-        public Task<TableResult> AddOrUpdateAsync<T>(T entity) where T : class, ITableEntity, new() => this.AddOrUpdateAsync(typeof(T), entity);
+        public Task<TableResult> AddOrUpdateAsync<T>(T entity) where T : class, ITableEntity, new() 
+            => this.AddOrUpdateAsync(typeof(T), entity);
         public async Task<TableResult> AddOrUpdateAsync(Type type, ITableEntity entity) {
             var table = await this.GetTableAsync(type);
             entity = this.GetTableAttribute(type).BeforeSave(entity);
@@ -154,8 +156,8 @@ namespace BudgetPlanner.Services {
             return re;
         }
 
-        public Task<List<ITableEntity>> GetAllAsync(Type type, Args parameter) {
-            return (Task<List<ITableEntity>>) this.GetType().GetMethod(nameof(this.GetAllTableEntitesAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new [] { type }).Invoke(this, new [] { parameter });
+        public Task<IList<ITableEntity>> GetAllAsync(Type type, Args parameter) {
+            return (Task<IList<ITableEntity>>) this.GetType().GetMethod(nameof(this.GetAllTableEntitesAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new [] { type }).Invoke(this, new [] { parameter });
         }
         public Task<ITableEntity> GetAsync(Type type, Args parameter) {
             return (Task<ITableEntity>) this.GetType().GetMethod(nameof(this.GetEntityAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new [] { type }).Invoke(this, new [] { parameter });
@@ -191,7 +193,7 @@ namespace BudgetPlanner.Services {
             return re;
         }
 
-        private async Task<List<ITableEntity>> GetAllTableEntitesAsync<T>(Args parameter) where T : class, ITableEntity, new() {
+        private async Task<IList<ITableEntity>> GetAllTableEntitesAsync<T>(Args parameter) where T : class, ITableEntity, new() {
             string filter = null;
             var type = typeof(T);
             var table = await this.GetViewAsync(type);

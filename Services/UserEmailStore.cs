@@ -11,37 +11,32 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace BudgetPlanner.Services {
+namespace BudgetPlanner.Services
+{
 
-    internal partial class UserStore : IUserEmailStore<User> {
-        public async Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken) {
-            var entity =
-                await this.tableStore.GetAsync<UserEntity>(new Args { { nameof(UserEntity.NormalizedEmail), normalizedEmail } }) ??
-                await this.tableStore.GetAsync<UserEntity>(new Args { { nameof(UserEntity.Email), normalizedEmail } }) ??
-                await this.tableStore.GetAsync<UserEntity>(new Args { { nameof(UserEntity.NormalizedUserName), normalizedEmail } });
-            return entity;
-        }
+    internal partial class UserStore : IUserEmailStore<User>
+    {
+        public async Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+            => await this.tableStore.GetAsync<UserEntity>(new Args { { nameof(UserEntity.NormalizedEmail), normalizedEmail } }) ??
+               await this.tableStore.GetAsync<UserEntity>(new Args { { nameof(UserEntity.Email), normalizedEmail } }) ??
+               await this.tableStore.GetAsync<UserEntity>(new Args { { nameof(UserEntity.NormalizedUserName), normalizedEmail } });
 
-        public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken) => Task.FromResult(user.Email);
+        public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken)
+            => user.Email.AsTask();
 
-        public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken) => Task.FromResult(user.EmailConfirmed);
+        public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken)
+            => user.EmailConfirmed.AsTask();
 
-        public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken) => Task.FromResult(user.NormalizedEmail);
+        public Task<string> GetNormalizedEmailAsync(User user, CancellationToken cancellationToken)
+            => user.NormalizedEmail.AsTask();
 
-        public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken) {
-            user.Email = email;
-            return Task.CompletedTask;
-        }
+        public Task SetEmailAsync(User user, string email, CancellationToken cancellationToken)
+            => user.AsTask(u => u.Email = email);
 
-        public Task SetEmailConfirmedAsync(User user, bool confirmed, CancellationToken cancellationToken) {
-            user.EmailConfirmed = confirmed;
-            return Task.CompletedTask;
-        }
+        public Task SetEmailConfirmedAsync(User user, bool confirmed, CancellationToken cancellationToken)
+            => user.AsTask(u => u.EmailConfirmed = confirmed);
 
-        public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken) {
-            user.NormalizedEmail = normalizedEmail;
-            return Task.CompletedTask;
-        }
-
+        public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
+            => user.AsTask(u => u.NormalizedEmail = normalizedEmail);
     }
 }

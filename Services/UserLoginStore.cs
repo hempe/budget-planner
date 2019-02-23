@@ -15,38 +15,19 @@ namespace BudgetPlanner.Services {
 
     internal partial class UserStore : IUserLoginStore<User> {
 
-        public async Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken) {
+        public Task AddLoginAsync(User user, UserLoginInfo login, CancellationToken cancellationToken)
+            => this.tableStore.AddOrUpdateAsync(new LoginInfo(login){ UserId = user.Id}).ThrowOnError();
+        
+        public Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
+            => this.tableStore.GetAsync<LoginInfo>(new LoginInfo { LoginProvider = loginProvider, ProviderKey = providerKey })
+                .IfNotNull((e)=> this.FindByIdAsync(e.UserId, cancellationToken));
 
-            LoginInfo entity = login;
-            entity.UserId = user.Id;
-
-            var result = await this.tableStore.AddOrUpdateAsync(entity);
-            if (result.HttpStatusCode >= 200 && result.HttpStatusCode < 300)
-                return;
-            throw new Exception("Update failed");
-        }
-
-        public async Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            var entity = await this.tableStore.GetAsync<LoginInfo>(new LoginInfo { LoginProvider = loginProvider, ProviderKey = providerKey });
-
-            if (entity == null)
-                return null;
-
-            return await this.FindByIdAsync(entity.UserId, cancellationToken);
-        }
-
-        public async Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken) {
-            var entities = await this.tableStore.GetAllAsync<LoginInfo>(
-                new Args { { nameof(LoginInfo.UserId), user.Id } }
-            );
-
-            return entities.Select(x =>(UserLoginInfo) x).ToList();
-        }
-
-        public async Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken) {
-            try {
-                await this.tableStore.DeleteAsync<UserEntity>(user);
-            } catch { }
-        }
+        public Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken)
+            => this.tableStore
+                .GetAllAsync<LoginInfo>(new Args { { nameof(LoginInfo.UserId), user.Id } })
+                .Select(z => (UserLoginInfo)z);
+        
+        public Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken)
+            => this.tableStore.DeleteAsync<UserEntity>(user).CatchException();
     }
 }

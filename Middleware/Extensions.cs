@@ -278,8 +278,8 @@ namespace BudgetPlanner.Middleware
         public static Conditional<T> If<T>(this T @this, bool condition) => new Conditional<T>(@this, condition);
         public class Conditional<T>
         {
-            private T t;
-            private bool condition;
+            private readonly T t;
+            private readonly bool condition;
             internal Conditional(T t, bool condition)
             {
                 this.t = t;
@@ -290,9 +290,9 @@ namespace BudgetPlanner.Middleware
 
             public class ConditionalThen
             {
-                private T t;
-                private bool condition;
-                private Func<T, T> then;
+                private readonly T t;
+                private readonly bool condition;
+                private readonly Func<T, T> then;
                 internal ConditionalThen(T t, bool condition, Func<T, T> then)
                 {
                     this.t = t;

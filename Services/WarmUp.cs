@@ -25,9 +25,7 @@ namespace BudgetPlanner.Services {
             this.tableStore = tableStore;
             this.roleManager = roleManager;
         }
-        public void Load() {
-            this.LoadAsync().GetAwaiter().GetResult();
-        }
+        public void Load()  => this.LoadAsync().GetAwaiter().GetResult();
 
         private async Task LoadAsync() {
             if (this.options == null || this.options.AdminUsers == null)
@@ -42,16 +40,6 @@ namespace BudgetPlanner.Services {
                 await this.userManager.AddToRoleAsync(user, "admin");
             }
 
-        }
-
-        private async Task RemoveOldRoleAssignementAsync() {
-            var roles = await this.tableStore.GetAllAsync<Tables.RoleEntity>(new Args { });
-            foreach (var r in roles)
-                await this.tableStore.DeleteAsync(r);
-
-            var userroles = await this.tableStore.GetAllAsync<Tables.UserRoleEntity>(new Args { });
-            foreach (var r in userroles)
-                await this.tableStore.DeleteAsync(r);
         }
     }
 }

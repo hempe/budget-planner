@@ -21,14 +21,15 @@ namespace BudgetPlanner.Tables
         public string ProviderDisplayName { get; set; }
 
         public LoginInfo() { }
+        public LoginInfo(UserLoginInfo user)
+        {
+            DisplayName = user.ProviderDisplayName;
+            LoginProvider = user.LoginProvider;
+            ProviderKey = user.ProviderKey;
+        }
 
         public static implicit operator UserLoginInfo(LoginInfo user) => user == null ? null : new UserLoginInfo(user.LoginProvider, user.ProviderKey, user.DisplayName);
 
-        public static implicit operator LoginInfo(UserLoginInfo user) => user == null ? null : new LoginInfo
-        {
-            DisplayName = user.ProviderDisplayName,
-            LoginProvider = user.LoginProvider,
-            ProviderKey = user.ProviderKey,
-        };
+        public static implicit operator LoginInfo(UserLoginInfo user) => user == null ? null : new LoginInfo(user);
     }
 }

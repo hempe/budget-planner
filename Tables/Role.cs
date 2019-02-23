@@ -10,6 +10,12 @@ namespace BudgetPlanner.Tables
         [IgnoreProperty]
         [RowKey]
         public string RoleName { get; set; }
+        public UserRoleEntity() { }
+        public UserRoleEntity(string userId, string roleName)
+        {
+            this.UserId = userId;
+            this.RoleName = roleName;
+        }
     }
 
     [Table("Roles")]
