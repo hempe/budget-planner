@@ -13,21 +13,19 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace BudgetPlanner.Services
 {
-
     internal partial class UserStore : IUserRoleStore<User>
     {
-
         public Task AddToRoleAsync(User user, string normalizedRoleName, CancellationToken cancellationToken)
             => this.GetRoleNameAsync(normalizedRoleName)
             .TransformAsync((r) => this.tableStore.AddOrUpdateAsync(new UserRoleEntity(user.Id, r)).ThrowOnError());
 
         public Task<IList<string>> GetRolesAsync(User user, CancellationToken cancellationToken)
-            => this.tableStore.GetAllAsync<UserRoleEntity>(new Args { { nameof(UserRoleEntity.UserId), user.Id } })
+            => this.tableStore.GetAllAsync<UserRoleEntity>(new UserArg(user.Id))
             .Select(z => z.RoleName);
 
         public Task<IList<User>> GetUsersInRoleAsync(string normalizedRoleName, CancellationToken cancellationToken)
             => this.GetRoleNameAsync(normalizedRoleName)
-            .TransformAsync(r => this.tableStore.GetAllAsync<UserRoleEntity>(new Args { { nameof(UserRoleEntity.RoleName), r } }))
+            .TransformAsync(r => this.tableStore.GetAllAsync<UserRoleEntity>(r.AsArg<UserRoleEntity>(x => x.RoleName)))
             .SelectAsync(z => this.FindByIdAsync(z.UserId, cancellationToken));
                 
         public Task<bool> IsInRoleAsync(User user, string normalizedRoleName, CancellationToken cancellationToken)
@@ -41,7 +39,7 @@ namespace BudgetPlanner.Services
             .ThrowOnError();
         
         private Task<string> GetRoleNameAsync(string normalizedRoleName)
-            => this.tableStore.GetAsync<RoleEntity>(new Args { { nameof(RoleEntity.NormalizedName), normalizedRoleName }})
+            => this.tableStore.GetAsync<RoleEntity>(normalizedRoleName.AsArg<RoleEntity>(x => x.NormalizedName))
             .Transform(e => e?.Name ?? normalizedRoleName);
     }
 }

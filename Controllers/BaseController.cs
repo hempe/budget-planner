@@ -1,5 +1,6 @@
 using BudgetPlanner.Models;
 using BudgetPlanner.Services;
+using BudgetPlanner.Tables;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,5 +18,7 @@ namespace BudgetPlanner.Controllers
         }
 
         protected string UserId { get => this.UserManager.GetUserId(this.User); }
+
+        protected Args UserArg { get => new UserArg(this.UserId); }
     }
 }

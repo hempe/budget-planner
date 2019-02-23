@@ -19,7 +19,7 @@ namespace BudgetPlanner.Controllers
         [ProducesResponseType(typeof(DashboardConfiguration[]), 200)]
         public async Task<IActionResult> GetAll()
         {
-            var values = await this.TableStore.GetAllAsync<Tables.Dashboard>(new Args { { nameof(Tables.Dashboard.UserId), this.UserId } });
+            var values = await this.TableStore.GetAllAsync<Tables.Dashboard>(this.UserArg);
             return this.Ok(values.Select(x => (DashboardConfiguration)x));
         }
 

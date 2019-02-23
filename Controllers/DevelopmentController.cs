@@ -23,7 +23,7 @@ namespace BudgetPlanner.Controllers
         public async Task<IActionResult> GetDevelopment()
         {
             var all = new List<DevelopmentElement>();
-            var budgets = await this.TableStore.GetAllAsync<Tables.Budget>(new Args { { nameof(Tables.Budget.UserId), this.UserId } });
+            var budgets = await this.TableStore.GetAllAsync<Tables.Budget>(this.UserArg);
             if (budgets != null)
             {
                 all.AddRange(budgets

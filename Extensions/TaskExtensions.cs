@@ -7,6 +7,8 @@ namespace BudgetPlanner
 {
     public static class TaskExtensions
     {
+
+        public static Task WhenAll(this IEnumerable<Task> tasks) => Task.WhenAll(tasks);
         public static async Task<TResult> Transform<TResult, TValue>(this Task<TValue> task, Func<TValue, TResult> transform)
             where TResult : class
          => transform(await task);

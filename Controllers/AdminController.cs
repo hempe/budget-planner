@@ -30,7 +30,16 @@ namespace BudgetPlanner.Controllers
             public string Table { get; set; }
             public Dictionary<string, object> Data { get; set; }
         }
-        
+
+        private class RowArgs : Args
+        {
+            public RowArgs(string partitionKey, string rowKey)
+            {
+                base.Add(nameof(ITableEntity.PartitionKey), partitionKey);
+                base.Add(nameof(ITableEntity.RowKey), rowKey);
+            }
+        }
+
         public AdminController(UserManager<User> userManager, TableStore tableStore) : base(userManager, tableStore) { }
 
         [HttpGet("tables")]
@@ -49,7 +58,7 @@ namespace BudgetPlanner.Controllers
         {
             var table = this.FindTableType(tableName);
             var users = await this.GetUserMappingAsync();
-            var all = await this.TableStore.GetAllAsync(table, new Args { });
+            var all = await this.TableStore.GetAllAsync(table);
             var cleaned = this.ToTableEntries(table, all, false, users);
             return this.Ok(cleaned);
         }
@@ -95,9 +104,7 @@ namespace BudgetPlanner.Controllers
             var table = this.FindTableType(tableName);
             var users = await this.GetUserMappingAsync();
 
-            var value = await this.TableStore.GetAsync(table,
-                new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
-                });
+            var value = await this.TableStore.GetAsync(table, new RowArgs(partitionKey, rowKey));
             return this.Ok(this.ToTableEntry(table, value, true, users));
         }
 
@@ -116,9 +123,7 @@ namespace BudgetPlanner.Controllers
                 return this.NoContent();
             }
 
-            var entry = await this.TableStore.GetAsync(table,
-                new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
-                });
+            var entry = await this.TableStore.GetAsync(table, new RowArgs(partitionKey, rowKey));
             if (entry == null)
                 return this.BadRequest();
             await this.TableStore.DeleteAsync(table, entry);
@@ -133,17 +138,13 @@ namespace BudgetPlanner.Controllers
             var table = this.FindTableType(tableName);
             var users = await this.GetUserMappingAsync();
 
-            var entity = await this.TableStore.GetAsync(table,
-                new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
-                });
+            var entity = await this.TableStore.GetAsync(table, new RowArgs(partitionKey, rowKey));
 
             if (entity == null)
                 return BadRequest();
             entity = this.UpdateTableEntry(table, entity, tableEntry, true);
             await this.TableStore.AddOrUpdateAsync(table, entity);
-            entity = await this.TableStore.GetAsync(table,
-                new Args { { nameof(ITableEntity.PartitionKey), partitionKey }, { nameof(ITableEntity.RowKey), rowKey }
-                });
+            entity = await this.TableStore.GetAsync(table, new RowArgs(partitionKey, rowKey));
 
             return this.Ok(this.ToTableEntry(table, entity, true, users));
         }
@@ -221,11 +222,11 @@ namespace BudgetPlanner.Controllers
 
         private async Task<Dictionary<string, string>> GetUserMappingAsync()
         {
-            var all = await this.TableStore.GetAllAsync<UserLookupEntity>(new Args { });
+            var all = await this.TableStore.GetAllAsync<UserLookupEntity>();
             return all.ToDictionary(x => x.UserId, x => x.UserName);
         }
 
-        private List<TableEntry> ToTableEntries(Type type, List<ITableEntity> values, bool includeObjects, Dictionary<string, string> userMappings)
+        private List<TableEntry> ToTableEntries(Type type, IList<ITableEntity> values, bool includeObjects, Dictionary<string, string> userMappings)
         {
             var rows = new List<TableEntry>();
             if (values == null)

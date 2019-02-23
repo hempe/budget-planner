@@ -34,22 +34,18 @@ namespace BudgetPlanner.Services
 
         public async Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
         {
-
-            await this.GetLoginsAsync(user, cancellationToken)
-                .WhenAll(l => this.RemoveLoginAsync(user, l.LoginProvider, l.ProviderKey, cancellationToken));
-
-            await this.GetTokensAsync(user)
-                .WhenAll(t => this.RemoveTokenAsync(user, t.PartitionKey, t.Name, cancellationToken).CatchException());
-
-            await Task.WhenAll(Types.Select(type => 
-                 this.tableStore.GetAllAsync(type, new Args { { nameof(UserData.UserId), user.Id } })
-                    .WhenAll(e => this.tableStore.DeleteAsync(type,e).CatchException())
-            ));
-
-            await this.tableStore.DeleteAsync<UserEntity>(user).CatchException();
-
+            await new []{
+                this.GetLoginsAsync(user, cancellationToken)
+                    .WhenAll(l => this.RemoveLoginAsync(user, l.LoginProvider, l.ProviderKey, cancellationToken)),
+                this.GetTokensAsync(user)
+                    .WhenAll(t => this.RemoveTokenAsync(user, t.PartitionKey, t.Name, cancellationToken).CatchException()),
+                Types.Select(type =>
+                    this.tableStore.GetAllAsync(type, new UserArg(user.Id))
+                        .WhenAll(e => this.tableStore.DeleteAsync(type, e).CatchException())
+                ).WhenAll(),
+                this.tableStore.DeleteAsync<UserEntity>(user).CatchException()
+            }.WhenAll();
             return IdentityResult.Success;
-
         }
 
         public void Dispose() { }
@@ -57,9 +53,7 @@ namespace BudgetPlanner.Services
         public async Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
             => await this.tableStore.GetAsync(new UserEntity { UserId = userId });
         public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
-            => await this.tableStore.GetAsync<UserEntity>(
-                new Args { { nameof(UserEntity.NormalizedUserName), normalizedUserName }
-            });
+            => await this.tableStore.GetAsync<UserEntity>(normalizedUserName.AsArg<UserEntity>(u => u.NormalizedUserName));
 
         public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
             => user.NormalizedUserName.AsTask();
@@ -78,9 +72,8 @@ namespace BudgetPlanner.Services
 
         public Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
             => this.tableStore.AddOrUpdateAsync<UserEntity>(user).MapToResult();
+
         private async Task<IList<Token>> GetTokensAsync(User user)
-            => await this.tableStore.GetAllAsync<Token>(
-                new Args { { nameof(Token.UserId), user.Id } }
-            );
+            => await this.tableStore.GetAllAsync<Token>(new UserArg(user.Id));
     }
 }

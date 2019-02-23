@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BudgetPlanner.Models;
+using BudgetPlanner.Tables;
 using Newtonsoft.Json;
 
 namespace BudgetPlanner.Services.Export
@@ -21,7 +22,7 @@ namespace BudgetPlanner.Services.Export
 
         public async Task ImportAsync(string userId, Complete value)
         {
-            var budgets = await this.TableStore.GetAllAsync<Tables.Budget>(new Args { { nameof(Tables.Budget.UserId), userId } });
+            var budgets = await this.TableStore.GetAllAsync<Tables.Budget>(new UserArg(userId));
             foreach (var b in budgets)
             {
                 await this.TableStore.DeleteAsync(b);
@@ -56,7 +57,7 @@ namespace BudgetPlanner.Services.Export
 
         public async Task<Models.Complete> GetJsonAsync(string userId)
         {
-            var budgets = await this.TableStore.GetAllAsync<Tables.Budget>(new Args { { nameof(Tables.Budget.UserId), userId } });
+            var budgets = await this.TableStore.GetAllAsync<Tables.Budget>(new UserArg(userId));
             var revenue = await this.TableStore.GetAsync(new Tables.Revenue { UserId = userId });
             var assets = await this.TableStore.GetAsync(new Tables.Asset { UserId = userId });
             var profile = await this.TableStore.GetAsync(new Tables.Profile { UserId = userId });

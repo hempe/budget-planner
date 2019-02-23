@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BudgetPlanner.Middleware;
 using BudgetPlanner.Models;
 using BudgetPlanner.Services;
+using BudgetPlanner.Tables;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace BudgetPlanner.Controllers
         [ProducesResponseType(typeof(BudgetOverview[]), 200)]
         public async Task<IActionResult> GetAll()
         {
-            var values = await this.TableStore.GetAllAsync<Tables.Budget>(new Args { { nameof(Tables.Budget.UserId), this.UserId } });
+            var values = await this.TableStore.GetAllAsync<Tables.Budget>(this.UserArg);
             if (values.Count == 0)
                 values.Add(new Tables.Budget { Data = new BudgetData { }, Name = "Budget", Id = Guid.NewGuid().ToString() });
 

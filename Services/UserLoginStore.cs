@@ -24,7 +24,7 @@ namespace BudgetPlanner.Services {
 
         public Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken)
             => this.tableStore
-                .GetAllAsync<LoginInfo>(new Args { { nameof(LoginInfo.UserId), user.Id } })
+                .GetAllAsync<LoginInfo>(new UserArg(user.Id))
                 .Select(z => (UserLoginInfo)z);
         
         public Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken)

@@ -24,8 +24,8 @@ namespace BudgetPlanner.Services
             => await this.tableStore.GetAsync(new RoleEntity { Id = roleId });
 
         public async Task<IdentityRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
-            => await this.tableStore.GetAsync<RoleEntity>( new Args { { nameof(RoleEntity.NormalizedName), normalizedRoleName }});
-
+            => await this.tableStore.GetAsync<RoleEntity>( normalizedRoleName.AsArg<RoleEntity>(r => r.NormalizedName));
+            
         public Task<string> GetNormalizedRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
             => role.NormalizedName.AsTask();
 
