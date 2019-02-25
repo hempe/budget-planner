@@ -35,8 +35,7 @@ namespace BudgetPlanner.Services.Export
         public async Task<Stream> GetExportAsync(string userId)
         {
             var data = await this.baseHandler.GetJsonAsync(userId);
-            var content = await this.templateService.LoadTemplateAsync("Templates/Export.html.template");
-            var result = this.templateService.Render(content, data, data?.Client.Language);
+            var result = await this.templateService.RenderAsync("Templates/Export.html.template", data, data?.Client.Language);
             return new MemoryStream(Encoding.UTF8.GetBytes(result));
         }
 

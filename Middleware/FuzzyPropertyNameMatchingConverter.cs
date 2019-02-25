@@ -11,16 +11,13 @@ namespace BudgetPlanner.Middleware
     public class FuzzyPropertyNameMatchingConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
-        {
-            return objectType.Assembly == this.GetType().Assembly && objectType.GetConstructor(Type.EmptyTypes) != null;
-        }
-
+            => objectType.Assembly == this.GetType().Assembly && objectType.GetConstructor(Type.EmptyTypes) != null;
+    
         public override bool CanWrite => false;
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var constructor = objectType.GetConstructor(Type.EmptyTypes);
-
             var instance = constructor.Invoke(null);
 
             if (reader.ValueType.IsSimple())
@@ -62,10 +59,8 @@ namespace BudgetPlanner.Middleware
             foreach (var kv in properties)
             {
                 if (kv.Key.Equals(search))
-                {
                     return kv.Value;
-                }
-
+                
                 var d = kv.Key.LevenshteinDistance(search);
                 if (0 < d && d < distance && d < maxDistance)
                 {
@@ -78,13 +73,8 @@ namespace BudgetPlanner.Middleware
         }
 
         private void ParseDictionaryAsListByType(Type elementType, JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance)
-        {
-            this.GetType()
-                .GetMethod(nameof(ParseDictionaryAsList), BindingFlags.Instance | BindingFlags.NonPublic)
-                .MakeGenericMethod(elementType)
-                .Invoke(this, new[] { jp, serializer, prop, instance });
-        }
-
+            => this.InvokePrivateGeneric<object>(nameof(ParseDictionaryAsList), elementType, jp, serializer, prop, instance);
+        
         private void ParseDictionaryAsList<TElement>(JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance)
         {
             var surogateValue = (Dictionary<string, object>)jp.Value.ToObject(typeof(Dictionary<string, object>), serializer);

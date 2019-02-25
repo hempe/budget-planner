@@ -25,8 +25,7 @@ namespace BudgetPlanner.Services {
 
         public async Task SendEmailAsync(string receiverEmail, string subject, string templatePath, object data, string language = null) {
 
-            var template = await this.templateService.LoadTemplateAsync(templatePath);
-            var content = this.templateService.Render(template, data, language);
+            var content = await this.templateService.RenderAsync(templatePath, data, language);
             var email = new SendGridMessage {
                 From = new EmailAddress(this.options.FromEmailAddress, this.options.FromName),
                 Subject = subject,
@@ -37,10 +36,7 @@ namespace BudgetPlanner.Services {
             var response = await this.client.SendEmailAsync(email);
         }
 
-        public async Task<string> ParseSendEmailAsync(string receiverEmail, string subject, string templatePath, object data, string language = null) {
-
-            var template = await this.templateService.LoadTemplateAsync(templatePath);
-            return this.templateService.Render(template, data, language);
-        }
+        public Task<string> ParseSendEmailAsync(string receiverEmail, string subject, string templatePath, object data, string language = null)
+            => this.templateService.RenderAsync(templatePath, data, language);
     }
 }

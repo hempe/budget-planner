@@ -80,7 +80,6 @@ namespace BudgetPlanner.Services
 
         public async Task<TableResult> DeleteAsync(Type type, ITableEntity entity)
         {
-
             var table = await this.GetTableAsync(type);
             entity.ETag = "*";
             entity = this.GetTableAttribute(type).BeforeSave(entity);
@@ -98,9 +97,7 @@ namespace BudgetPlanner.Services
         {
             var table = await this.GetTableAsync(type);
             entity = this.GetTableAttribute(type).BeforeSave(entity);
-
-            var tableOperation = TableOperation.InsertOrReplace(entity);
-            return await table.ExecuteAsync(tableOperation);
+            return await table.ExecuteAsync(TableOperation.InsertOrReplace(entity));
         }
 
         public async Task<T> GetAsync<T>(T entity) where T : class, ITableEntity, new()
@@ -141,7 +138,7 @@ namespace BudgetPlanner.Services
                     filter = TableQuery.CombineFilters(filter, TableOperators.And, condition);
             }
 
-            var query = new TableQuery<T>().Where(filter).Take(1);
+            var query = (filter == null ? new TableQuery<T>() : new TableQuery<T>().Where(filter)).Take(1);
             T re = null;
             TableContinuationToken continuationToken = null;
             do
@@ -165,22 +162,17 @@ namespace BudgetPlanner.Services
             var type = typeof(T);
             var table = await this.GetViewAsync(type);
             var attribute = this.GetViewAttribute(type);
+
             foreach (var kv in parameter ?? new Args())
             {
                 var propertyName = attribute.PropertyName(type, kv.Key);
                 var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);
-                if (filter == null)
-                    filter = condition;
-                else
-                    filter = TableQuery.CombineFilters(filter, TableOperators.And, condition);
+                filter = filter == null
+                    ? condition
+                    : TableQuery.CombineFilters(filter, TableOperators.And, condition);
             }
 
-            var query = new TableQuery<T>();
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
+            var query = filter == null ? new TableQuery<T>() : new TableQuery<T>().Where(filter);
             var re = new List<T>();
             TableContinuationToken continuationToken = null;
             do
@@ -194,14 +186,11 @@ namespace BudgetPlanner.Services
         }
 
         public Task<IList<ITableEntity>> GetAllAsync(Type type, Args parameter = null)
-        {
-            return (Task<IList<ITableEntity>>)this.GetType().GetMethod(nameof(this.GetAllTableEntitesAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new[] { type }).Invoke(this, new[] { parameter ?? new Args() });
-        }
+            => this.InvokePrivateGeneric<Task<IList<ITableEntity>>>(nameof(this.GetAllTableEntitesAsync), type, parameter ?? new Args());
+        
         public Task<ITableEntity> GetAsync(Type type, Args parameter)
-        {
-            return (Task<ITableEntity>)this.GetType().GetMethod(nameof(this.GetEntityAsync), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(new[] { type }).Invoke(this, new[] { parameter });
-        }
-
+            => this.InvokePrivateGeneric<Task<ITableEntity>>(nameof(this.GetEntityAsync), type, parameter ?? new Args());
+        
         private async Task<ITableEntity> GetEntityAsync<T>(Args parameter) where T : class, ITableEntity, new()
         {
             var type = typeof(T);
@@ -218,7 +207,7 @@ namespace BudgetPlanner.Services
                     filter = TableQuery.CombineFilters(filter, TableOperators.And, condition);
             }
 
-            var query = new TableQuery<T>().Where(filter).Take(1);
+            var query = (filter == null ? new TableQuery<T>() : new TableQuery<T>().Where(filter)).Take(1);
             T re = null;
             TableContinuationToken continuationToken = null;
             do
@@ -246,18 +235,12 @@ namespace BudgetPlanner.Services
             {
                 var propertyName = attribute.PropertyName(type, kv.Key);
                 var condition = TableQuery.GenerateFilterCondition(propertyName, QueryComparisons.Equal, kv.Value);
-                if (filter == null)
-                    filter = condition;
-                else
-                    filter = TableQuery.CombineFilters(filter, TableOperators.And, condition);
+                filter = filter == null 
+                    ? condition
+                    : TableQuery.CombineFilters(filter, TableOperators.And, condition);
             }
 
-            var query = new TableQuery<T>();
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
+            var query = filter == null ? new TableQuery<T>() : new TableQuery<T>().Where(filter);
             var re = new List<ITableEntity>();
             TableContinuationToken continuationToken = null;
             do

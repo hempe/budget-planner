@@ -19,7 +19,7 @@ namespace BudgetPlanner.Services
             => user.PasswordHash.AsTask();
 
         public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
-            => user.AsTask(u =>!string.IsNullOrWhiteSpace(user.PasswordHash));
+            => user.AsTask(u => !string.IsNullOrWhiteSpace(user.PasswordHash));
 
         public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
             => user.AsTask(u => u.PasswordHash = passwordHash);

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace BudgetPlanner
@@ -15,5 +16,15 @@ namespace BudgetPlanner
  
         public static Task<TResult[]> WhenAll<TValue,TResult>(this IEnumerable<TValue> enumerable, Func<TValue,Task<TResult>> func)
             => Task.WhenAll(enumerable.Select(z => func(z)));
+
+        public static TTarget InvokePrivateGeneric<TTarget>(
+            this object source, 
+            string method,
+            Type genericType,
+            params Object[] parameters)
+            where TTarget: class
+            =>  (TTarget) source.GetType()
+                .GetMethod(method, BindingFlags.Instance | BindingFlags.NonPublic)
+                .MakeGenericMethod(new[] { genericType }).Invoke(source, parameters);
     }
 }
