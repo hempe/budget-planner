@@ -14,5 +14,6 @@
         "source.organizeImports": true
     },
     "appService.deploySubpath": ".publish",
-    "msbuildProjectTools.nuget.includePreRelease": false
+    "msbuildProjectTools.nuget.includePreRelease": false,
+    "appService.defaultWebAppToDeploy": "None"
 }

@@ -10,14 +10,7 @@ namespace BudgetPlanner.Extensions
     internal static class Check
     {
         public static string GetPropertyName<T, TProperty>(Expression<Func<T, TProperty>> propertyAccessExpression)
-        {
-            var parameterExpression = propertyAccessExpression.Parameters.Single();
-            var propertyPath = MatchPropertyAccess(propertyAccessExpression.Body, parameterExpression);
-            return propertyPath.Name;
-        }
-
-        private static PropertyInfo MatchPropertyAccess(Expression parameterExpression, Expression propertyAccessExpression)
-            => (RemoveConvert(propertyAccessExpression) as MemberExpression)?.Member as PropertyInfo;
+            => ((RemoveConvert(propertyAccessExpression) as MemberExpression)?.Member as PropertyInfo)?.Name;
 
         private static Expression RemoveConvert(this Expression expression)
         {
