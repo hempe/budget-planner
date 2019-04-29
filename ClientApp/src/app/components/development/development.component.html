@@ -13,21 +13,28 @@
                     </div>
                 </menu-container>
                 <div *ngIf="value" class="header">
-                    <mat-card *ngIf="tooltip" class="label" [style.top]="tooltip.top" [style.left]="tooltip.left">
-
-                        <mat-card-title>{{tooltip.year}}</mat-card-title>
-                        <mat-card-subtitle>{{tooltip.group}}: {{tooltip.value}}</mat-card-subtitle>
-
-                    </mat-card>
-                    <canvas baseChart height="250" width="250" [colors]="colors" [options]="options" [datasets]="datasets" chartType="bar" (chartClick)="chartClicked($event)"></canvas>
+                    <canvas baseChart height="250" width="250" [colors]="colors" [options]="options" [datasets]="datasetsOne" chartType="bar" (chartClick)="chartClicked($event)"></canvas>
                 </div>
+                <div *ngIf="value" class="header">
+                    <canvas baseChart height="250" width="250" [colors]="colors" [options]="options" [datasets]="datasetsTwo" chartType="bar" (chartClick)="chartClicked($event)"></canvas>
+                </div>
+                <div *ngIf="value" class="header">
+                    <canvas baseChart height="250" width="250" [colors]="colors" [options]="options" [datasets]="datasetsThree" chartType="bar" (chartClick)="chartClicked($event)"></canvas>
+                </div>
+
+                <mat-card *ngIf="tooltip" class="label" [style.top]="tooltip.top" [style.left]="tooltip.left">
+                    <mat-card-title><mat-icon>{{tooltip.icon}}</mat-icon>{{tooltip.year}}</mat-card-title>
+                    <mat-card-subtitle>{{tooltip.group}}: {{tooltip.value}}</mat-card-subtitle>
+                </mat-card>
             </menu-container>
             <br/>
-            <data-source-table [columns]="columns" [dataSourceFactory]="dataSource" (selected)="selected($event)"></data-source-table>
+            
+            <data-source-table [pageSize]="100" [columns]="columns" [dataSourceFactory]="dataSource" (selected)="selected($event)">
+                <field search [(ngModel)]="year" (blur)="setYear()" name="Year" type="number" flex=0.5></field>
+            </data-source-table>
         </menu-left>
 
         <menu-right>
-
             <menu-header>
                 <menu-title>{{ 'Edit' | translate }}</menu-title>
             </menu-header>

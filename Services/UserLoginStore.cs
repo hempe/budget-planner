@@ -20,12 +20,12 @@ namespace BudgetPlanner.Services {
         
         public Task<User> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
             => this.tableStore.GetAsync<LoginInfo>(new LoginInfo { LoginProvider = loginProvider, ProviderKey = providerKey })
-                .IfNotNull(e => this.FindByIdAsync(e.UserId, cancellationToken));
+                .ContinueWithAsync(e => e == null ? default : this.FindByIdAsync(e.UserId, cancellationToken));
 
         public Task<IList<UserLoginInfo>> GetLoginsAsync(User user, CancellationToken cancellationToken)
             => this.tableStore
                 .GetAllAsync<LoginInfo>(new UserArg(user.Id))
-                .Select(z => (UserLoginInfo)z);
+                .ContinueWithAsync(z => z.Cast<UserLoginInfo>().ToIList());
         
         public Task RemoveLoginAsync(User user, string loginProvider, string providerKey, CancellationToken cancellationToken)
             => this.tableStore.DeleteAsync<UserEntity>(user).CatchException();

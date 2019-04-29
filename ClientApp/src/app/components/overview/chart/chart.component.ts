@@ -1,21 +1,8 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { BaseChartDirective, Color, Colors } from 'ng2-charts';
 import { Observable, Subscription } from 'rxjs';
 import { OverviewContainer } from '../../../common/api';
-import {
-    array,
-    hexToRgb,
-    numberWithSeperator,
-    toSum
-} from '../../../common/helper';
+import { array, hexToRgb, numberWithSeperator, toSum } from '../../../common/helper';
 import { ConfigurationService } from '../../../services/configuration';
 import { ResizeService } from '../../../services/resize';
 
@@ -25,17 +12,28 @@ import { ResizeService } from '../../../services/resize';
     styleUrls: ['./chart.component.css']
 })
 export class OverviewChartComponent implements OnInit, OnDestroy {
-    public datasets: Colors[] = [];
-    public labels: string[];
-
-    private init: boolean = false;
-
-    @ViewChild(BaseChartDirective) private _chart: BaseChartDirective;
 
     constructor(
         private config: ConfigurationService,
         private resizeService: ResizeService
     ) {}
+
+    @Input()
+    public set units(value: OverviewContainer[]) {
+        value = array(value);
+        value.forEach(val => (val.elements = array(val.elements)));
+        this._units = value;
+        this.updateGraphic();
+    }
+    public get units(): OverviewContainer[] {
+        return this._units;
+    }
+    public datasets: Colors[] = [];
+    public labels: string[];
+
+    private init = false;
+
+    @ViewChild(BaseChartDirective) private _chart: BaseChartDirective;
 
     public options: any = {
         scales: {
@@ -92,9 +90,8 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
         },
         hover: {
             onHover: function(e) {
-                var point = this.getElementAtEvent(e);
-                if (point.length) e.target.style.cursor = 'pointer';
-                else e.target.style.cursor = 'default';
+                const point = this.getElementAtEvent(e);
+                if (point.length) { e.target.style.cursor = 'pointer'; } else { e.target.style.cursor = 'default'; }
             }
         },
         tooltips: {
@@ -124,27 +121,19 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
     public tooltip: string[];
     private total: string[];
 
-    @Input() public chartType: string = 'bar';
-    @Input() path: string = '';
+    @Input() public chartType = 'bar';
+    @Input() path = '';
 
-    public color: string = '';
-
-    @Input()
-    public set units(value: OverviewContainer[]) {
-        value = array(value);
-        value.forEach(val => (val.elements = array(val.elements)));
-        this._units = value;
-        this.updateGraphic();
-    }
-    public get units(): OverviewContainer[] {
-        return this._units;
-    }
+    public color = '';
 
     @Input() public update: Observable<{}>;
     private resizeSub: Subscription;
 
+    @Output() edit: EventEmitter<string> = new EventEmitter();
+    private _units: OverviewContainer[];
+
     ngOnDestroy(): void {
-        if (this.resizeSub) this.resizeSub.unsubscribe();
+        if (this.resizeSub) { this.resizeSub.unsubscribe(); }
     }
     ngOnInit(): void {
         this.resizeSub = this.resizeService.resized.subscribe(x => {
@@ -154,33 +143,32 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
         this.init = true;
         this.updateGraphic();
 
-        if (this.update)
+        if (this.update) {
             this.update.subscribe(x => {
                 this.updateGraphic();
             });
+        }
     }
-
-    @Output() edit: EventEmitter<string> = new EventEmitter();
     public chartClicked(e: any): void {
         if (!e || !e.active || !e.active[0] || !e.active[0]._model) {
             return;
         }
-        let label = e.active[0]._model.label;
-        if (this.edit) this.edit.emit(label);
+        const label = e.active[0]._model.label;
+        if (this.edit) { this.edit.emit(label); }
     }
 
     private rgba(percent: number) {
         // prettier-ignore
         //        return `${x.key == 'positive' ? '255' : '0'},${x.key == 'positive' ? '255' : '0'},${x.key == 'positive' ? '255' : '0'}`;
 
-        let addon = 10;
+        const addon = 10;
         return `rgba(${hexToRgb(this.color)
             .map(x => (x + addon < 255 ? x + addon : 255))
             .join(',')}, ${percent})`;
     }
 
     private updateGraphic() {
-        if (!this.units || !this.init) return;
+        if (!this.units || !this.init) { return; }
         this.total = [
             'Total',
             numberWithSeperator(this.units.map(x => x.value).reduce(toSum, 0))
@@ -190,8 +178,8 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
         this.datasets = [
             {
                 data: this.units.map(x => x.value),
-                //backgroundColor: this.color,
-                //hoverBackgroundColor: this.color,
+                // backgroundColor: this.color,
+                // hoverBackgroundColor: this.color,
 
                 backgroundColor: this.units.map((x, i) =>
                     this.rgba(0.5 + i / (2 * this.units.length))
@@ -218,5 +206,4 @@ export class OverviewChartComponent implements OnInit, OnDestroy {
             }
         }, 0);
     }
-    private _units: OverviewContainer[];
 }

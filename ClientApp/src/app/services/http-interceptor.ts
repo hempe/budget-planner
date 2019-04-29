@@ -1,13 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-    ConnectionBackend,
-    Http,
-    Request,
-    RequestOptions,
-    RequestOptionsArgs,
-    Response,
-    XHRBackend
-} from '@angular/http';
+import { ConnectionBackend, Http, Request, RequestOptions, RequestOptionsArgs, Response, XHRBackend } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,7 +27,6 @@ export function httpFactory(
 
 @Injectable()
 export class HttpInterceptor extends Http {
-    //private router: Router
     constructor(
         backend: ConnectionBackend,
         defaultOptions: RequestOptions,
@@ -87,21 +78,21 @@ export class HttpInterceptor extends Http {
     }
 
     private on401(obj: Observable<Response>): Observable<Response> {
-        let subject = new Subject<Response>();
+        const subject = new Subject<Response>();
         obj.subscribe(
             data => {
                 CustomErrorStateMatcher.errors = {};
                 subject.next(data);
             },
             err => {
-                if (err && err.status == 401) {
+                if (err && err.status === 401) {
                     this.configurationService.username = undefined;
                     this.configurationService.loggedIn = undefined;
-                    //this.router.navigate(['/login']);
+                    // this.router.navigate(['/login']);
                 }
                 try {
                     console.error(err.status, err);
-                    if (err.status == 0) {
+                    if (err.status === 0) {
                         this.alert('Server not reachable');
                     }
                     if (err.status >= 500) {
@@ -119,7 +110,7 @@ export class HttpInterceptor extends Http {
     }
 
     private alert(msg) {
-        let trx = this.translateService.get(msg).subscribe(x => {
+        const trx = this.translateService.get(msg).subscribe(x => {
             this.snackBar.open(x, undefined, {
                 duration: 3000
             });
@@ -152,7 +143,7 @@ export class HttpInterceptor extends Http {
             );
         }*/
 
-        //options.headers.append('Accept', '*/*');
+        // options.headers.append('Accept', '*/*');
 
         return options;
     }

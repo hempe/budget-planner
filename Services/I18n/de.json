@@ -28,24 +28,20 @@
     "displayName": "Anzeigename",
     "Down": "Runter",
     "Edit": "Bearbeiten",
+    "Enabled": "Aktiv",
     "eMail": "E-Mail",
     "email": "E-Mail",
     "emailConfirmed": "E-Mail bestätigt",
     "endYear": "Bis",
     "Errors": {
-        "PasswordRequiresNonAlphanumeric":
-            "Passwörter müssen mindestens ein nicht alphanumerisches Zeichen enthalten.",
-        "PasswordRequiresDigit":
-            "Passwörter müssen mindestens eine Ziffer haben ('0' - '9').",
+        "PasswordRequiresNonAlphanumeric": "Passwörter müssen mindestens ein nicht alphanumerisches Zeichen enthalten.",
+        "PasswordRequiresDigit": "Passwörter müssen mindestens eine Ziffer haben ('0' - '9').",
         "DuplicateEmail": "E-Mail ist bereits vergeben",
         "InvalidLoginAttempt": "Ungültiges Login",
         "PasswordTooShort": "Passwort zu kurz.",
-        "PasswordRequiresLower":
-            "Passwörter müssen mindestens einen Kleinbuchstaben enthalten ('a' - 'z').",
-        "PasswordRequiresUpper":
-            "Passwörter müssen mindestens einen Großbuchstaben haben ('A' - 'Z').",
-        "PasswordRequiresUniqueChars":
-            "Passwörter müssen mindestens 2 verschiedene Zeichen enthalten.",
+        "PasswordRequiresLower": "Passwörter müssen mindestens einen Kleinbuchstaben enthalten ('a' - 'z').",
+        "PasswordRequiresUpper": "Passwörter müssen mindestens einen Großbuchstaben haben ('A' - 'Z').",
+        "PasswordRequiresUniqueChars": "Passwörter müssen mindestens 2 verschiedene Zeichen enthalten.",
         "Required": "Erforderlich"
     },
     "Expenses": "Ausgaben",
@@ -76,8 +72,7 @@
     "Logins": "Logins",
     "loginProvider": "Login-Anbieter",
     "MatFile": {
-        "DragFilesHereOrBrowse":
-            "Ziehen Sie Dateien hierher oder durchsuchen Sie Ihren PC"
+        "DragFilesHereOrBrowse": "Ziehen Sie Dateien hierher oder durchsuchen Sie Ihren PC"
     },
     "mobilNumber": "Mobil",
     "Name": "Name",
@@ -98,8 +93,7 @@
         "Title": "Password zurücksetzen",
         "Hello": "Hallo, ",
         "MessageBold": "Es gab eine Aufforderung, Ihr Passwort zu ändern.",
-        "Message":
-            "Wenn Sie diese Anfrage nicht gemacht haben, ignorieren Sie einfach diese E-Mail. Andernfalls klicken Sie bitte auf den folgenden Link, um Ihr Passwort zu ändern:",
+        "Message": "Wenn Sie diese Anfrage nicht gemacht haben, ignorieren Sie einfach diese E-Mail. Andernfalls klicken Sie bitte auf den folgenden Link, um Ihr Passwort zu ändern:",
         "Link": "Password ändern"
     },
     "RegisterEmailSend": "Reset-E-Mail wurde gesendet",
@@ -107,8 +101,7 @@
         "Title": "E-Mail Bestätigung",
         "Hello": "Hallo, ",
         "MessageBold": "Es gab eine Registrierung mit dieser E-Mail.",
-        "Message":
-            "Wenn Sie nicht versuchen, sich zu registrieren, ignorieren Sie einfach diese E-Mail, andernfalls klicken Sie bitte unten auf den Link, um Ihre E-Mail zu bestätigen:",
+        "Message": "Wenn Sie nicht versuchen, sich zu registrieren, ignorieren Sie einfach diese E-Mail, andernfalls klicken Sie bitte unten auf den Link, um Ihre E-Mail zu bestätigen:",
         "Link": "E-Mail bestätigen"
     },
     "Revenue": "Einnahmen",
@@ -131,8 +124,7 @@
     "userName": "Benutzername",
     "UserRoles": "Benutzerrollen",
     "value": "Wert",
-    "WelcomeMessage":
-        "Willkommen! Melden Sie sich an und beginnen Sie damit, Ihr budget zu plannen.",
+    "WelcomeMessage": "Willkommen! Melden Sie sich an und beginnen Sie damit, Ihr budget zu plannen.",
     "Year": "Jahr",
     "zipCode": "PLZ"
 }

@@ -78,6 +78,9 @@ namespace BudgetPlanner.Middleware
         private void ParseDictionaryAsList<TElement>(JProperty jp, JsonSerializer serializer, PropertyInfo prop, object instance)
         {
             var surogateValue = (Dictionary<string, object>)jp.Value.ToObject(typeof(Dictionary<string, object>), serializer);
+            if(surogateValue == null)
+                return;
+                
             var value = surogateValue
                 .Where(kv => int.TryParse(kv.Key.ToString(), out _))
                 .Select(x => x.Value as JObject)

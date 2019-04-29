@@ -41,8 +41,12 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
 
     @ViewChild('filter') filter: ElementRef;
 
-    @Input() public dataSourceFactory: DataSourceFactory<any, any> | null;
-    @Input() public columns: DataSourceColumn[];
+    @Input()
+    public dataSourceFactory: DataSourceFactory<any, any> | null;
+
+    @Input()
+    public columns: DataSourceColumn[];
+
     @Input()
     public get selectable(): boolean {
         return this._selectable;
@@ -50,6 +54,9 @@ export class DataSourceTableComponent implements OnInit, OnDestroy {
     public set selectable(value: boolean) {
         this._selectable = value === true || <any>value === 'true';
     }
+
+    @Input()
+    public pageSize = 10;
 
     @Input()
     public get editable(): boolean {

@@ -1,7 +1,6 @@
 <mat-card [style.background-color]="color">
     <div class="header">
-        <div class="title" (click)="toggleTotals()">{{label}}</div>
-
+        <div class="title">{{label}}</div>
         <div *ngIf="tooltip" class="label">
             <div *ngFor="let t of tooltip;let index = index" [style.font-size]="index == 0 ? '1em': '.8em'">{{t}}</div>
         </div>

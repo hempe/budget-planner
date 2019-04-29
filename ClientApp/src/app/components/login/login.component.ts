@@ -28,6 +28,11 @@ export class LoginComponent implements OnInit {
         rememberMe: false
     };
 
+    public head: MenuEntry = {
+        icon: 'home',
+        name: 'Home'
+    };
+
     ngOnInit(): void {
         this.api.getProviders().subscribe(x => (this.providers = x));
         if (this.route.snapshot.queryParams['forgotCode']) {
@@ -36,11 +41,6 @@ export class LoginComponent implements OnInit {
             this.login.email = this.route.snapshot.queryParams['email'];
         }
     }
-
-    public head: MenuEntry = {
-        icon: 'home',
-        name: 'Home'
-    };
 
     public signInWith(provider: string) {
         this.api.signInWith(provider);

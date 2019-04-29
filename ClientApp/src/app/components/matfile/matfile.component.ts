@@ -1,10 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import {
-    FileLikeObject,
-    FileUploader,
-    FileUploaderOptions
-} from 'ng2-file-upload';
+import { FileLikeObject, FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 
 @Component({
     selector: 'mat-file',
@@ -22,13 +18,16 @@ export class MatFileComponent implements OnInit {
 
     @Input() public color: string;
 
+    public uploader: FileUploader;
+    public hasBaseDropZoneOver = false;
+    public hasAnotherDropZoneOver = false;
+
     ngOnInit(): void {
-        var options: FileUploaderOptions = {
+        const options: FileUploaderOptions = {
             url: this.url,
             isHTML5: true,
             autoUpload: true,
             method: 'PUT',
-            /*authToken: 'Token ' + this.configuration.accessToken,*/
             disableMultipart: true,
             removeAfterUpload: true,
             filters: [
@@ -36,10 +35,10 @@ export class MatFileComponent implements OnInit {
                     name: 'types',
                     fn: (x: FileLikeObject) => {
                         return (
-                            x.type == 'image/gif' ||
-                            x.type == 'image/png' ||
-                            x.type == 'image/jpeg' ||
-                            x.type == 'image/jpg'
+                            x.type === 'image/gif' ||
+                            x.type === 'image/png' ||
+                            x.type === 'image/jpeg' ||
+                            x.type === 'image/jpg'
                         );
                     }
                 }
@@ -50,10 +49,6 @@ export class MatFileComponent implements OnInit {
             this.onCompleteAll.emit()
         );
     }
-
-    public uploader: FileUploader;
-    public hasBaseDropZoneOver: boolean = false;
-    public hasAnotherDropZoneOver: boolean = false;
 
     public fileOverBase(e: any): void {
         this.hasBaseDropZoneOver = e;

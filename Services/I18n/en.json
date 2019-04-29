@@ -28,24 +28,20 @@
     "displayName": "Display name",
     "Down": "Down",
     "Edit": "Edit",
+    "Enabled": "Enabled",
     "eMail": "Email",
     "email": "Email",
     "emailConfirmed": "Email confirmed",
     "endYear": "Until",
     "Errors": {
-        "PasswordRequiresNonAlphanumeric":
-            "Passwords must have at least one non alphanumeric character.",
-        "PasswordRequiresDigit":
-            "Passwords must have at least one digit ('0'-'9').",
+        "PasswordRequiresNonAlphanumeric": "Passwords must have at least one non alphanumeric character.",
+        "PasswordRequiresDigit": "Passwords must have at least one digit ('0'-'9').",
         "DuplicateEmail": "Email is already taken",
         "InvalidLoginAttempt": "Invalid login",
         "PasswordTooShort": "Password too short",
-        "PasswordRequiresLower":
-            "Passwords must have at least one lowercase ('a'-'z').",
-        "PasswordRequiresUpper":
-            "Passwords must have at least one uppercase ('A'-'Z').",
-        "PasswordRequiresUniqueChars":
-            "Passwords must use at least 2 different characters.",
+        "PasswordRequiresLower": "Passwords must have at least one lowercase ('a'-'z').",
+        "PasswordRequiresUpper": "Passwords must have at least one uppercase ('A'-'Z').",
+        "PasswordRequiresUniqueChars": "Passwords must use at least 2 different characters.",
         "Required": "Required"
     },
     "Expenses": "Expenses",
@@ -97,8 +93,7 @@
         "Title": "Reset Password",
         "Hello": "Hi, ",
         "MessageBold": "There was a request to change your password.",
-        "Message":
-            "If you did not make this request, just ignore this email, otherwise, please click the link below to change your password:",
+        "Message": "If you did not make this request, just ignore this email, otherwise, please click the link below to change your password:",
         "Link": "Change Password"
     },
     "RegisterEmailSend": "Reset email was send",
@@ -106,8 +101,7 @@
         "Title": "Email Confirmation",
         "Hello": "Hi, ",
         "MessageBold": "There was a registration with this email.",
-        "Message":
-            "If you did not try to register, just ignore this email, otherwise, please click the link below to confirm your email:",
+        "Message": "If you did not try to register, just ignore this email, otherwise, please click the link below to confirm your email:",
         "Link": "Confirm email"
     },
     "Revenue": "Revenue",

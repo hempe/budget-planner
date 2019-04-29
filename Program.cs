@@ -24,7 +24,7 @@ namespace BudgetPlanner
                 Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
                     .WriteTo.Console()
-                    .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
+                    .WriteTo.File(Path.Combine("logs","log.txt"), rollingInterval: RollingInterval.Day)
                     .CreateLogger();
 
                 JsonConvert.DefaultSettings = () => new JsonSerializerSettings

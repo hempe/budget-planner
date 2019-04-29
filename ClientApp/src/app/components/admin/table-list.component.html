@@ -1,5 +1,5 @@
-<view-wrapper [head]="head" [button]="button">
-    <div flexContainer>
+<view-wrapper [head]="head">
+    <div flexContainer *ngIf="dataSource">
         <menu-left>
             <data-source-table [columns]="columns" [dataSourceFactory]="dataSource" (selected)="selected($event)"></data-source-table>
         </menu-left>

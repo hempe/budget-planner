@@ -35,6 +35,7 @@ namespace BudgetPlanner.Controllers
                     Positive = x.o.Positive,
                     Negative = x.o.Negative,
                     Name = x.o.Name,
+                    Enabled = x.d?.Enabled ?? false,
                     Id = x.o.Id,
                     Value = x.o.Value
                 });
@@ -57,6 +58,7 @@ namespace BudgetPlanner.Controllers
                 Positive = overview.Positive,
                 Negative = overview.Negative,
                 Name = overview.Name,
+                Enabled = value?.Data?.Enabled ?? false,
                 Id = overview.Id,
                 Value = overview.Value
             });
@@ -98,6 +100,7 @@ namespace BudgetPlanner.Controllers
             entity.Data = entity.Data ?? new BudgetData();
             entity.Data.StartYear = data.StartYear;
             entity.Data.EndYear = data.EndYear;
+            entity.Data.Enabled = data.Enabled;
             entity.Name = data.Name;
 
             var result = await this.TableStore.AddOrUpdateAsync(entity);

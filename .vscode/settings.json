@@ -15,5 +15,6 @@
     },
     "appService.deploySubpath": ".publish",
     "msbuildProjectTools.nuget.includePreRelease": false,
-    "appService.defaultWebAppToDeploy": "None"
+    "appService.defaultWebAppToDeploy": "None",
+    "tslint.configFile": "ClientApp/tslint.json"
 }

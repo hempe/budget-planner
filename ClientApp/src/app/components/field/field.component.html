@@ -28,7 +28,13 @@
             <mat-error error [name]="name"></mat-error>
         </mat-form-field>
     </div>
-
+    <div *ngSwitchCase="'checkbox'">
+        <div class="checkbox" >
+            <mat-checkbox name="{{name}}" [(ngModel)]="value" (blur)="onBlur()"
+                (focus)="onFocus()"> {{ name | translate }}
+            </mat-checkbox>
+        </div>
+    </div>
     <div *ngSwitchCase="isInputType(type)">
         <mat-icon *ngIf="icon">{{icon}}</mat-icon>
         <mat-form-field [ngClass]="{'without-icon':!icon,'with-icon':icon}">

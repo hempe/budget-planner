@@ -14,11 +14,17 @@
             (blur)="onBlur()" [errorStateMatcher]="matcher">
         <mat-error error [name]="name"></mat-error>
     </div>
-
+    <div *ngSwitchCase="'checkbox'">
+        <div class="checkbox" >
+            <mat-checkbox name="{{name}}" [(ngModel)]="value" (blur)="onBlur()" [disabled]="disabled"
+                (focus)="onFocus()">
+            </mat-checkbox>
+        </div>
+    </div>
     <div *ngSwitchCase="isInputType(type)">
         <input class="placeholder" matInput type="{{type}}" placeholder="{{ name | translate }}" name="{{name}}" [(ngModel)]="value"
             (blur)="onBlur()" [errorStateMatcher]="matcher">
         <mat-error error [name]="name"></mat-error>
     </div>
-    <strong *ngSwitchDefault style="color:red">Unknown type '{{type}}'</strong>
+    <strong *ngSwitchDefault class="error">Unknown type '{{type}}'</strong>
 </div>

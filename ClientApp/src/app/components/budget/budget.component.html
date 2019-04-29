@@ -1,16 +1,15 @@
-<view-wrapper [head]="head" [button]="button">
-    <div flexContainer>
+<view-wrapper [head]="head">
+    <div flexContainer *ngIf="value | async as v">
         <menu-left>
             <menu-header>
-                <menu-title>{{ value ? value.name : ('Budget' | translate) }}</menu-title>
+                <menu-title>{{ v ? v.name : ('Budget' | translate) }}</menu-title>
             </menu-header>
-            <menu-container *ngIf="value" flexContainer>
-
+            <menu-container flexContainer>
                 <div flex=1>
                     <div flexContainer>
                         <span flex=10>{{positive | translate}}</span>
                         <div style='flex: 5; border: 1px solid transparent; min-width:0'>
-                            <overview-chart [units]="value.positive" path="{{type + '.positive'}}" (edit)="goto('positive', $event)"></overview-chart>
+                            <overview-chart [units]="v.positive" path="{{type + '.positive'}}" (edit)="goto('positive', $event)"></overview-chart>
                         </div>
                         <div flex=10 style="text-align:right;padding:12px 0px;">
                             <button mat-button (click)="goto('positive')">
@@ -23,7 +22,7 @@
                     <div flexContainer>
                         <span flex=10>{{negative | translate}}</span>
                         <div style='flex: 5; border: 1px solid transparent; min-width:0'>
-                            <overview-chart [units]="value.negative" path="{{type + '.negative'}}" (edit)="goto('negative',$event)"></overview-chart>
+                            <overview-chart [units]="v.negative" path="{{type + '.negative'}}" (edit)="goto('negative',$event)"></overview-chart>
                         </div>
                         <div flex=10 style="text-align:right;padding:12px 0px;">
                             <button mat-button (click)="goto('negative')">
@@ -43,12 +42,24 @@
                         <mat-icon>more_vert</mat-icon>
                     </button>
                 </menu-header>
-                <menu-input *ngIf="value">
-                    <field icon="folder" [(ngModel)]="value.name" name="name" type="text"></field>
+                <menu-input *ngIf="v">
+                    <field icon="folder" [(ngModel)]="v.name" name="name" type="text"></field>
+                    <field icon="folder" [(ngModel)]="v.enabled" name="Enabled" type="checkbox"></field>
                     <span flexContainer>
-                        <field style="width:50%;" icon="date_range" [(ngModel)]="value.startYear" min="2017" max="2099" name="startYear" type="number"
+                        <field 
+                            style="width:50%;"
+                            icon="date_range" 
+                            [(ngModel)]="v.startYear" 
+                            min="2017" max="2099" 
+                            name="startYear" type="number"
                             flex=1></field>
-                        <field style="width:50%;" [(ngModel)]="value.endYear" name="endYear" min="2017" max="2099" type="number" flex=1></field>
+                        <field 
+                            style="width:50%;" 
+                            [(ngModel)]="v.endYear" 
+                            name="endYear" 
+                            min="2017" max="2099" 
+                            type="number" 
+                            flex=1></field>
                     </span>
                 </menu-input>
                 <menu-container noTop="true">
@@ -57,7 +68,9 @@
                         <mat-icon>save</mat-icon>
                     </menu-entry>
                     <menu-entry (click)="pin()">
-                        <mat-icon>{{theme ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (theme ? 'Unpin' : 'Pin') | translate }}
+                        <ng-container *ngIf="pinned | async as p">
+                            <mat-icon>{{p ? 'favorite' : 'favorite_border'}}</mat-icon>{{ (p ? 'Unpin' : 'Pin') | translate }}
+                        </ng-container>
                     </menu-entry>
                 </menu-container>
 

@@ -1,9 +1,16 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    OnDestroy,
+    OnInit
+} from '@angular/core';
 import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BudgetOverview } from '../../common/api';
-import { guid } from '../../common/helper';
+import { clone, guid } from '../../common/helper';
 import { ConfigurationService } from '../../services/configuration';
 import {
     DataSourceColumn,
@@ -12,16 +19,17 @@ import {
 } from '../../services/data-source-wrapper';
 import { KeyboardService } from '../../services/keyboard';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'budget-list',
     templateUrl: 'budget-list.component.html',
-    styleUrls: ['budget-list.component.css']
+    styleUrls: ['budget-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BudgetListComponent implements OnInit, OnDestroy {
     public columns: DataSourceColumn[] = [
         { key: 'name', name: 'name', type: 'text' },
+        { key: 'enabled', name: 'Enabled', type: 'checkbox' },
         { key: 'value', name: 'amount', type: 'number' },
         { key: 'startYear', name: 'startYear', type: 'number' },
         { key: 'endYear', name: 'endYear', type: 'number' }
@@ -101,6 +109,7 @@ export class BudgetListComponent implements OnInit, OnDestroy {
             this.deleteFromServer(x.id);
             i--;
         }
+        this._data = clone(this._data);
         this.data.emit(this._data);
     }
 

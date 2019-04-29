@@ -1,20 +1,7 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnDestroy,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { BaseChartDirective, Color, Colors } from 'ng2-charts';
 import { Observable, Subscription } from 'rxjs';
-import {
-    DatedValue,
-    FrequencyValue,
-    NamedValue,
-    Unit
-} from '../../../common/api';
+import { DatedValue, FrequencyValue, NamedValue, Unit } from '../../../common/api';
 import { array, numberWithSeperator, toSum } from '../../../common/helper';
 
 @Component({
@@ -23,9 +10,6 @@ import { array, numberWithSeperator, toSum } from '../../../common/helper';
     styleUrls: ['./chart.component.css']
 })
 export class EditChartComponent implements OnInit, OnDestroy {
-    @Input() public chartType: string = 'doughnut';
-    @Input() public color: string = '';
-    @Input() public label: string = '';
     @Input()
     public set units(value: Unit<NamedValue | FrequencyValue | DatedValue>[]) {
         value = array(value);
@@ -36,6 +20,9 @@ export class EditChartComponent implements OnInit, OnDestroy {
     public get units(): Unit<NamedValue | FrequencyValue | DatedValue>[] {
         return this._units;
     }
+    @Input() public chartType = 'doughnut';
+    @Input() public color = '';
+    @Input() public label = '';
 
     @Input() public update: Observable<{}>;
     @Input() public type: string;
@@ -56,9 +43,8 @@ export class EditChartComponent implements OnInit, OnDestroy {
         },
         hover: {
             onHover: function(e) {
-                var point = this.getElementAtEvent(e);
-                if (point.length) e.target.style.cursor = 'pointer';
-                else e.target.style.cursor = 'default';
+                const point = this.getElementAtEvent(e);
+                if (point.length) { e.target.style.cursor = 'pointer'; } else { e.target.style.cursor = 'default'; }
             }
         },
         tooltips: {
@@ -81,31 +67,34 @@ export class EditChartComponent implements OnInit, OnDestroy {
     };
 
     @Output() edit: EventEmitter<string> = new EventEmitter();
+
+    private updateSub: Subscription;
+
+    private _units: Unit<NamedValue | FrequencyValue | DatedValue>[];
     public onEdit(tab: string) {
         this.edit.emit(tab);
     }
 
-    private updateSub: Subscription;
-
     ngOnDestroy(): void {
-        if (this.updateSub) this.updateSub.unsubscribe();
+        if (this.updateSub) { this.updateSub.unsubscribe(); }
     }
     ngOnInit(): void {
-        if (this.update)
+        if (this.update) {
             this.updateSub = this.update.subscribe(x => {
                 this.updateGraphic();
             });
+        }
     }
 
     private updateGraphic() {
-        if (!this._units || this._units.length <= 0) return;
-        let value = this._units;
+        if (!this._units || this._units.length <= 0) { return; }
+        const value = this._units;
 
-        var sets = value.map(x =>
-            x.elements.map(x => this.getValue(x)).reduce(toSum, 0)
+        const sets = value.map(x =>
+            x.elements.map(y => this.getValue(y)).reduce(toSum, 0)
         );
 
-        let total = sets.reduce(toSum, 0);
+        const total = sets.reduce(toSum, 0);
 
         this.total = ['Total', numberWithSeperator(total)];
         this.tooltip = this.total;
@@ -133,20 +122,19 @@ export class EditChartComponent implements OnInit, OnDestroy {
         }, 0);
     }
 
-    private _units: Unit<NamedValue | FrequencyValue | DatedValue>[];
-
     public chartClicked(e: any): void {
         if (!e || !e.active || !e.active[0]) {
             return;
         }
 
-        let label = e.active[0]._model.label;
+        const label = e.active[0]._model.label;
         this.onEdit(label);
     }
 
     private getValue(x: NamedValue | FrequencyValue | DatedValue) {
-        if (this.type == 'budgets')
+        if (this.type === 'budgets') {
             return x.value * (<FrequencyValue>x).frequency;
+        }
         return x.value;
     }
 }

@@ -27,7 +27,7 @@ namespace BudgetPlanner.Controllers
             if (budgets != null)
             {
                 all.AddRange(budgets
-                    .Where(b => b.Data != null)
+                    .Where(b => b.Data != null && b.Data.Enabled)
                     .SelectMany(b => b.Data.Positive.Select(x => new DevelopmentElement
                     {
                         Group = b.Name,
@@ -42,7 +42,7 @@ namespace BudgetPlanner.Controllers
                     .ToList());
 
                 all.AddRange(budgets
-                    .Where(b => b.Data != null)
+                    .Where(b => b.Data != null && b.Data.Enabled)
                     .SelectMany(b => b.Data.Negative.Select(x => new DevelopmentElement
                     {
                         Group = b.Name,

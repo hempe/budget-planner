@@ -39,6 +39,6 @@ namespace BudgetPlanner.Services
                 LoginProvider = loginProvider,
                 UserId = user.Id,
                 Name = name
-            }).Transform(x => x?.Value);
+            }).ContinueWithAsync(x => x?.Value);
     }
 }

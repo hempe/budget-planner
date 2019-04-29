@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BudgetPlanner.Middleware;
 using BudgetPlanner.Models;
@@ -21,8 +22,13 @@ namespace BudgetPlanner.Controllers
         [ProducesResponseType(typeof(OverviewValue), 200)]
         public async Task<IActionResult> GetOverview([FromServices] TranslationService i18n)
         {
-            var value = await this.TableStore.GetAsync(new Tables.Asset { UserId = this.UserId });
-            var profile = await this.TableStore.GetAsync(new Tables.Profile { UserId = this.UserId });
+            Tables.Asset value = null;
+            Tables.Profile profile = null;
+            
+            await new Func<Task>[]{
+                async () => value =  await this.TableStore.GetAsync(new Tables.Asset { UserId = this.UserId }),
+                async () => profile = await this.TableStore.GetAsync(new Tables.Profile { UserId = this.UserId })
+            }.WhenAllAsync();
 
             return this.Ok((value?.Data ?? new Group<NamedValue>()).ToOverview(x => x.Value, "", await i18n.TranslateAsync(profile?.Data?.Language, "Assets")));
         }

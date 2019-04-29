@@ -1,4 +1,4 @@
-<view-wrapper [head]="head" [button]="button">
+<view-wrapper [head]="head">
     <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
         <div flexContainer>
             <menu-left>
@@ -6,19 +6,20 @@
                     <menu-title>{{ table }}</menu-title>
                 </menu-header>
                 <menu-container>
-
-                    <mat-card-content flexContainer class="flex-container" *ngIf="meta && value">
-                        <ng-container *ngFor="let m of meta">
-                            <ng-container *ngIf="m.value != 'object'">
-                                <field [(ngModel)]="value.data[m.key]" name="{{m.key}}" type="{{m.value}}" flex=5></field>
+                    <ng-container *ngIf="meta | async as mt">
+                        <mat-card-content flexContainer class="flex-container" *ngIf="value | async as v">
+                            <ng-container *ngFor="let m of mt">
+                                <ng-container *ngIf="m.value != 'object'">
+                                    <field [(ngModel)]="v.data[m.key]" name="{{m.key}}" type="{{m.value}}" flex=5></field>
+                                </ng-container>
                             </ng-container>
-                        </ng-container>
-                        <ng-container *ngFor="let m of meta">
-                            <ng-container *ngIf="m.value == 'object'">
-                                <field [(ngModel)]="value.data[m.key]" name="{{m.key}}" type="{{m.value}}" flex=10></field>
+                            <ng-container *ngFor="let m of mt">
+                                <ng-container *ngIf="m.value == 'object'">
+                                    <field [(ngModel)]="v.data[m.key]" name="{{m.key}}" type="{{m.value}}" flex=10></field>
+                                </ng-container>
                             </ng-container>
-                        </ng-container>
-                    </mat-card-content>
+                        </mat-card-content>
+                    </ng-container>
                 </menu-container>
             </menu-left>
             <menu-right>

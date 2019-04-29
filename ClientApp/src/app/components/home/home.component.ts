@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
-import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
 import { Colors, ConfigurationService } from '../../services/configuration';
 import { DashboardConfig } from '../dashboard/dashboard';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'home',
@@ -26,7 +25,6 @@ export class HomeComponent implements OnInit {
     }
 
     constructor(
-        private router: Router,
         private http: Http,
         private config: ConfigurationService
     ) {

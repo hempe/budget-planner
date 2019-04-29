@@ -3,8 +3,8 @@ import { Http } from '@angular/http';
 import { MatSnackBar } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { ConfigurationService } from './configuration';
 import { map } from 'rxjs/operators';
+import { ConfigurationService } from './configuration';
 
 export interface Provider {
     name: string;
@@ -17,8 +17,7 @@ export class ApiService {
         private translate: TranslateService,
         private http: Http,
         private configuration: ConfigurationService,
-        private snackBar: MatSnackBar,
-        private translateService: TranslateService
+        private snackBar: MatSnackBar
     ) {}
 
     public signIn(email: string, password: string, rememberMe?: boolean) {
@@ -61,13 +60,11 @@ export class ApiService {
                 () => {},
                 () => {},
                 () => {
-                    this.translateService
-                        .get('RegisterEmailSend')
-                        .subscribe(x => {
-                            this.snackBar.open(x, undefined, {
-                                duration: 3000
-                            });
+                    this.translate.get('RegisterEmailSend').subscribe(x => {
+                        this.snackBar.open(x, undefined, {
+                            duration: 3000
                         });
+                    });
                 }
             );
     }

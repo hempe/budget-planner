@@ -7,9 +7,9 @@ export interface MenuGroup extends MenuEntry {
 }
 
 export interface MenuEntry {
-    name?: string;
-    icon?: string;
-    action?: () => any;
+    readonly name?: string;
+    readonly icon?: string;
+    readonly action?: () => any;
 }
 
 @Component({

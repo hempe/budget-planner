@@ -13,11 +13,6 @@ export class DecimalFormatDirective implements OnInit {
         this.el.value = numberWithSeperator(this.el.value);
     }
 
-    @HostListener('change', ['$event.target.value'])
-    onChange(value) {
-        debugger;
-    }
-
     @HostListener('focus', ['$event.target.value'])
     onFocus(value) {
         this.el.value = <any>toNumber(value); // opossite of transform

@@ -9,7 +9,7 @@ export class MenuLeftComponent {
     private _noTop = false;
     @Input()
     public set noTop(value: boolean) {
-        this._noTop = value == true || <any>value == 'true';
+        this._noTop = value === true || <any>value === 'true';
     }
     public get noTop(): boolean {
         return this._noTop;

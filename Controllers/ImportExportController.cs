@@ -19,8 +19,10 @@ namespace BudgetPlanner.Controllers
         [HttpGet]
         [Route("export")]
         public async Task<IActionResult> Export(
-            [FromServices] BaseHandler json, [FromServices] XlsHandler xls, [FromServices] HtmlHandler html, [FromQuery] string format
-        )
+            [FromServices] BaseHandler json,
+            [FromServices] XlsHandler xls,
+            [FromServices] HtmlHandler html,
+            [FromQuery] string format)
         {
             try
             {

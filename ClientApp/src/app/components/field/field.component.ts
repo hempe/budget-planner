@@ -14,7 +14,6 @@ import { CustomErrorStateMatcher } from '../../services/custom-error-state-match
 const noop = () => {};
 const inputTypes = [
     'button',
-    'checkbox',
     'color',
     'date',
     'datetime-local',
@@ -48,40 +47,18 @@ export const CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR: any = {
     providers: [CUSTOM_INPUT_CONTROL_VALUE_ACCESSOR]
 })
 export class FieldComponent implements ControlValueAccessor, OnInit {
-    ngOnInit(): void {
-        this.matcher.name = this.name;
-    }
-
-    public ace = {
-        options: {
-            maxLines: 1000,
-            printMargin: false,
-            showInvisibles: false,
-            displayIndentGuides: true,
-            showGutter: false
-        }
-    };
-
-    //The internal data model
-    private innerValue: any = '';
-
-    //Placeholders for the callbacks which are later provided
-    //by the Control Value Accessor
-    private onTouchedCallback: () => void = noop;
-    private onChangeCallback: (_: any) => void = noop;
-
     constructor(private router: Router) {}
 
-    //get accessor
+    // get accessor
     get value(): any {
         return this.innerValue;
     }
 
-    //set accessor including call the onchange callback
+    // set accessor including call the onchange callback
     set value(v: any) {
         if (v !== this.innerValue) {
             this.innerValue = v;
-            if (this.type == 'decimal') {
+            if (this.type === 'decimal') {
                 v = toNumber(v);
             }
             this.onChangeCallback(v);
@@ -96,7 +73,7 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
     set text(v: string) {
         if (v !== this.innerValue) {
             try {
-                let ob = JSON.parse(v);
+                const ob = JSON.parse(v);
                 if (ob) {
                     this.innerValue = ob;
                     this.onChangeCallback(ob);
@@ -106,42 +83,23 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
         }
     }
 
-    //Set touched on blur
-    onBlur() {
-        if (this.type === 'decimal') {
-            this.innerValue = numberWithSeperator(this.innerValue);
+    public ace = {
+        options: {
+            maxLines: 1000,
+            printMargin: false,
+            showInvisibles: false,
+            displayIndentGuides: true,
+            showGutter: false
         }
-        this.onTouchedCallback();
-        this.blur.emit();
-    }
+    };
 
-    onFocus() {
-        this.focus.emit();
-    }
+    // The internal data model
+    private innerValue: any = '';
 
-    //From ControlValueAccessor interface
-    writeValue(value: any) {
-        if (this.type === 'decimal') {
-            value = numberWithSeperator(value);
-            if (value !== this.innerValue) {
-                this.innerValue = value;
-            }
-        } else {
-            if (value !== this.innerValue) {
-                this.innerValue = value;
-            }
-        }
-    }
-
-    //From ControlValueAccessor interface
-    registerOnChange(fn: any) {
-        this.onChangeCallback = fn;
-    }
-
-    //From ControlValueAccessor interface
-    registerOnTouched(fn: any) {
-        this.onTouchedCallback = fn;
-    }
+    // Placeholders for the callbacks which are later provided
+    // by the Control Value Accessor
+    private onTouchedCallback: () => void = noop;
+    private onChangeCallback: (_: any) => void = noop;
 
     @Output() public blur: EventEmitter<{}> = new EventEmitter();
     @Output() public focus: EventEmitter<{}> = new EventEmitter();
@@ -155,8 +113,50 @@ export class FieldComponent implements ControlValueAccessor, OnInit {
     @Input() public options: { name: string; value: string }[];
 
     public matcher: CustomErrorStateMatcher = new CustomErrorStateMatcher();
+    ngOnInit(): void {
+        this.matcher.name = this.name;
+    }
 
-    private isInputType(type: string): string {
-        if (inputTypes.indexOf(type) >= 0) return type;
+    // Set touched on blur
+    onBlur() {
+        if (this.type === 'decimal') {
+            this.innerValue = numberWithSeperator(this.innerValue);
+        }
+        this.onTouchedCallback();
+        this.blur.emit();
+    }
+
+    onFocus() {
+        this.focus.emit();
+    }
+
+    // From ControlValueAccessor interface
+    writeValue(value: any) {
+        if (this.type === 'decimal') {
+            value = numberWithSeperator(value);
+            if (value !== this.innerValue) {
+                this.innerValue = value;
+            }
+        } else {
+            if (value !== this.innerValue) {
+                this.innerValue = value;
+            }
+        }
+    }
+
+    // From ControlValueAccessor interface
+    registerOnChange(fn: any) {
+        this.onChangeCallback = fn;
+    }
+
+    // From ControlValueAccessor interface
+    registerOnTouched(fn: any) {
+        this.onTouchedCallback = fn;
+    }
+
+    isInputType(type: string): string {
+        if (inputTypes.indexOf(type) >= 0) {
+            return type;
+        }
     }
 }

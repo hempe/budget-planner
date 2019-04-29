@@ -7,10 +7,10 @@ import { Component, HostBinding, Input } from '@angular/core';
 })
 export class MenuContainerComponent {
     private _noTop = false;
-    @HostBinding('style.padding-top') paddingTop: string = '24px';
+    @HostBinding('style.padding-top') paddingTop = '24px';
     @Input()
     public set noTop(value: boolean) {
-        this._noTop = value == true || <any>value == 'true';
+        this._noTop = value === true || <any>value === 'true';
         this.paddingTop = this._noTop ? '0px' : '24px';
     }
     public get noTop(): boolean {

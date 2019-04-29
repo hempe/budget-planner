@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { OverviewValue } from '../../common/api';
 import { ConfigurationService } from '../../services/configuration';
 import { DashboardConfig } from '../dashboard/dashboard';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'overview',
@@ -17,12 +17,13 @@ import { map } from 'rxjs/operators';
 export class OverviewComponent implements OnInit {
     public head: MenuEntry = {};
     public theme: string = undefined;
-    private value: OverviewValue;
+    public value: OverviewValue;
+    public name: string;
+    public positive: string;
+    public negative: string;
+
     private type: string;
     private url: string;
-    private name: string;
-    private positive: string;
-    private negative: string;
 
     constructor(
         private route: ActivatedRoute,

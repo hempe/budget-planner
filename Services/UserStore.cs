@@ -36,15 +36,15 @@ namespace BudgetPlanner.Services
         {
             await new []{
                 this.GetLoginsAsync(user, cancellationToken)
-                    .WhenAll(l => this.RemoveLoginAsync(user, l.LoginProvider, l.ProviderKey, cancellationToken)),
+                    .ContinueWithAsync(x => x.WhenAllAsync(l => this.RemoveLoginAsync(user, l.LoginProvider, l.ProviderKey, cancellationToken))),
                 this.GetTokensAsync(user)
-                    .WhenAll(t => this.RemoveTokenAsync(user, t.PartitionKey, t.Name, cancellationToken).CatchException()),
-                Types.Select(type =>
+                    .ContinueWithAsync(x => x.WhenAllAsync(t => this.RemoveTokenAsync(user, t.PartitionKey, t.Name, cancellationToken).CatchException())),
+                Types.WhenAllAsync(type =>
                     this.tableStore.GetAllAsync(type, new UserArg(user.Id))
-                        .WhenAll(e => this.tableStore.DeleteAsync(type, e).CatchException())
-                ).WhenAll(),
+                        .ContinueWithAsync(x => x.WhenAllAsync(e => this.tableStore.DeleteAsync(type, e).CatchException()))
+                ),
                 this.tableStore.DeleteAsync<UserEntity>(user).CatchException()
-            }.WhenAll();
+            }.WhenAllAsync();
             return IdentityResult.Success;
         }
 

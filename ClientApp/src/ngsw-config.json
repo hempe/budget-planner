@@ -1,0 +1,26 @@
+{
+  "index": "/index.html",
+  "assetGroups": [{
+    "name": "app",
+    "installMode": "prefetch",
+    "updateMode?": "prefetch",
+    "resources": {
+      "files": [
+        "/assets/**/*",
+        "!/ngsw-worker.js",
+        "/**/*.html",
+        "/**/*.js",
+        "/**/*.css"
+      ]
+    }
+  }, {
+    "name": "assets",
+    "installMode": "lazy",
+    "updateMode": "prefetch",
+    "resources": {
+      "files": [
+        "/assets/**"
+      ]
+    }
+  }]
+}

@@ -37,3 +37,6 @@ textarea.placeholder:-ms-input-placeholder {
     /* Internet Explorer 10+ */
     color: rgba(0, 0, 0, 0.54) !important;
 }
+.error {
+    color:red;
+}

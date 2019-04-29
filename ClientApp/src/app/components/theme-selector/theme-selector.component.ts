@@ -7,7 +7,7 @@ export class ThemeSelector {
     constructor(private dialog: MatDialog) {}
 
     public selectTheme(): Observable<string> {
-        let dialogRef = this.dialog.open(ThemeSelectorDialog, {});
+        const dialogRef = this.dialog.open(ThemeSelectorDialogComponent, {});
         return dialogRef.afterClosed();
     }
 }
@@ -16,8 +16,8 @@ export class ThemeSelector {
     selector: 'theme-selector',
     templateUrl: 'theme-selector.component.html'
 })
-export class ThemeSelectorDialog {
-    constructor(public dialogRef: MatDialogRef<ThemeSelectorDialog>) {}
+export class ThemeSelectorDialogComponent {
+    constructor(public dialogRef: MatDialogRef<ThemeSelectorDialogComponent>) {}
 
     onNoClick(): void {
         this.dialogRef.close();

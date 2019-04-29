@@ -1,3 +1,19 @@
+export interface Unit<T> {
+    name: string;
+    elements: T[];
+}
+
+export interface Group<T> {
+    name: string;
+    positive: Unit<T>[];
+    negative: Unit<T>[];
+}
+export interface OverviewValue extends NamedValue {
+    id: string;
+    positive: OverviewContainer[];
+    negative: OverviewContainer[];
+}
+
 export interface Complete {
     budgets: BudgetData[];
     assets: Group<NamedValue>;
@@ -15,33 +31,22 @@ export interface DevelopmentElement {
     end?: number;
     value?: number;
 }
+export interface FrequencyValue extends NamedValue {
+    frequency?: number;
+}
+
 export interface BudgetData extends Group<FrequencyValue> {
     startYear?: number;
     endYear?: number;
 }
+
 export interface BudgetOverview extends OverviewValue {
     startYear?: number;
     endYear?: number;
 }
-export interface OverviewValue extends NamedValue {
-    id: string;
-    positive: OverviewContainer[];
-    negative: OverviewContainer[];
-}
 
 export interface OverviewContainer extends Unit<NamedValue> {
     value: number;
-}
-
-export interface Unit<T> {
-    name: string;
-    elements: T[];
-}
-
-export interface Group<T> {
-    name: string;
-    positive: Unit<T>[];
-    negative: Unit<T>[];
 }
 
 export const UnitKey = {
@@ -49,10 +54,6 @@ export const UnitKey = {
     negative: 'negative',
     total: 'total'
 };
-
-export interface FrequencyValue extends NamedValue {
-    frequency?: number;
-}
 
 export interface NamedValue {
     name: string;

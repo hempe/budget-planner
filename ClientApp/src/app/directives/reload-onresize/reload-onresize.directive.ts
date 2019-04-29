@@ -10,11 +10,11 @@ export class ReloadOnResizeDirective {
 
     @HostListener('window:resize', ['$event'])
     onResize(event) {
-        if (this.timer) return;
+        if (this.timer) { return; }
         this.display = 'none';
         this.timer = setTimeout(() => {
             this.display = 'block';
-            if (this.timer) clearTimeout(this.timer);
+            if (this.timer) { clearTimeout(this.timer); }
             this.timer = undefined;
         }, 1000);
     }

@@ -35,12 +35,16 @@ namespace BudgetPlanner.Services.Export
             foreach (var b in value.Budgets)
             {
                 if (string.IsNullOrWhiteSpace(b.Id) || !Guid.TryParse(b.Id, out var _))
+                {
                     b.Id = Guid.NewGuid().ToString();
+                    b.Enabled = true;
+                }
+
                 if (b.StartYear.GetValueOrDefault() == 0 && b.EndYear.GetValueOrDefault() == 0)
                 {
                     try
                     {
-                        var fromName = b.Name.Split("-").Select(x => int.Parse(x)).ToList();
+                        var fromName = b.Name.Split("-").Select(x => int.Parse(x.Trim().Split(" ")[0])).ToList();
                         b.StartYear = fromName[0];
                         b.EndYear = fromName[1];
                     }
@@ -62,7 +66,7 @@ namespace BudgetPlanner.Services.Export
             var assets = await this.TableStore.GetAsync(new Tables.Asset { UserId = userId });
             var profile = await this.TableStore.GetAsync(new Tables.Profile { UserId = userId });
 
-            budgets.Where(b => b.Data != null).ToList().ForEach(b =>
+            budgets.Where(b => b.Data != null && b.Data.Enabled).ToList().ForEach(b =>
             {
                 b.Data.Id = b.Id;
                 b.Data.Name = b.Name;

@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 export class PdfRenderService {
     constructor() {}
     public render(url: string) {
-        var iframe = document.createElement('iframe');
+        const iframe = document.createElement('iframe');
         iframe.id = 'printing';
         iframe.name = 'printing';
         iframe.src = url;

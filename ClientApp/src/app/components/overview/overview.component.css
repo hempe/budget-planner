@@ -12,3 +12,18 @@
     text-align: center;
     left: 50%;
 }
+
+.title {
+    padding-bottom: 20px;
+}
+
+.chart-wrapper {
+    flex: 5; 
+    border: 1px solid transparent; 
+    min-width:0
+}
+
+.edit-button {
+    text-align:right;
+    padding:12px 0px;
+}

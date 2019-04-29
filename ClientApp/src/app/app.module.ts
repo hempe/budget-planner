@@ -7,12 +7,7 @@ import { ErrorStateMatcher, MatSnackBar } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, RouterModule } from '@angular/router';
-import {
-    MissingTranslationHandler,
-    TranslateLoader,
-    TranslateModule,
-    TranslateService
-} from '@ngx-translate/core';
+import { MissingTranslationHandler, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import 'chartjs-plugin-deferred';
 import { AceEditorModule } from 'ng2-ace-editor';
@@ -29,7 +24,7 @@ import { BudgetListComponent } from './components/budget/budget-list.component';
 import { BudgetComponent } from './components/budget/budget.component';
 import { DashboardBarComponent } from './components/dashboard/bar/bar.component';
 import { DashboardDoughnutComponent } from './components/dashboard/doughnut/doughnut.component';
-import { DashboardIcon } from './components/dashboard/icon/icon.component';
+import { DashboardIconComponent } from './components/dashboard/icon/icon.component';
 import { DataSourceTableComponent } from './components/data-source-table/data-source-table.component';
 import { DevelopmentComponent } from './components/development/development.component';
 import { EditChartComponent } from './components/edit/chart/chart.component';
@@ -44,17 +39,10 @@ import { MenuModule } from './components/menu/menu.module';
 import { OverviewChartComponent } from './components/overview/chart/chart.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import {
-    ThemeSelector,
-    ThemeSelectorDialog
-} from './components/theme-selector/theme-selector.component';
+import { ThemeSelector, ThemeSelectorDialogComponent } from './components/theme-selector/theme-selector.component';
 import { ViewWrapperComponent } from './components/view-wrapper/view-wrapper.component';
 import { DecimalFormatDirective } from './directives/decimal-format/decimal-format.directive';
-import {
-    FlexBreakDirective,
-    FlexContainerDirective,
-    FlexDirective
-} from './directives/flex/flex.directive';
+import { FlexBreakDirective, FlexContainerDirective, FlexDirective } from './directives/flex/flex.directive';
 import { ReloadOnResizeDirective } from './directives/reload-onresize/reload-onresize.directive';
 import { ApiService } from './services/api';
 import { ConfigurationService } from './services/configuration';
@@ -65,6 +53,8 @@ import { MouseService } from './services/mouse';
 import { PdfRenderService } from './services/pdf-render';
 import { ResizeService } from './services/resize';
 import { WarnMissingTranslationHandler } from './services/warn-missing-translation-handler';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
     declarations: [
@@ -90,16 +80,16 @@ import { WarnMissingTranslationHandler } from './services/warn-missing-translati
         DataSourceTableComponent,
         DashboardDoughnutComponent,
         DashboardBarComponent,
-        DashboardIcon,
+        DashboardIconComponent,
         OverviewChartComponent,
         OverviewComponent,
         TableListComponent,
         TableContentComponent,
         TableEntryComponent,
-        ThemeSelectorDialog,
+        ThemeSelectorDialogComponent,
         MatFileComponent
     ],
-    entryComponents: [ThemeSelectorDialog, MatFileComponent],
+    entryComponents: [ThemeSelectorDialogComponent, MatFileComponent],
     imports: [
         BrowserModule,
         HttpModule,
@@ -127,7 +117,8 @@ import { WarnMissingTranslationHandler } from './services/warn-missing-translati
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
-        })
+        }),
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
         /*
         TranslateModule.forRoot({
             loader: {

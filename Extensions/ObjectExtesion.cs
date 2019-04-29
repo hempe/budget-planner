@@ -14,9 +14,6 @@ namespace BudgetPlanner
         public static Task<TResult> AsTask<TValue, TResult>(this TValue value, Func<TValue,TResult> func)
             => Task.FromResult(func(value));
  
-        public static Task<TResult[]> WhenAll<TValue,TResult>(this IEnumerable<TValue> enumerable, Func<TValue,Task<TResult>> func)
-            => Task.WhenAll(enumerable.Select(z => func(z)));
-
         public static TTarget InvokePrivateGeneric<TTarget>(
             this object source, 
             string method,

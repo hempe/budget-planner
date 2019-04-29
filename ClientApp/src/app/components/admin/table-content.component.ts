@@ -1,15 +1,11 @@
-import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { ConfigurationService } from '../../services/configuration';
-import {
-    DataSourceColumn,
-    DataSourceFactory,
-    ListDataSource
-} from '../../services/data-source-wrapper';
-import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 import { map } from 'rxjs/operators';
+import { ConfigurationService } from '../../services/configuration';
+import { DataSourceColumn, DataSourceFactory, ListDataSource } from '../../services/data-source-wrapper';
+import { MenuEntry } from '../view-wrapper/view-wrapper.component';
 
 interface Table {
     partitionKey: string;
@@ -20,12 +16,13 @@ interface Table {
 @Component({
     selector: 'table-content',
     templateUrl: 'table-content.component.html',
-    styleUrls: ['table-content.component.css']
+    styleUrls: ['table-content.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableContentComponent implements OnInit, OnDestroy {
     public columns: DataSourceColumn[] = [];
 
-    public dataSource: DataSourceFactory<any, any>;
+    public dataSource: Observable<DataSourceFactory<any, any>>;
     public head: MenuEntry = {};
     private _data: Table[] = undefined;
     private data: EventEmitter<Table[]> = new EventEmitter<any>();
@@ -38,12 +35,6 @@ export class TableContentComponent implements OnInit, OnDestroy {
         private config: ConfigurationService,
         private http: Http
     ) {
-        this.head = {
-            icon: 'arrow_back',
-            name: this.config.getName('admin'),
-            action: () =>
-                this.router.navigate(['../'], { relativeTo: this.route })
-        };
 
         this.config.setColor('admin');
     }
@@ -51,12 +42,18 @@ export class TableContentComponent implements OnInit, OnDestroy {
     ngOnInit() {
         const table = this.route.snapshot.params['table'];
         const headerUrl = `/api/admin/tables/headers/${table}`;
-        this.head.name = table;
+        this.head = {
+            icon: 'arrow_back',
+            name: table,
+            action: () =>
+                this.router.navigate(['../'], { relativeTo: this.route })
+        };
 
-        this.http
+        this.dataSource = this.http
             .get(headerUrl)
-            .pipe(map(x => x.json()))
-            .subscribe((x: Map<string, any>[]) => {
+            .pipe(
+                map(x => x.json()),
+                map((x: Map<string, any>[]) => {
                 this.columns = Object.keys(x).map(
                     c =>
                         <DataSourceColumn>{
@@ -66,12 +63,10 @@ export class TableContentComponent implements OnInit, OnDestroy {
                         }
                 );
 
-                console.info(this.columns);
                 this.url = `/api/admin/tables/${table}`;
                 console.info('and the url is ', this.url);
-                this.dataSource = ref =>
-                    new ListDataSource(this.getData(), ref);
-            });
+                return ref => new ListDataSource(this.getData(), ref);
+            }));
     }
 
     ngOnDestroy(): void {}

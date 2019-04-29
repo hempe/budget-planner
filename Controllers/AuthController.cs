@@ -28,8 +28,9 @@ namespace BudgetPlanner.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var schemes = await this.signInManager.GetExternalAuthenticationSchemesAsync();
-            var loginProviders = schemes.Select(x => new { x.Name, x.DisplayName }).ToList();
+            var loginProviders = await this.signInManager.GetExternalAuthenticationSchemesAsync()
+                .ContinueWithAsync(schemes => schemes.Select(x => new { x.Name, x.DisplayName }).ToList());
+
             return this.Ok(loginProviders);
         }
 
@@ -53,8 +54,11 @@ namespace BudgetPlanner.Controllers
             var created = await this.UserManager.CreateAsync(user, model.Password);
             if (created.Succeeded)
             {
-                await this.signInManager.SignInAsync(user, isPersistent: false);
-                await this.RequestEmailConfirmationAsync(mailService, translationService, user, model.Language);
+                await new []{
+                    this.signInManager.SignInAsync(user, isPersistent: false),
+                    this.RequestEmailConfirmationAsync(mailService, translationService, user, model.Language)
+                }.WhenAllAsync();
+                
                 return this.Ok();
             }
 

@@ -40,7 +40,7 @@ export class ConfigurationService {
     public loggedIn: boolean;
     public username: string;
 
-    private _avatar: string = '/assets/img/avatars/noavatar.png';
+    private _avatar = '/assets/img/avatars/noavatar.png';
     public set avatar(val: string) {
         if (val) {
             val = val.split('?id=')[0];
@@ -59,7 +59,9 @@ export class ConfigurationService {
     }
     public set profile(v: Profile) {
         this._profile = v;
-        if (v.color) this.fallback = v.color;
+        if (v.color) {
+            this.fallback = v.color;
+        }
     }
 
     public get color() {
@@ -68,15 +70,15 @@ export class ConfigurationService {
 
     private _color: string;
 
-    private fallback = Colors.Cyan; //'#BAEC8E';
+    private fallback = Colors.Cyan; // '#BAEC8E';
     public setCustomColor(color: string) {
         this.fallback = color;
         this.resetColor();
     }
 
     public setColor(path?: string) {
-        let color = this.getColor(path);
-        let addon = 60;
+        const color = this.getColor(path);
+        const addon = 60;
         try {
             this._color = `rgba(${hexToRgb(color)
                 .map(x => (x + addon < 255 ? x + addon : 255))
@@ -88,20 +90,23 @@ export class ConfigurationService {
 
     public resetColor() {
         this.setColor();
-        //this._color = `rgba(${hexToRgb(this.getColor()).join(',')}, 0.6)`;
+        // this._color = `rgba(${hexToRgb(this.getColor()).join(',')}, 0.6)`;
     }
 
     public getIcon(...path: string[]) {
-        let type = this.flatten(path);
+        const type = this.flatten(path);
         switch (type) {
             case 'assets':
             case 'assets.positive':
             case 'assets.negative':
+                return 'assessment';
             case 'revenue':
             case 'revenue.positive':
             case 'revenue.negative':
-                return 'assessment';
+                return 'date_range';
             case 'budgets':
+            case 'budgets.positive':
+            case 'budgets.negative':
                 return 'trending_up';
             default:
                 return 'home';
@@ -113,7 +118,7 @@ export class ConfigurationService {
     }
 
     public getName(...path: string[]) {
-        let type = this.flatten(path);
+        const type = this.flatten(path);
         switch (type) {
             case 'assets':
             case 'assets.positive':
@@ -138,32 +143,32 @@ export class ConfigurationService {
     }
 
     public getColor(...path: string[]) {
-        let type = this.flatten(path);
+        const type = this.flatten(path);
         switch (type) {
-            //case 'assets':
+            // case 'assets':
             case 'assets.positive':
                 return Colors.Green;
             case 'assets.negative':
                 return Colors.Red;
-            //case 'revenue':
+            // case 'revenue':
             case 'revenue.positive':
                 return Colors.Teal;
             case 'revenue.negative':
                 return Colors.Deep_Orange;
-            //case 'budgets':
+            // case 'budgets':
             case 'budgets.positive':
-                return Colors.Blue; //Colors.Cyan;
+                return Colors.Blue; // Colors.Cyan;
             case 'budgets.negative':
                 return Colors.Orange;
             default:
                 return this.fallback;
-            //return Colors.Deep_Purple;
-            //return '#BAEC8E';
+            // return Colors.Deep_Purple;
+            // return '#BAEC8E';
         }
     }
 
     private flatten(path: any): string {
-        return path && typeof path != 'string'
+        return path && typeof path !== 'string'
             ? (<string[]>path).join('.')
             : path;
     }

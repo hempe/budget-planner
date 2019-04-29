@@ -1,27 +1,17 @@
-import {
-    Component,
-    EventEmitter,
-    OnDestroy,
-    OnInit,
-    ViewChild
-} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 import { MatTabChangeEvent } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { NamedValue, Unit } from '../../common/api';
 import { array, clone, isNullOrWhitespace } from '../../common/helper';
 import { ConfigurationService } from '../../services/configuration';
-import {
-    DataSourceColumn,
-    DataSourceFactory,
-    ListDataSource
-} from '../../services/data-source-wrapper';
+import { DataSourceColumn, DataSourceFactory, ListDataSource } from '../../services/data-source-wrapper';
 import { KeyboardService } from '../../services/keyboard';
 import { DashboardConfig } from '../dashboard/dashboard';
 import { ThemeSelector } from '../theme-selector/theme-selector.component';
 import { MenuEntry } from '../view-wrapper/view-wrapper.component';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'edit',
@@ -59,10 +49,11 @@ export class EditComponent implements OnInit, OnDestroy {
     public touched = false;
     public type: string;
     public subType: string;
+    public theme: string;
 
     private updateEvents: EventEmitter<NamedValue[]>[] = [];
     private keyDown: Subscription;
-    private theme: string;
+
     private url: string;
     private dashboardUrl: string;
     private id: string;

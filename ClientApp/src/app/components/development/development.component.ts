@@ -31,11 +31,12 @@ export class DevelopmentComponent implements OnInit {
     public theme: string;
     public value: DevelopmentElement[];
     public dev: any[];
-
+    public year: number;
     public tooltip: {
         year: number;
         group: string;
         value: string;
+        icon: string;
         top: any;
         left: any;
     };
@@ -90,7 +91,12 @@ export class DevelopmentComponent implements OnInit {
                         fontSize: 12,
                         fontFamily: 'roboto',
                         padding: 24,
-                        maxTicksLimit: 10
+                        maxTicksLimit: 10,
+                        callback: (value: any) => {
+                            if (Math.floor(value) === value) {
+                                return numberWithSeperator(value);
+                            }
+                        }
                     },
                     stacked: true
                 }
@@ -128,27 +134,32 @@ export class DevelopmentComponent implements OnInit {
                     return;
                 }
                 try {
-                    const year = tooltipModel.title[0].getFullYear();
+                    const year = new Date(tooltipModel.title[0]).getFullYear();
                     const line = tooltipModel.body[0].lines[0].split(':');
-                    const group = line[0].trim();
+                    const group = this.config.getTranslatedName(line[0].trim());
+                    const icon = this.config.getIcon(line[0].trim());
                     const value = numberWithSeperator(line[1].trim());
 
                     this.tooltip = {
                         year: year,
                         group: group,
                         value: value,
+                        icon: icon,
                         top: this.mouse.getY() + 20 + 'px',
                         left: this.mouse.getX() + 20 + 'px'
                     };
                 } catch (err) {
-                    // this.tooltip = undefined;
+                    console.error('Could not create tootlip', err);
                 }
             }
         }
     };
 
     public labels: string[];
-    public datasets: Colors[];
+    public datasetsOne: Colors[];
+    public datasetsTwo: Colors[];
+    public datasetsThree: Colors[];
+
     public colors = [{}];
     constructor(
         private router: Router,
@@ -217,6 +228,8 @@ export class DevelopmentComponent implements OnInit {
 
     public setValue(value: DevelopmentElement[]) {
         this.value = value;
+        this.year = undefined;
+
         const start = Math.min.apply(
             null,
             this.value.filter(x => x.start > 0).map(x => x.start)
@@ -230,9 +243,12 @@ export class DevelopmentComponent implements OnInit {
         let index = 0;
         const startValues = this.value
             .filter(x => !x.start && !x.end)
-            .map(x => x.value);
+            .map(x => x);
+
         const startValue =
-            startValues.length > 0 ? startValues.reduce(toSum) : 0;
+            startValues.length > 0
+                ? startValues.map(x => x.value).reduce(toSum)
+                : 0;
 
         for (let year = start; year <= end; year++) {
             // Current elements?
@@ -253,7 +269,7 @@ export class DevelopmentComponent implements OnInit {
             let v = values && values.length ? values.reduce(toSum) : 0;
             const current = v;
             if (index > 0) {
-                v += this.dev[index - 1].v;
+                v += this.dev[index - 1].value;
             } else {
                 v += startValue;
             }
@@ -267,35 +283,9 @@ export class DevelopmentComponent implements OnInit {
             index++;
         }
 
-        this.datasets = [
+        this.datasetsOne = [
             {
-                label: 'revenue',
-                data: this.dev.map(
-                    x =>
-                        <any>{
-                            x: new Date(x.year, 0),
-                            y: x.revenue > 0 ? x.revenue : 0
-                        }
-                ),
-                backgroundColor: this.rgba(
-                    this.config.getColor('revenue.positive')
-                )
-            },
-            {
-                label: 'expenses',
-                data: this.dev.map(
-                    x =>
-                        <any>{
-                            x: new Date(x.year, 0),
-                            y: x.revenue < 0 ? x.revenue : 0
-                        }
-                ),
-                backgroundColor: this.rgba(
-                    this.config.getColor('revenue.negative')
-                )
-            },
-            {
-                label: 'current',
+                label: 'budgets.positive',
                 data: this.dev.map(
                     x =>
                         <any>{
@@ -311,7 +301,7 @@ export class DevelopmentComponent implements OnInit {
                 )
             },
             {
-                label: 'current',
+                label: 'budgets.negative',
                 data: this.dev.map(
                     x =>
                         <any>{
@@ -325,18 +315,50 @@ export class DevelopmentComponent implements OnInit {
                 backgroundColor: this.rgba(
                     this.config.getColor('budgets.negative')
                 )
-            },
-            <any>{
-                label: 'value',
+            }
+        ];
+        this.datasetsTwo = [
+            {
+                label: 'revenue.positive',
                 data: this.dev.map(
-                    x => <any>{ x: new Date(x.year, 0), y: x.value }
+                    x =>
+                        <any>{
+                            x: new Date(x.year, 0),
+                            y: x.revenue > 0 ? x.revenue : 0
+                        }
                 ),
-                // data: this.dev.map(x => x.value),
+                backgroundColor: this.rgba(
+                    this.config.getColor('revenue.positive')
+                )
+            },
+            {
+                label: 'revenue.negative',
+                data: this.dev.map(
+                    x =>
+                        <any>{
+                            x: new Date(x.year, 0),
+                            y: x.revenue < 0 ? x.revenue : 0
+                        }
+                ),
+                backgroundColor: this.rgba(
+                    this.config.getColor('revenue.negative')
+                )
+            }
+        ];
+        this.datasetsThree = [
+            <any>{
+                label: 'assets',
+                data: this.dev.map(
+                    x =>
+                        <any>{
+                            x: new Date(x.year, 0),
+                            y: x.value
+                        }
+                ),
                 type: 'line'
             }
         ];
 
-        console.info(this.datasets);
         this.labels = this.dev.map(x => x.year);
         this.valueEmitter.emit(this.toDataSource(this.value));
     }
@@ -376,13 +398,22 @@ export class DevelopmentComponent implements OnInit {
 
     public chartClicked(e: any): void {
         if (!this.tooltip) {
-            this.valueEmitter.emit(this.value);
+            return;
+        }
+        this.year = this.tooltip.year;
+        this.setYear();
+    }
+
+    public setYear(): void {
+        if (!this.year) {
+            this.year = undefined;
+            this.valueEmitter.emit(this.toDataSource(this.value));
             return;
         }
 
-        console.info(this.tooltip);
-        const year = this.tooltip.year;
-        const filted = this.value.filter(x => x.start <= year && x.end >= year);
-        this.valueEmitter.emit(this.toDataSource(filted));
+        const filtered = this.value.filter(
+            x => x.start <= this.year && x.end >= this.year
+        );
+        this.valueEmitter.emit(this.toDataSource(filtered));
     }
 }

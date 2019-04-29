@@ -1,29 +1,13 @@
-import {
-    Component,
-    HostBinding,
-    Input,
-    OnDestroy,
-    OnInit
-} from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import { Color, Colors } from 'ng2-charts';
-import {
-    NamedValue,
-    OverviewContainer,
-    OverviewValue
-} from '../../../common/api';
-import {
-    array,
-    hexToRgb,
-    isNullOrWhitespace,
-    numberWithSeperator,
-    toSum
-} from '../../../common/helper';
+import { map } from 'rxjs/operators';
+import { NamedValue, OverviewContainer, OverviewValue } from '../../../common/api';
+import { array, hexToRgb, isNullOrWhitespace, isNumber, numberWithSeperator, toSum } from '../../../common/helper';
 import { ConfigurationService } from '../../../services/configuration';
 import { ResizeService } from '../../../services/resize';
 import { DashboardConfig, Themes } from '../dashboard';
-import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'dashboard-doughnut',
@@ -79,12 +63,9 @@ export class DashboardDoughnutComponent implements OnInit, OnDestroy {
                 }
                 if (tooltipModel.body) {
                     // prettier-ignore
-
-                    this.tooltip = tooltipModel.title.concat(
-                        (<string[]>tooltipModel.body[0].lines[0].split(
-                            ':'
-                        )).map(x => numberWithSeperator(x.trim()))
-                    );
+                    this.tooltip = (<string[]>tooltipModel.body[0].lines[0].split(
+                        ':'
+                    )).map(x => isNumber(x) ? numberWithSeperator(x.trim()) : x.trim());
                 } else {
                     this.tooltip = this.total;
                 }
