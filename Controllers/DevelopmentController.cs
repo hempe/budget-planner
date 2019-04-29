@@ -30,7 +30,7 @@ namespace BudgetPlanner.Controllers
                     .Where(b => b.Data != null && b.Data.Enabled)
                     .SelectMany(b => b.Data.Positive.Select(x => new DevelopmentElement
                     {
-                        Group = b.Name,
+                        Group = b.Data?.Name,
                         Name = x.Name,
                         Value = x.Elements == null ? 0 : x.Elements.Sum(y => y.Value * y.Frequency),
                         Start = b.Data.StartYear,
@@ -45,7 +45,7 @@ namespace BudgetPlanner.Controllers
                     .Where(b => b.Data != null && b.Data.Enabled)
                     .SelectMany(b => b.Data.Negative.Select(x => new DevelopmentElement
                     {
-                        Group = b.Name,
+                        Group = b.Data?.Name,
                         Name = x.Name,
                         Value = -(x.Elements == null ? 0 : x.Elements.Sum(y => y.Value * y.Frequency)),
                         Start = b.Data.StartYear,

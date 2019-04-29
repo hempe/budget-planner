@@ -1,8 +1,26 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import { BaseChartDirective, Color, Colors } from 'ng2-charts';
 import { Observable, Subscription } from 'rxjs';
-import { DatedValue, FrequencyValue, NamedValue, Unit } from '../../../common/api';
-import { array, numberWithSeperator, toSum } from '../../../common/helper';
+import {
+    DatedValue,
+    FrequencyValue,
+    NamedValue,
+    Unit
+} from '../../../common/api';
+import {
+    array,
+    isNumber,
+    numberWithSeperator,
+    toSum
+} from '../../../common/helper';
 
 @Component({
     selector: 'edit-chart',
@@ -44,7 +62,11 @@ export class EditChartComponent implements OnInit, OnDestroy {
         hover: {
             onHover: function(e) {
                 const point = this.getElementAtEvent(e);
-                if (point.length) { e.target.style.cursor = 'pointer'; } else { e.target.style.cursor = 'default'; }
+                if (point.length) {
+                    e.target.style.cursor = 'pointer';
+                } else {
+                    e.target.style.cursor = 'default';
+                }
             }
         },
         tooltips: {
@@ -57,8 +79,9 @@ export class EditChartComponent implements OnInit, OnDestroy {
                 }
                 if (tooltipModel.body) {
                     // prettier-ignore
-                    this.tooltip = (<string[]>tooltipModel.body[0].lines[0].split(':'))
-                                        .map(x => numberWithSeperator(x.trim()));
+                    this.tooltip = (<string[]>tooltipModel.body[0].lines[0].split(
+                        ':'
+                    )).map(x => isNumber(x) ? numberWithSeperator(x.trim()) : x.trim());
                 } else {
                     this.tooltip = this.total;
                 }
@@ -76,7 +99,9 @@ export class EditChartComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        if (this.updateSub) { this.updateSub.unsubscribe(); }
+        if (this.updateSub) {
+            this.updateSub.unsubscribe();
+        }
     }
     ngOnInit(): void {
         if (this.update) {
@@ -87,7 +112,9 @@ export class EditChartComponent implements OnInit, OnDestroy {
     }
 
     private updateGraphic() {
-        if (!this._units || this._units.length <= 0) { return; }
+        if (!this._units || this._units.length <= 0) {
+            return;
+        }
         const value = this._units;
 
         const sets = value.map(x =>

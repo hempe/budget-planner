@@ -1,10 +1,27 @@
-import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    HostBinding,
+    Input,
+    OnDestroy,
+    OnInit
+} from '@angular/core';
 import { Http } from '@angular/http';
 import { Router } from '@angular/router';
 import { Color, Colors } from 'ng2-charts';
 import { map } from 'rxjs/operators';
-import { NamedValue, OverviewContainer, OverviewValue } from '../../../common/api';
-import { array, hexToRgb, isNullOrWhitespace, isNumber, numberWithSeperator, toSum } from '../../../common/helper';
+import {
+    NamedValue,
+    OverviewContainer,
+    OverviewValue
+} from '../../../common/api';
+import {
+    array,
+    hexToRgb,
+    isNullOrWhitespace,
+    isNumber,
+    numberWithSeperator,
+    toSum
+} from '../../../common/helper';
 import { ConfigurationService } from '../../../services/configuration';
 import { ResizeService } from '../../../services/resize';
 import { DashboardConfig, Themes } from '../dashboard';

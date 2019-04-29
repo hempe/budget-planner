@@ -50,7 +50,7 @@ namespace BudgetPlanner.Services.Export
                     }
                     catch { }
                 }
-                await this.TableStore.AddOrUpdateAsync(new Tables.Budget { UserId = userId, Name = b.Name, Id = b.Id, Data = b });
+                await this.TableStore.AddOrUpdateAsync(new Tables.Budget { UserId = userId, Id = b.Id, Data = b });
             }
         }
         public async Task<Stream> GetExportAsync(string userId)
@@ -69,7 +69,7 @@ namespace BudgetPlanner.Services.Export
             budgets.Where(b => b.Data != null && b.Data.Enabled).ToList().ForEach(b =>
             {
                 b.Data.Id = b.Id;
-                b.Data.Name = b.Name;
+                b.Data.Name = b.Data.Name;
             });
 
             return new Models.Complete

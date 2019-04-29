@@ -24,10 +24,10 @@ namespace BudgetPlanner.Controllers
         {
             var values = await this.TableStore.GetAllAsync<Tables.Budget>(this.UserArg);
             if (values.Count == 0)
-                values.Add(new Tables.Budget { Data = new BudgetData { }, Name = "Budget", Id = Guid.NewGuid().ToString() });
+                values.Add(new Tables.Budget { Data = new BudgetData { Name = "Budget", }, Id = Guid.NewGuid().ToString() });
 
             var result = values
-                .Select(b => new { o = ((Group<FrequencyValue>)b.Data).ToOverview(x => x.Value * x.Frequency, b.Id, b.Name ?? nameof(Tables.Budget)), d = b.Data })
+                .Select(b => new { o = ((Group<FrequencyValue>)b.Data).ToOverview(x => x.Value * x.Frequency, b.Id, b.Data?.Name ?? nameof(Tables.Budget)), d = b.Data })
                 .Select(x => new BudgetOverview
                 {
                     EndYear = x.d?.EndYear,
@@ -48,8 +48,8 @@ namespace BudgetPlanner.Controllers
         public async Task<IActionResult> GetOverview([FromRoute] string id)
         {
             var value = await this.TableStore.GetAsync(new Tables.Budget { Id = id, UserId = this.UserId });
-            value = value ?? new Tables.Budget { Name = "Budget", Id = id };
-            var overview = (value?.Data ?? new Group<FrequencyValue>()).ToOverview(x => x.Value * x.Frequency, value.Id, value.Name ?? nameof(Tables.Budget));
+            value = value ?? new Tables.Budget { Data = new BudgetData { Name = "Budget" }, Id = id };
+            var overview = (value?.Data ?? new Group<FrequencyValue>()).ToOverview(x => x.Value * x.Frequency, value.Id, value?.Data.Name ?? nameof(Tables.Budget));
 
             return this.Ok(new BudgetOverview
             {
@@ -82,7 +82,7 @@ namespace BudgetPlanner.Controllers
             if (entity?.Data == null)
                 return this.BadRequest("Failed to copy data.");
             entity.Id = to;
-            entity.Name = $"{entity.Name} Copy";
+            entity.Data.Name = $"{entity.Data.Name} Copy";
             var result = await this.TableStore.AddOrUpdateAsync(entity);
             if (result.Success())
                 return await this.GetOverview(to);
@@ -101,7 +101,7 @@ namespace BudgetPlanner.Controllers
             entity.Data.StartYear = data.StartYear;
             entity.Data.EndYear = data.EndYear;
             entity.Data.Enabled = data.Enabled;
-            entity.Name = data.Name;
+            entity.Data.Name = data.Name;
 
             var result = await this.TableStore.AddOrUpdateAsync(entity);
             if (result.Success())
